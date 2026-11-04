@@ -3,3 +3,14 @@ lib/
 .artifacts/
 .env
 coverage/
+
+# --- EvoVS-RSI project additions (upstream rules above are kept) ---
+logs/
+reference/
+runs/
+workspaces/
+artifacts/
+benchmarks/heldout/
+ops/local.env
+*.local.env
+.dsh-state/
