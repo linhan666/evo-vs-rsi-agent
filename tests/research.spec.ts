@@ -1,6 +1,9 @@
+import { execFile } from 'node:child_process'
 import { existsSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { promisify } from 'node:util'
 import { afterEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { SCIENTIFIC_TOOLS, describeTools, findTool, withinWorkspace, type ScientificToolDefinition } from '../src/research/registry.ts'
@@ -48,6 +51,19 @@ function sleepTool(): ScientificToolDefinition {
 
 const python = 'python3'
 
+const runFile = promisify(execFile)
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const VENV_PYTHON = process.env.EVOVS_PYTHON ?? join(REPO_ROOT, 'scientific/.venv/bin/python')
+
+/** Maximal arguments per tool, so the argv shows every flag the schema can produce. */
+const SAMPLE_ARGS: Record<string, Record<string, unknown>> = {
+  'rdkit.featurize': { input: 'data.csv', output: 'runs/features.npz', report: 'runs/feature_meta.json' },
+  'ml.train': { features: 'runs/features.npz', labels: 'data.csv', output_dir: 'runs/models/m',
+    split_manifest: 'split_manifest.json', label_id_column: 'molecule_chembl_id', label_column: 'label' },
+  'screening.rank': { model: 'runs/models/m/model.joblib', library: 'library.smi',
+    output: 'runs/screening/ranked.csv', top_output: 'runs/screening/top.csv', report: 'runs/screening/report.json' },
+}
+
 describe('scientific registry', () => {
   it('publishes both shipped tools with a JSON Schema the Agent can read', () => {
     const described = describeTools()
@@ -57,6 +73,20 @@ describe('scientific registry', () => {
       expect(item.failure_codes.length).toBeGreaterThan(0)
     }
     expect(SCIENTIFIC_TOOLS.every(item => item.argv.length > 0)).toBe(true)
+  })
+
+  // science_005/006 defect: the zod schema drifted from the Python CLI. Every flag the
+  // registry can emit must exist in the module's own argparse contract.
+  it.skipIf(!existsSync(VENV_PYTHON))('keeps every argv flag in the Python CLI contract', async () => {
+    for (const tool of SCIENTIFIC_TOOLS) {
+      const argv = tool.argv(SAMPLE_ARGS[tool.id] as never, { python: VENV_PYTHON })
+      expect(argv[1]).toBe('-m')
+      const module = argv[2] as string
+      const flags = argv.filter(part => typeof part === 'string' && part.startsWith('--'))
+      const help = await runFile(VENV_PYTHON, ['-m', module, '--help'], { timeout: 120_000 })
+      const missing = flags.filter(flag => !help.stdout.includes(flag))
+      expect(missing, `${tool.id}: flags missing from ${module} --help`).toEqual([])
+    }
   })
 
   it('produces discovery output that survives a JSON round trip', () => {

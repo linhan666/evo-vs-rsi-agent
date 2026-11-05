@@ -247,6 +247,7 @@ def main(argv: list[str] | None = None) -> int:
     grey = [row for row in merged if row["label"] is None]
 
     sufficiency = "OK" if len(labeled) >= args.min_molecules else "NOT_ENOUGH_RELIABLE_DATA"
+    os.makedirs(args.outdir, exist_ok=True)
     split_manifest = None
     if sufficiency == "OK":
         split_manifest = scaffold_split(labeled, fractions, args.seed)

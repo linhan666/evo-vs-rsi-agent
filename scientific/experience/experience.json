@@ -1,0 +1,422 @@
+[
+  {
+    "schema_version": "1",
+    "experience_id": "dataset_MOR_001",
+    "kind": "dataset",
+    "target": "MOR",
+    "created_at": "2026-11-05T13:09:56+00:00",
+    "payload_path": "dataset_audit.json",
+    "payload_sha256": "b3feec06b6606361bb8740336c7e5f52bd1c1c0eafa11c5b00d3bb77c88d513b",
+    "payload": {
+      "schema_version": "1",
+      "created_at": "2026-11-05T12:08:11+00:00",
+      "input": "activities_normalized.csv",
+      "endpoint": "Ki",
+      "parameters": {
+        "min_confidence": 9,
+        "strong_px": 7.0,
+        "weak_px": 6.0,
+        "fractions": [
+          0.7,
+          0.15,
+          0.15
+        ],
+        "seed": 17
+      },
+      "rows_in": 16131,
+      "exclusions": {
+        "low_confidence": 2388,
+        "other_endpoint": 7368,
+        "kept": 6339,
+        "assay_type_other": 36
+      },
+      "rows_normalized": 6339,
+      "channels": {
+        "exact": 5310,
+        "unknown_relation": 126,
+        "censored": 903
+      },
+      "units_seen": {
+        "nM": 6227,
+        "": 112
+      },
+      "rows_without_usable_value": 127,
+      "molecules_with_exact_value": 4472,
+      "conflict_molecules": 84,
+      "labeled": 3281,
+      "grey_zone_unlabeled": 1191,
+      "positives": 2575,
+      "negatives": 706,
+      "sufficiency": "OK",
+      "dataset_rows": 2790,
+      "final_test_rows": 491,
+      "protected": {
+        "dir": "/home/linhan_cluster/evo_vs_rsi/protected/chembl37_ki",
+        "file": "final_test_Ki.csv",
+        "rows": 491
+      },
+      "isolation": "final-test labels are written only to the protected directory, outside EVOVS_DATA_ROOT",
+      "label_rule": "exact '=' value with pX >= 7.0 is active, pX <= 6.0 inactive; grey zone and all censored rows are unlabeled; unmeasured pairs are never negatives",
+      "caveats": [
+        "One endpoint only; Ki and IC50 are different physical quantities and are not mixed here.",
+        "Censored rows keep their relation and are excluded from the regression column.",
+        "Labels are thresholded measurements, not assay ground truth for a different endpoint."
+      ]
+    },
+    "applicability": "Ki only; pX>=7/<=6 pre-registered; scaffold split; test labels in protected dir"
+  },
+  {
+    "schema_version": "1",
+    "experience_id": "model_MOR_002",
+    "kind": "model",
+    "target": "MOR",
+    "created_at": "2026-11-05T13:09:56+00:00",
+    "payload_path": "metrics.json",
+    "payload_sha256": "2586400c6a7ff0cc1ea6de654a7223e4d9895d070a2992ba75a240d4874101b0",
+    "payload": {
+      "schema_version": "1",
+      "created_at": "2026-11-05T12:14:42+00:00",
+      "label_source": "chembl37_ki_pX7_6",
+      "model": "xgboost",
+      "seed": 17,
+      "split_strategy": "scaffold-manifest",
+      "counts": {
+        "joined": 2790,
+        "train": 2297,
+        "validation": 493,
+        "positives": 2219,
+        "validation_positives": 369
+      },
+      "metrics": {
+        "auroc": 0.9021,
+        "auprc": 0.9539,
+        "accuracy": 0.8702,
+        "f1": 0.9175,
+        "ef_at_1pct": 1.336,
+        "ef_at_5pct": 1.336
+      },
+      "notes": [
+        "Metrics are computed on the scaffold-manifest validation molecules.",
+        "The locked final test set is evaluated separately by evovs_science.evaluation.evaluate."
+      ],
+      "versions": {
+        "sklearn": "1.5.2",
+        "numpy": "2.1.3"
+      }
+    },
+    "applicability": "xgboost on scaffold-train only; metrics are scaffold-validation; locked test via evaluator"
+  },
+  {
+    "schema_version": "1",
+    "experience_id": "screening_MOR_003",
+    "kind": "screening",
+    "target": "MOR",
+    "created_at": "2026-11-05T13:09:56+00:00",
+    "payload_path": "report.json",
+    "payload_sha256": "ecf4fa045cd4e3e7df41314e218eb1673ce7901512dc0ffebe02538b2ca80dfd",
+    "payload": {
+      "schema_version": "1",
+      "created_at": "2026-11-05T12:33:20+00:00",
+      "library": "library_100k.smi",
+      "rows_read": 100000,
+      "rows_featurized": 100000,
+      "rows_invalid": 0,
+      "invalid": [],
+      "duplicates_note": "the library is scored as provided; deduplication is the caller's preprocessing step",
+      "parameters": {
+        "radius": 2,
+        "n_bits": 2048,
+        "top_k": 100
+      },
+      "model_sha256": "64a0af149563a940328544bc235b90803346eede762f3bcb3c88a1146a024cc4",
+      "library_sha256": "09446ea1110f8af61ae6065a5941ddac2a131baaeef02219b27c53cc7e767e17",
+      "elapsed_seconds": 83.6,
+      "predictions_are": "model scores on an unlabeled library; no hit rate or enrichment is defined here",
+      "top_score_range": [
+        0.9912108182907104,
+        0.9984508752822876
+      ]
+    },
+    "applicability": "predictions on unlabeled ZINC250k-100k sample; no hit rate defined"
+  },
+  {
+    "schema_version": "1",
+    "experience_id": "dataset_KOR_004",
+    "kind": "dataset",
+    "target": "KOR",
+    "created_at": "2026-11-05T13:09:56+00:00",
+    "payload_path": "dataset_audit.json",
+    "payload_sha256": "96aaff99597306b73b484b9b6e720c44a7583feff5366d4d5a748307237add43",
+    "payload": {
+      "schema_version": "1",
+      "created_at": "2026-11-05T13:04:50+00:00",
+      "input": "activities_normalized.csv",
+      "endpoint": "Ki",
+      "parameters": {
+        "min_confidence": 9,
+        "strong_px": 7.0,
+        "weak_px": 6.0,
+        "fractions": [
+          0.7,
+          0.15,
+          0.15
+        ],
+        "seed": 17
+      },
+      "rows_in": 13330,
+      "exclusions": {
+        "low_confidence": 2073,
+        "other_endpoint": 7069,
+        "kept": 4174,
+        "assay_type_other": 14
+      },
+      "rows_normalized": 4174,
+      "channels": {
+        "exact": 3580,
+        "censored": 503,
+        "unknown_relation": 91
+      },
+      "units_seen": {
+        "nM": 4084,
+        "": 90
+      },
+      "rows_without_usable_value": 90,
+      "molecules_with_exact_value": 3100,
+      "conflict_molecules": 43,
+      "labeled": 2233,
+      "grey_zone_unlabeled": 867,
+      "positives": 1729,
+      "negatives": 504,
+      "sufficiency": "OK",
+      "dataset_rows": 1899,
+      "final_test_rows": 334,
+      "protected": {
+        "dir": "/home/linhan_cluster/evo_vs_rsi/protected/chembl37_ki_oprk1",
+        "file": "final_test_Ki.csv",
+        "rows": 334
+      },
+      "isolation": "final-test labels are written only to the protected directory, outside EVOVS_DATA_ROOT",
+      "label_rule": "exact '=' value with pX >= 7.0 is active, pX <= 6.0 inactive; grey zone and all censored rows are unlabeled; unmeasured pairs are never negatives",
+      "caveats": [
+        "One endpoint only; Ki and IC50 are different physical quantities and are not mixed here.",
+        "Censored rows keep their relation and are excluded from the regression column.",
+        "Labels are thresholded measurements, not assay ground truth for a different endpoint."
+      ]
+    },
+    "applicability": "Ki only; pX>=7/<=6 pre-registered; scaffold split; same 100k library as MOR"
+  },
+  {
+    "schema_version": "1",
+    "experience_id": "model_KOR_005",
+    "kind": "model",
+    "target": "KOR",
+    "created_at": "2026-11-05T13:09:56+00:00",
+    "payload_path": "metrics.json",
+    "payload_sha256": "21cf4ad83a4e1cfcc7d525607923544f67072bd54d64cd37c2a6b15c9fe2de45",
+    "payload": {
+      "schema_version": "1",
+      "created_at": "2026-11-05T13:06:33+00:00",
+      "label_source": "chembl37_ki_pX7_6",
+      "model": "xgboost",
+      "seed": 17,
+      "split_strategy": "scaffold-manifest",
+      "counts": {
+        "joined": 1899,
+        "train": 1564,
+        "validation": 335,
+        "positives": 1500,
+        "validation_positives": 228
+      },
+      "metrics": {
+        "auroc": 0.8765,
+        "auprc": 0.9275,
+        "accuracy": 0.8358,
+        "f1": 0.8871,
+        "ef_at_1pct": 1.469,
+        "ef_at_5pct": 1.469
+      },
+      "notes": [
+        "Metrics are computed on the scaffold-manifest validation molecules.",
+        "The locked final test set is evaluated separately by evovs_science.evaluation.evaluate."
+      ],
+      "versions": {
+        "sklearn": "1.5.2",
+        "numpy": "2.1.3"
+      }
+    },
+    "applicability": "xgboost scaffold-manifest; cross-target transfer NOT assumed"
+  },
+  {
+    "schema_version": "1",
+    "experience_id": "screening_KOR_006",
+    "kind": "screening",
+    "target": "KOR",
+    "created_at": "2026-11-05T13:09:57+00:00",
+    "payload_path": "report.json",
+    "payload_sha256": "c3b4ebe72f0ce49f8969d04807c294d83e9a7cc77d1b2cca8f2cb4336438971f",
+    "payload": {
+      "schema_version": "1",
+      "created_at": "2026-11-05T13:08:13+00:00",
+      "library": "library_100k.smi",
+      "rows_read": 100000,
+      "rows_featurized": 100000,
+      "rows_invalid": 0,
+      "invalid": [],
+      "duplicates_note": "the library is scored as provided; deduplication is the caller's preprocessing step",
+      "parameters": {
+        "radius": 2,
+        "n_bits": 2048,
+        "top_k": 100
+      },
+      "model_sha256": "c2732424dfef43ac37d37768a8d50e3c5cd4fe575ed4b241dbf372c49090ea2c",
+      "library_sha256": "09446ea1110f8af61ae6065a5941ddac2a131baaeef02219b27c53cc7e767e17",
+      "elapsed_seconds": 65.7,
+      "predictions_are": "model scores on an unlabeled library; no hit rate or enrichment is defined here",
+      "top_score_range": [
+        0.9961618185043335,
+        0.9994333386421204
+      ]
+    },
+    "applicability": "predictions on the same 100k library; no hit rate defined"
+  },
+  {
+    "schema_version": "1",
+    "experience_id": "dataset_DRD2_007",
+    "kind": "dataset",
+    "target": "DRD2",
+    "created_at": "2026-11-05T13:09:57+00:00",
+    "payload_path": "dataset_audit.json",
+    "payload_sha256": "a9b532bae5dce07a748ac1b855153e5d0d1c38e690db4f952636a49d32f0fb33",
+    "payload": {
+      "schema_version": "1",
+      "created_at": "2026-11-05T13:04:53+00:00",
+      "input": "activities_normalized.csv",
+      "endpoint": "Ki",
+      "parameters": {
+        "min_confidence": 9,
+        "strong_px": 7.0,
+        "weak_px": 6.0,
+        "fractions": [
+          0.7,
+          0.15,
+          0.15
+        ],
+        "seed": 17
+      },
+      "rows_in": 19564,
+      "exclusions": {
+        "other_endpoint": 4781,
+        "low_confidence": 3819,
+        "kept": 10753,
+        "assay_type_other": 211
+      },
+      "rows_normalized": 10753,
+      "channels": {
+        "exact": 9361,
+        "unknown_relation": 221,
+        "censored": 1171
+      },
+      "units_seen": {
+        "nM": 10549,
+        "": 204
+      },
+      "rows_without_usable_value": 219,
+      "molecules_with_exact_value": 6606,
+      "conflict_molecules": 138,
+      "labeled": 3873,
+      "grey_zone_unlabeled": 2733,
+      "positives": 2510,
+      "negatives": 1363,
+      "sufficiency": "OK",
+      "dataset_rows": 3293,
+      "final_test_rows": 580,
+      "protected": {
+        "dir": "/home/linhan_cluster/evo_vs_rsi/protected/chembl37_ki_drd2",
+        "file": "final_test_Ki.csv",
+        "rows": 580
+      },
+      "isolation": "final-test labels are written only to the protected directory, outside EVOVS_DATA_ROOT",
+      "label_rule": "exact '=' value with pX >= 7.0 is active, pX <= 6.0 inactive; grey zone and all censored rows are unlabeled; unmeasured pairs are never negatives",
+      "caveats": [
+        "One endpoint only; Ki and IC50 are different physical quantities and are not mixed here.",
+        "Censored rows keep their relation and are excluded from the regression column.",
+        "Labels are thresholded measurements, not assay ground truth for a different endpoint."
+      ]
+    },
+    "applicability": "Ki only; pX>=7/<=6 pre-registered; scaffold split; same 100k library as MOR"
+  },
+  {
+    "schema_version": "1",
+    "experience_id": "model_DRD2_008",
+    "kind": "model",
+    "target": "DRD2",
+    "created_at": "2026-11-05T13:09:57+00:00",
+    "payload_path": "metrics.json",
+    "payload_sha256": "86450fbdc0a66ed77038a44d30566eadd7df3191797874e22ff5fa7aba3adbc1",
+    "payload": {
+      "schema_version": "1",
+      "created_at": "2026-11-05T13:06:42+00:00",
+      "label_source": "chembl37_ki_pX7_6",
+      "model": "xgboost",
+      "seed": 17,
+      "split_strategy": "scaffold-manifest",
+      "counts": {
+        "joined": 3293,
+        "train": 2712,
+        "validation": 581,
+        "positives": 2192,
+        "validation_positives": 342
+      },
+      "metrics": {
+        "auroc": 0.9214,
+        "auprc": 0.947,
+        "accuracy": 0.8348,
+        "f1": 0.8663,
+        "ef_at_1pct": 1.699,
+        "ef_at_5pct": 1.699
+      },
+      "notes": [
+        "Metrics are computed on the scaffold-manifest validation molecules.",
+        "The locked final test set is evaluated separately by evovs_science.evaluation.evaluate."
+      ],
+      "versions": {
+        "sklearn": "1.5.2",
+        "numpy": "2.1.3"
+      }
+    },
+    "applicability": "xgboost scaffold-manifest; cross-target transfer NOT assumed"
+  },
+  {
+    "schema_version": "1",
+    "experience_id": "screening_DRD2_009",
+    "kind": "screening",
+    "target": "DRD2",
+    "created_at": "2026-11-05T13:09:57+00:00",
+    "payload_path": "report.json",
+    "payload_sha256": "2c1ff277012b3af2886a90763c1f38f572a1d15377b75b092a9af7ce2e2ccd74",
+    "payload": {
+      "schema_version": "1",
+      "created_at": "2026-11-05T13:09:26+00:00",
+      "library": "library_100k.smi",
+      "rows_read": 100000,
+      "rows_featurized": 100000,
+      "rows_invalid": 0,
+      "invalid": [],
+      "duplicates_note": "the library is scored as provided; deduplication is the caller's preprocessing step",
+      "parameters": {
+        "radius": 2,
+        "n_bits": 2048,
+        "top_k": 100
+      },
+      "model_sha256": "49f688f315fb3ffa8130259ebdf50091609cb73141e4d433d1638435613b8493",
+      "library_sha256": "09446ea1110f8af61ae6065a5941ddac2a131baaeef02219b27c53cc7e767e17",
+      "elapsed_seconds": 69.8,
+      "predictions_are": "model scores on an unlabeled library; no hit rate or enrichment is defined here",
+      "top_score_range": [
+        0.979671061038971,
+        0.9967104196548462
+      ]
+    },
+    "applicability": "predictions on the same 100k library; no hit rate defined"
+  }
+]
