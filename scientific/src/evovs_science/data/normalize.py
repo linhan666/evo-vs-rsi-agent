@@ -214,6 +214,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--strong-px", type=float, default=7.0, help="pX at or above which a molecule is labeled active")
     parser.add_argument("--weak-px", type=float, default=6.0, help="pX at or below which a molecule is labeled inactive")
     parser.add_argument("--fractions", default="0.7,0.15,0.15")
+    parser.add_argument("--protected-dir", default=None,
+                        help="where final-test labels are written (mode 700); MUST sit outside EVOVS_DATA_ROOT")
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--min-molecules", type=int, default=100,
                         help="below this the run reports NOT_ENOUGH_RELIABLE_DATA and writes no split")
@@ -244,6 +246,27 @@ def main(argv: list[str] | None = None) -> int:
     labeled = [row for row in merged if row["label"] is not None]
     grey = [row for row in merged if row["label"] is None]
 
+    sufficiency = "OK" if len(labeled) >= args.min_molecules else "NOT_ENOUGH_RELIABLE_DATA"
+    split_manifest = None
+    if sufficiency == "OK":
+        split_manifest = scaffold_split(labeled, fractions, args.seed)
+        split_path = os.path.join(args.outdir, "split_manifest.json")
+        with open(split_path, "w", encoding="utf-8") as handle:
+            json.dump(split_manifest, handle, ensure_ascii=False, indent=2)
+            handle.write("\n")
+
+    split_of: dict[str, str] = {}
+    if split_manifest:
+        for name, members in split_manifest["molecules"].items():
+            for molecule in members:
+                split_of[molecule] = name
+    # P2-04 isolation: the modelling table holds train+validation only; final-test
+    # labels live in the protected directory, outside every agent-readable root.
+    # Grey-zone molecules have no split assignment and belong to no modelling table.
+    model_rows = [row for row in merged if split_of.get(row["molecule_chembl_id"]) in ("train", "validation")] \
+        if split_manifest else merged
+    test_rows = [row for row in merged if split_of.get(row["molecule_chembl_id"]) == "test"] if split_manifest else []
+
     os.makedirs(args.outdir, exist_ok=True)
     measurements_path = os.path.join(args.outdir, "measurements.csv")
     with open(measurements_path, "w", newline="", encoding="utf-8") as handle:
@@ -257,16 +280,20 @@ def main(argv: list[str] | None = None) -> int:
     with open(dataset_path, "w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
-        writer.writerows([{key: row.get(key, "") for key in fields} for row in merged])
+        writer.writerows([{key: row.get(key, "") for key in fields} for row in model_rows])
 
-    sufficiency = "OK" if len(labeled) >= args.min_molecules else "NOT_ENOUGH_RELIABLE_DATA"
-    split_manifest = None
-    if sufficiency == "OK":
-        split_manifest = scaffold_split(labeled, fractions, args.seed)
-        split_path = os.path.join(args.outdir, "split_manifest.json")
-        with open(split_path, "w", encoding="utf-8") as handle:
-            json.dump(split_manifest, handle, ensure_ascii=False, indent=2)
-            handle.write("\n")
+    protected_note = None
+    if args.protected_dir and test_rows:
+        protected_dir = os.path.abspath(args.protected_dir)
+        os.makedirs(protected_dir, exist_ok=True)
+        os.chmod(protected_dir, 0o700)
+        test_path = os.path.join(protected_dir, f"final_test_{args.endpoint}.csv")
+        with open(test_path, "w", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows([{key: row.get(key, "") for key in fields} for row in test_rows])
+        os.chmod(test_path, 0o600)
+        protected_note = {"dir": protected_dir, "file": os.path.basename(test_path), "rows": len(test_rows)}
 
     audit = {
         "schema_version": "1",
@@ -288,6 +315,10 @@ def main(argv: list[str] | None = None) -> int:
         "positives": sum(1 for row in labeled if row["label"] == 1),
         "negatives": sum(1 for row in labeled if row["label"] == 0),
         "sufficiency": sufficiency,
+        "dataset_rows": len(model_rows),
+        "final_test_rows": len(test_rows),
+        "protected": protected_note,
+        "isolation": "final-test labels are written only to the protected directory, outside EVOVS_DATA_ROOT",
         "label_rule": f"exact '=' value with pX >= {args.strong_px} is active, pX <= {args.weak_px} inactive; "
                       f"grey zone and all censored rows are unlabeled; unmeasured pairs are never negatives",
         "caveats": [
@@ -313,7 +344,8 @@ def main(argv: list[str] | None = None) -> int:
         args.outdir, artifacts,
         generator="evovs_science.data.normalize",
         inputs=[describe_input(args.input)],
-        parameters={"endpoint": args.endpoint, "strong_px": args.strong_px, "weak_px": args.weak_px},
+        parameters={"endpoint": args.endpoint, "strong_px": args.strong_px, "weak_px": args.weak_px,
+                    "protected_rows": len(test_rows)},
         extra={"sufficiency": sufficiency, "split_checks": (split_manifest or {}).get("checks")},
     )
 

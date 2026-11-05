@@ -1,9 +1,12 @@
 """Train a small classifier on featurized molecules and report screening metrics.
 
-Blueprint §9.5: report AUROC/AUPRC, Precision@K and EF@1%, and say plainly when a
-metric is undefined (single-class test fold) instead of writing a misleading 0.
-Labels here come from a **fixture**, never from real assay data; the output
-records `label_source` so a report cannot quietly present it as measured activity.
+Blueprint §9.4/§9.5 and P2-04:
+  * when `--split-manifest` is given, fitting uses **only** the manifest's train
+    molecules and the reported metrics come from its validation molecules — the
+    internal random split is then not used at all;
+  * the final test set is never read here; only the independent evaluator sees it;
+  * single-class folds report `null` instead of a misleading 0;
+  * labels carry `label_source` so fixture data can never masquerade as assay data.
 """
 
 from __future__ import annotations
@@ -14,34 +17,78 @@ import json
 import os
 
 import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, average_precision_score, f1_score, roc_auc_score
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 
 from ..manifest import describe_input, utc_now, write_manifest
 
+MODELS = ("logreg", "rf", "xgboost", "catboost")
 
-def read_labels(path: str) -> dict[str, int]:
+
+def build_model(kind: str, seed: int):
+    """Construct a classifier; a missing optional library is a clear error."""
+    if kind == "logreg":
+        return LogisticRegression(max_iter=2000, class_weight="balanced")
+    if kind == "rf":
+        return RandomForestClassifier(n_estimators=200, random_state=seed, n_jobs=1)
+    if kind == "xgboost":
+        try:
+            from xgboost import XGBClassifier
+        except ImportError as error:
+            raise SystemExit("xgboost is not installed in this environment; pip install xgboost") from error
+        return XGBClassifier(n_estimators=300, max_depth=6, learning_rate=0.1, subsample=0.9,
+                             colsample_bytree=0.9, min_child_weight=1.0, random_state=seed, n_jobs=1,
+                             eval_metric="logloss", tree_method="hist", verbosity=0)
+    if kind == "catboost":
+        try:
+            from catboost import CatBoostClassifier
+        except ImportError as error:
+            raise SystemExit("catboost is not installed in this environment; pip install catboost") from error
+        return CatBoostClassifier(iterations=300, depth=6, learning_rate=0.1, random_seed=seed,
+                                  verbose=False, allow_writing_files=False)
+    raise SystemExit(f"unknown model kind: {kind}")
+
+
+def read_labels(path: str, id_column: str = "id", label_column: str = "label") -> dict[str, int]:
     labels: dict[str, int] = {}
-    with open(path, newline="", encoding="utf-8") as handle:
+    with open(path, newline="", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
         fields = {name.lower(): name for name in (reader.fieldnames or [])}
-        if "id" not in fields or "label" not in fields:
-            raise SystemExit(f"{path} needs 'id' and 'label' columns; found {reader.fieldnames}")
+        if id_column.lower() not in fields or label_column.lower() not in fields:
+            raise SystemExit(f"{path} needs {id_column!r} and {label_column!r} columns; found {reader.fieldnames}")
         for row in reader:
-            labels[str(row[fields["id"]])] = int(float(row[fields["label"]]))
+            raw = row[fields[label_column.lower()]]
+            if raw == "":
+                continue  # grey-zone rows are present but deliberately unlabeled
+            labels[str(row[fields[id_column.lower()]])] = int(float(raw))
     return labels
 
 
+def read_split_ids(manifest_path: str) -> dict[str, set[str]]:
+    with open(manifest_path, encoding="utf-8") as handle:
+        manifest = json.load(handle)
+    molecules = manifest.get("molecules") or {}
+    if not {"train", "validation"} <= set(molecules):
+        raise SystemExit(f"{manifest_path} lacks train/validation molecule lists")
+    return {name: set(members) for name, members in molecules.items()}
+
+
 def split_indices(y: np.ndarray, test_fraction: float, seed: int) -> tuple[np.ndarray, np.ndarray]:
+    """Stratified random fallback used only when no scaffold manifest is supplied."""
     rng = np.random.default_rng(seed)
-    train_parts, test_parts = [], []
+    train_parts, val_parts = [], []
     for value in (0, 1):
         index = np.flatnonzero(y == value)
         rng.shuffle(index)
         cut = max(1, int(round(len(index) * test_fraction))) if len(index) > 1 else 0
-        test_parts.append(index[:cut])
+        val_parts.append(index[:cut])
         train_parts.append(index[cut:])
     train = np.sort(np.concatenate(train_parts)) if train_parts else np.array([], dtype=int)
-    test = np.sort(np.concatenate(test_parts)) if test_parts else np.array([], dtype=int)
-    return train, test
+    val = np.sort(np.concatenate(val_parts)) if val_parts else np.array([], dtype=int)
+    return train, val
 
 
 def enrichment(y_true: np.ndarray, scores: np.ndarray, fraction: float) -> float | None:
@@ -58,27 +105,24 @@ def enrichment(y_true: np.ndarray, scores: np.ndarray, fraction: float) -> float
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="evovs-science train")
     parser.add_argument("--features", required=True, help="npz from rdkit.featurize")
-    parser.add_argument("--labels", required=True, help="CSV with id,label")
+    parser.add_argument("--labels", required=True, help="CSV with id,label (or matching columns)")
     parser.add_argument("--output-dir", required=True)
-    parser.add_argument("--model", choices=["logreg", "rf"], default="logreg")
+    parser.add_argument("--model", choices=list(MODELS), default="logreg")
     parser.add_argument("--seed", type=int, default=17)
-    parser.add_argument("--test-fraction", type=float, default=0.3)
+    parser.add_argument("--test-fraction", type=float, default=0.3,
+                        help="internal random split, used only without --split-manifest")
+    parser.add_argument("--split-manifest", default=None,
+                        help="split_manifest.json from data.normalize; train/validation then follow scaffolds")
     parser.add_argument("--label-source", default="fixture")
+    parser.add_argument("--label-id-column", default="id")
+    parser.add_argument("--label-column", default="label")
     args = parser.parse_args(argv)
-
-    import joblib
-    import sklearn
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import accuracy_score, average_precision_score, f1_score, roc_auc_score
-    from sklearn.pipeline import make_pipeline
-    from sklearn.preprocessing import StandardScaler
 
     data = np.load(args.features, allow_pickle=True)
     ids = [str(item) for item in data["ids"]]
     matrix, descriptors = data["X"], data["D"]
 
-    labels = read_labels(args.labels)
+    labels = read_labels(args.labels, args.label_id_column, args.label_column)
     keep = [index for index, molecule_id in enumerate(ids) if molecule_id in labels]
     if len(keep) < 4:
         print(json.dumps({"error": "NOT_ENOUGH_RELIABLE_DATA", "joined": len(keep)}))
@@ -88,19 +132,26 @@ def main(argv: list[str] | None = None) -> int:
     y = np.asarray([labels[ids[index]] for index in keep], dtype=int)
     kept_ids = [ids[index] for index in keep]
 
-    train, test = split_indices(y, args.test_fraction, args.seed)
-    if len(test) == 0 or len(train) == 0:
-        print(json.dumps({"error": "NOT_ENOUGH_RELIABLE_DATA", "train": len(train), "test": len(test)}))
-        return 3
+    if args.split_manifest:
+        split_ids = read_split_ids(args.split_manifest)
+        train = np.asarray([index for index, molecule_id in enumerate(kept_ids)
+                            if molecule_id in split_ids["train"]], dtype=int)
+        val = np.asarray([index for index, molecule_id in enumerate(kept_ids)
+                          if molecule_id in split_ids["validation"]], dtype=int)
+        split_strategy = "scaffold-manifest"
+        if len(train) == 0 or len(val) == 0:
+            print(json.dumps({"error": "NOT_ENOUGH_RELIABLE_DATA", "strategy": split_strategy,
+                              "train": len(train), "validation": len(val)}))
+            return 3
+    else:
+        train, val = split_indices(y, args.test_fraction, args.seed)
+        split_strategy = "internal-random"
 
-    estimator = LogisticRegression(max_iter=2000, class_weight="balanced") if args.model == "logreg" \
-        else RandomForestClassifier(n_estimators=200, random_state=args.seed, n_jobs=1)
-    model = make_pipeline(StandardScaler(), estimator)
+    model = make_pipeline(StandardScaler(), build_model(args.model, args.seed))
     model.fit(features[train], y[train])
-
-    scores = model.predict_proba(features[test])[:, 1]
+    scores = model.predict_proba(features[val])[:, 1]
     predicted = (scores >= 0.5).astype(int)
-    single_class = len(np.unique(y[test])) < 2
+    single_class = len(np.unique(y[val])) < 2
 
     metrics = {
         "schema_version": "1",
@@ -108,19 +159,22 @@ def main(argv: list[str] | None = None) -> int:
         "label_source": args.label_source,
         "model": args.model,
         "seed": args.seed,
-        "counts": {"joined": int(len(y)), "train": int(len(train)), "test": int(len(test)),
-                   "positives": int(y.sum()), "test_positives": int(y[test].sum())},
+        "split_strategy": split_strategy,
+        "counts": {"joined": int(len(y)), "train": int(len(train)), "validation": int(len(val)),
+                   "positives": int(y.sum()), "validation_positives": int(y[val].sum())},
         "metrics": {
-            "auroc": None if single_class else round(float(roc_auc_score(y[test], scores)), 4),
-            "auprc": None if single_class else round(float(average_precision_score(y[test], scores)), 4),
-            "accuracy": round(float(accuracy_score(y[test], predicted)), 4),
-            "f1": round(float(f1_score(y[test], predicted, zero_division=0)), 4),
-            "ef_at_1pct": None if single_class else enrichment(y[test], scores, 0.01),
-            "ef_at_5pct": None if single_class else enrichment(y[test], scores, 0.05),
+            "auroc": None if single_class else round(float(roc_auc_score(y[val], scores)), 4),
+            "auprc": None if single_class else round(float(average_precision_score(y[val], scores)), 4),
+            "accuracy": round(float(accuracy_score(y[val], predicted)), 4),
+            "f1": round(float(f1_score(y[val], predicted, zero_division=0)), 4),
+            "ef_at_1pct": None if single_class else enrichment(y[val], scores, 0.01),
+            "ef_at_5pct": None if single_class else enrichment(y[val], scores, 0.05),
         },
-        "notes": ["Metrics come from a fixture label set; they describe the pipeline, not GPCR activity."]
-                 + (["Test fold has a single class; ranking metrics are undefined."] if single_class else []),
-        "versions": {"sklearn": sklearn.__version__, "numpy": np.__version__},
+        "notes": [
+            f"Metrics are computed on the {split_strategy} validation molecules.",
+            "The locked final test set is evaluated separately by evovs_science.evaluation.evaluate.",
+        ] + (["Validation fold has a single class; ranking metrics are undefined."] if single_class else []),
+        "versions": {"sklearn": __import__("sklearn").__version__, "numpy": np.__version__},
     }
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -135,11 +189,11 @@ def main(argv: list[str] | None = None) -> int:
         writer.writerow(["id", "label", "score", "split"])
         for index in train:
             writer.writerow([kept_ids[index], int(y[index]), "", "train"])
-        for position, index in enumerate(test):
-            writer.writerow([kept_ids[index], int(y[index]), round(float(scores[position]), 6), "test"])
+        for position, index in enumerate(val):
+            writer.writerow([kept_ids[index], int(y[index]), round(float(scores[position]), 6), "validation"])
 
     model_path = os.path.join(args.output_dir, "model.joblib")
-    joblib.dump(model, model_path)
+    __import__("joblib").dump(model, model_path)
 
     write_manifest(
         args.output_dir,
@@ -150,11 +204,12 @@ def main(argv: list[str] | None = None) -> int:
         ],
         generator="evovs_science.modeling.train",
         inputs=[describe_input(args.features), describe_input(args.labels)],
-        parameters={"model": args.model, "seed": args.seed, "test_fraction": args.test_fraction},
+        parameters={"model": args.model, "seed": args.seed, "split_strategy": split_strategy},
         extra={"label_source": args.label_source, "metrics": metrics["metrics"]},
     )
 
-    print(json.dumps({"metrics": metrics["metrics"], "counts": metrics["counts"]}))
+    print(json.dumps({"metrics": metrics["metrics"], "counts": metrics["counts"],
+                      "split_strategy": split_strategy}))
     return 0
 
 

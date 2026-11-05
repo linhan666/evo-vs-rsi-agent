@@ -34,20 +34,20 @@ def _descriptor_row(mol) -> list[float]:
 DESCRIPTOR_NAMES = ["mol_weight", "logp", "h_donors", "h_acceptors", "tpsa", "rotatable_bonds", "rings"]
 
 
-def read_smiles(path: str, limit: int | None = None) -> list[tuple[str, str]]:
-    """Read `(id, smiles)` pairs from a `.csv` (columns `id`,`smiles`) or a `.smi` file."""
+def read_smiles(path: str, limit: int | None = None, id_column: str = "id", smiles_column: str = "smiles") -> list[tuple[str, str]]:
+    """Read `(id, smiles)` pairs from a `.csv` or a `.smi` file; column names are configurable."""
     rows: list[tuple[str, str]] = []
     if path.endswith(".csv"):
-        with open(path, newline="", encoding="utf-8") as handle:
+        with open(path, newline="", encoding="utf-8-sig") as handle:
             reader = csv.DictReader(handle)
             fields = {name.lower(): name for name in (reader.fieldnames or [])}
-            if "smiles" not in fields:
-                raise SystemExit(f"{path} has no 'smiles' column; found {reader.fieldnames}")
-            id_field = fields.get("id")
+            if smiles_column.lower() not in fields:
+                raise SystemExit(f"{path} has no {smiles_column!r} column; found {reader.fieldnames}")
+            id_field = fields.get(id_column.lower())
             for index, row in enumerate(reader):
                 if limit is not None and index >= limit:
                     break
-                rows.append((row.get(id_field, f"row{index}") if id_field else f"row{index}", row[fields["smiles"]]))
+                rows.append((row.get(id_field, f"row{index}") if id_field else f"row{index}", row[fields[smiles_column.lower()]]))
     else:
         with open(path, encoding="utf-8") as handle:
             for index, line in enumerate(handle):
@@ -100,9 +100,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--radius", type=int, default=2)
     parser.add_argument("--n-bits", type=int, default=2048)
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument("--id-column", default="id")
+    parser.add_argument("--smiles-column", default="smiles")
     args = parser.parse_args(argv)
 
-    rows = read_smiles(args.input, args.limit or None)
+    rows = read_smiles(args.input, args.limit or None, args.id_column, args.smiles_column)
     ids, matrix, descriptors, invalid = featurize(rows, radius=args.radius, n_bits=args.n_bits)
 
     os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)

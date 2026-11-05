@@ -51,7 +51,7 @@ const python = 'python3'
 describe('scientific registry', () => {
   it('publishes both shipped tools with a JSON Schema the Agent can read', () => {
     const described = describeTools()
-    expect(described.map(item => item.tool_id)).toEqual(['rdkit.featurize', 'sklearn.train'])
+    expect(described.map(item => item.tool_id)).toEqual(['rdkit.featurize', 'ml.train'])
     for (const item of described) {
       expect(item.input_schema).toBeTruthy()
       expect(item.failure_codes.length).toBeGreaterThan(0)

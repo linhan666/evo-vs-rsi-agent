@@ -93,9 +93,9 @@ export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] = [
     outputs: (args: z.infer<typeof FeaturizeInput>) => [args.output, args.report],
   },
   {
-    id: 'sklearn.train',
+    id: 'ml.train',
     version: '0.1.0',
-    description: 'Train a small classifier on featurized molecules and report AUROC, AUPRC, EF@1% and counts. Refuses to invent negatives.',
+    description: 'Train a small classifier (logreg, rf, xgboost, catboost) on featurized molecules; reports AUROC, AUPRC, EF@1% and counts. Refuses to invent negatives.',
     capabilities: ['classification', 'metrics', 'enrichment'],
     resources: ['cpu'],
     sideEffects: ['write_artifacts'],
