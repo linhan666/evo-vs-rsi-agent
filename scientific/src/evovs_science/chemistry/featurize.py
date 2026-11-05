@@ -17,10 +17,10 @@ import numpy as np
 
 from ..manifest import describe_input, utc_now, write_manifest
 
-def _descriptor_row(mol) -> list[float]:
+def _descriptor_row(mol, extra_names: tuple[str, ...] = ()) -> list[float]:
     from rdkit.Chem import Crippen, Descriptors
 
-    return [
+    row = [
         Descriptors.MolWt(mol),
         Crippen.MolLogP(mol),
         Descriptors.NumHDonors(mol),
@@ -29,9 +29,26 @@ def _descriptor_row(mol) -> list[float]:
         Descriptors.NumRotatableBonds(mol),
         Descriptors.RingCount(mol),
     ]
+    if extra_names:
+        all_descriptors = Descriptors.CalcMolDescriptors(mol)
+        row.extend(float(all_descriptors.get(name) or 0.0) for name in extra_names)
+    return row
 
 
 DESCRIPTOR_NAMES = ["mol_weight", "logp", "h_donors", "h_acceptors", "tpsa", "rotatable_bonds", "rings"]
+
+# candidate3 (metric-level): descriptor set v2 appends these RDKit 2D descriptors.
+# The extra block is appended AFTER the v1 block, so a v2 row is [v1..., extras...].
+DESCRIPTOR_EXTRA_V2 = (
+    "NumValenceElectrons", "FractionCSP3", "Chi0n", "Chi1n", "Chi2n", "Chi3n", "Chi4n",
+    "Chi0v", "Chi1v", "Chi2v", "Chi3v", "Chi4v", "Kappa1", "Kappa2", "Kappa3",
+    "HallKierAlpha", "BalabanJ", "BertzCT", "LabuteASA", "MolMR", "NHOHCount", "NOCount",
+    "RingCount", "NumAromaticRings", "NumSaturatedRings", "NumAliphaticRings",
+    "NumAromaticCarbocycles", "NumAromaticHeterocycles", "NumSaturatedCarbocycles",
+    "NumSaturatedHeterocycles", "NumAliphaticCarbocycles", "NumAliphaticHeterocycles",
+    "MaxPartialCharge", "MinPartialCharge", "MaxAbsPartialCharge", "MinAbsPartialCharge",
+)
+DESCRIPTOR_SETS = {"v1": (), "v2": DESCRIPTOR_EXTRA_V2}
 
 
 def read_smiles(path: str, limit: int | None = None, id_column: str = "id", smiles_column: str = "smiles") -> list[tuple[str, str]]:
@@ -62,7 +79,7 @@ def read_smiles(path: str, limit: int | None = None, id_column: str = "id", smil
 
 def _featurize_chunk(task: tuple):
     """Featurize one chunk; module-level so multiprocessing can pickle it."""
-    _target, chunk, radius, n_bits = task
+    _target, chunk, radius, n_bits, extra_names = task
     from rdkit import Chem, RDLogger
     from rdkit.Chem import rdFingerprintGenerator
     from rdkit.DataStructs import ConvertToNumpyArray
@@ -81,7 +98,7 @@ def _featurize_chunk(task: tuple):
         vector = np.zeros((n_bits,), dtype=np.uint8)
         ConvertToNumpyArray(generator.GetFingerprint(mol), vector)
         fp_rows.append(vector)
-        desc_rows.append(_descriptor_row(mol))
+        desc_rows.append(_descriptor_row(mol, extra_names))
         ids.append(molecule_id)
     return (ids,
             np.vstack(fp_rows) if fp_rows else np.zeros((0, n_bits), dtype=np.uint8),
@@ -101,9 +118,12 @@ def featurize(rows: list[tuple[str, str]], *, radius: int, n_bits: int):
     # PROMOTED 2026-11-05 (candidate1): default 8 after shadow acceptance
     # (equivalence 1.0, featurize 2.1x, screening 3.3x) — see docs/PHASE4_DESIGN.md §6.
     jobs = max(1, int(os.environ.get("EVOVS_FEAT_JOBS", "8")))
+    desc_set = os.environ.get("EVOVS_DESC_SET", "v1")
+    extra_names = DESCRIPTOR_SETS.get(desc_set, ())
+    desc_width = len(DESCRIPTOR_NAMES) + len(extra_names)
     if rows:
         chunk_size = max(1, math.ceil(len(rows) / (jobs * 4)))
-        chunks = [(f"chunk{i}", rows[i:i + chunk_size], radius, n_bits)
+        chunks = [(f"chunk{i}", rows[i:i + chunk_size], radius, n_bits, extra_names)
                   for i in range(0, len(rows), chunk_size)]
     else:
         chunks = []
@@ -116,7 +136,7 @@ def featurize(rows: list[tuple[str, str]], *, radius: int, n_bits: int):
         parts = [_featurize_chunk(chunk) for chunk in chunks]
     ids = [molecule_id for part in parts for molecule_id in part[0]]
     matrix = np.vstack([part[1] for part in parts]) if parts else np.zeros((0, n_bits), dtype=np.uint8)
-    descriptors = np.vstack([part[2] for part in parts]) if parts else np.zeros((0, len(DESCRIPTOR_NAMES)), dtype=np.float32)
+    descriptors = np.vstack([part[2] for part in parts]) if parts else np.zeros((0, desc_width), dtype=np.float32)
     invalid = [item for part in parts for item in part[3]]
     return ids, matrix, descriptors, invalid
 
