@@ -58,6 +58,10 @@ Shadow Evaluator：在沙箱目录按 trace 重放候选工具链，比对工件
 2. **json 派生字段**：`artifact_manifest.json` 内嵌其它工件的文件级 `sha256`（npz 容器相关）→ 语义比较剔除 `sha256` 键（这些工件各自有独立等价校验，无信息损失）。
 3. **派生清单排除**：`artifact_manifest.json` 本身是其余工件的索引 → 从等价集排除（报告单独计数 `derived_skipped`）。
 
+## 7. candidate1 晋升记录（2026-11-06 00:47，首次真实晋升）
+
+完整门禁流程走完：影子验收 pass → operator 批准 → 应用（featurize.py 默认 1→8）→ freshness gate ✓ → rebuild ✓ → 金丝雀 ✓ → **生产冒烟 science_013（真实 Ticket，默认路径无任何环境变量）：rdkit.featurize SUCCEEDED 1.08s（串行基线 3.7–3.9s），回复 "2790 molecules featurized."** → 经验库 `harness_HARNESS_013`。回滚方式：把默认改回 "1"。
+
 ## 6. 验收（Phase 4 第一片的 Gate 4-a）——**已通过（2026-11-05 23:55）**
 
 trace：science_007（featurize → ml.train → screening.rank，真实 Ticket）。沙箱重放双跑：
