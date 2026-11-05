@@ -375,6 +375,9 @@ Some generic modules still refer directly to GitHub or Feishu:
 | `src/sources/admission-context.ts` | The bounded window an assessment starts from: the first pages of a Trigger's Thread, read through its kind, and the messages around the Trigger |
 | `src/sources/feishu-image.ts` | Reads a Feishu message's image as an attachment for the assessing Session |
 | `src/sources/local.ts` | The local task-file kind and plugin entry, exported as `./local-watch`: one JSON file per request, an inbox directory as the receiving scope, and one reply file per message |
+| `src/research/registry.ts` | The whitelisted scientific tools: `tool_id`, capability and failure-code metadata, a zod input schema, and the fixed argv a job runs — the Agent names a tool and arguments, never a command |
+| `src/research/job-runner.ts` | The sandboxed runner: `shell: false`, one process group per job, a wall-clock kill, stdout/stderr files, a sha256 artifact manifest, and `INTERRUPTED` for a job whose host stopped |
+| `src/research/tools.ts` | The worker tools `scientific_tools`, `scientific_run_job` and the action tool `scientific_job` (status, read, cancel, list), registered on every Executor Session |
 | `src/client/index.tsx` | The client plugin entry: the sidebar entry, the main panel and the page in DeepSeek Harness's Plugin Manager |
 | `src/client/app.tsx` | The panel: header, search, glossary, tabs and the page of the current route |
 | `src/client/provider.tsx` | What every page reads from its host: copy, calls, navigation, notices, the state poll, and `restart`, which reads the state quickly while dsh-superagent restarts |
@@ -410,6 +413,7 @@ Some generic modules still refer directly to GitHub or Feishu:
 | `tests/registry.spec.ts` | `SourceRegistry`: instances, validation, Policy parts, Channels and Thread context |
 | `tests/sources.spec.ts` | The Feishu and GitHub Sources on a `SourceContext`: translation, polls and read positions, the pull request rules, health |
 | `tests/local.spec.ts` | The local task-file Source: translation into Trigger, Thread, Actor and Channel; one stored Trigger per file with archiving; malformed files left in place; scope; idempotent replies; setup and switch health |
+| `tests/research.spec.ts` | The scientific tool registry and the sandboxed job runner: schema rejection, path containment, a sha256 manifest, non-zero exit, wall-clock kill, a missing declared output, and an abandoned job reported `INTERRUPTED` |
 | `tests/commands.spec.ts` | CLI calls as the deployment's accounts, the Channels' answers, and repository-scoped GitHub calls |
 | `tests/feishu-read.spec.ts`, `tests/github-read.spec.ts` | Feishu and GitHub reads |
 | `tests/admission-context.spec.ts`, `tests/feishu-image.spec.ts` | The Thread window of assessments, and Feishu image reads |

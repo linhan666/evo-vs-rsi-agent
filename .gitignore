@@ -19,3 +19,8 @@ ops/local.env
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# --- scientific environment ---
+scientific/.venv/
+scientific/.dl/
+scientific/.artifacts/
