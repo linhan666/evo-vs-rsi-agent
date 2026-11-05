@@ -22,11 +22,14 @@
 
 | 指标 | 值 |
 |---|---|
-| trace 语料 | **20 条**（55 步，5 个失败步） |
-| 失败簇 | **3 个**：`experience.retrieve::exit_1`(2)、`rdkit.featurize::exit_1`(2)、`screening.rank::exit_1`(1) |
+| trace 语料 | **20 条**（55 步，5 个失败步；schema **v2**，每步带 `stderr_tail`） |
+| 失败簇 | **3 个**：`experience.retrieve::FileNotFoundError`(2)、`rdkit.featurize::missing_column:smiles`(2)、`screening.rank::IsADirectoryError`(1) |
 | 涉及工单 | `chembl-oprm1-e2e`、`chembl-oprm1-rerun`、`chembl-oprk1-check`（均为早期已修复毛刺） |
 
 结论：**检测能力验证通过，但语料刚到门槛，3 个簇全部是"已修复的历史毛刺"，尚无可统计的模式**。聚类报告本身标注了 "Pattern surfacing only"。
+
+> D-1 之前这三簇的键是 `::exit_1` 且 `sample_errors` 全为空——聚类"能跑"但不可诊断。修复后每一簇都能直接读出原因（缺输出目录、列名不匹配、把模型目录当文件）。
+> 同时 `ops/sync_traces.py` 的收录条件从"至少一个科研作业**成功**"改为"**尝试过**科研工具"：全员失败的工单恰恰是失败分析最该看的那类，之前被排除在外（本次 19/22 个工单入语料）。
 
 ## 3. candidate3：描述符扩展（descv2）→ 方向性通过，**不上线**
 
@@ -116,8 +119,8 @@
 
 | 缺陷 | 处理 / 教训 |
 |---|---|
-| **D-1 失败诊断文本丢失** | `job-runner` 把 stderr 写 `stderr.log`，`result.json` 的 `error` 只在 spawn 失败 / 缺产出 / 主机中断时填写；`trace_export` 只读 `error` 字段 → 非零退出的错误文本全为空（聚类报告 `sample_errors` 全是 `""`）。**这直接限制 P4-04**：没有错误文本，进化只能看到 `tool::exit_code`。修法：`trace_export` 读 `stderr.log` 末尾若干字符入 trace |
-| **D-2 两条经验记录 payload 错位** | `model_HARNESS_017` 与 `screening_HARNESS_018` 的 `payload` 是**失败聚类报告**（`payload_path` 传错），真正的结论只在 `applicability` 里 → provenance 对不上结论。修法：按追加语义补记正确 payload，旧记录在 applicability 标注 superseded |
+| **D-1 失败诊断文本丢失**（✅ 已修） | 根因：`job-runner` 把 stderr 写 `stderr.log`，`result.json` 的 `error` 只在 spawn 失败 / 缺产出 / 主机中断时填写，`trace_export` 只读 `error` → 非零退出的文本全空。修复：trace schema **v2**，每步新增 `stderr_tail`（≤1200 字符，按字节尾部读）与失败步的 `stdout_tail`（仅当 stderr 静默）；`failure_clusters` 改为"结构化 error → stderr 末行 → stdout 末行 → exit_code"四级取值，并对 `has no 'X' column` 与未知参数给出具名类，未分类消息中的绝对路径折叠为 `<path>`（聚类键不能随机器变）。语料已按新 schema 重导，15 个 evolution 单测通过 |
+| **D-2 经验记录 payload 错位**（✅ 已补） | `model_HARNESS_017` / `screening_HARNESS_018` 的 payload 误指向失败聚类报告。新增 `ops/record_evidence_bundle.py`：把"结论所依赖的多个工件 + 各自 sha256"打成证据包再入库（store 一条记录只挂一个 payload 是结构限制，证据包是诚实的绕法）。已追加 `harness_HARNESS_028`（descv2 决策 + 三个 Ki 锁定指标）与 `harness_HARNESS_029`（candidate4 + 三个 IC50 锁定指标），旧记录保留并在 `applicability` 标注 supersedes |
 | 评测器 `--target-indicator` 误用 | 该参数是 pooled 模型专用（追加 one-hot）；per-target 模型误传会维度不匹配（2094≠2091）。已在文档标注 |
 | RDKit 入口名 | 是 `Descriptors.CalcMolDescriptors`（`rdMolDescriptors.CalcMolDescriptors` 不存在） |
 | 多字节/括号内容走 shell heredoc 必炸 | 一律写 `ops/*.py` 脚本文件执行 |
@@ -130,13 +133,14 @@
 - **P5-03 未整合**：四类硬门禁（科学质量/成本/成功率/安全）仍散在各候选的 `acceptance` 里。
 - **P5-04 / P5-05 未做**：无 Pareto 集（balanced/lite/heavy），无 VersionManager（晋升/回滚=改默认值 + JSON 记录 + git SHA 兜底）。
 - **F-1…F-4 已完成**（见 §6）；`pnpm typecheck` / `build` / `tests/research.spec.ts` 13/13 通过。
+- **D-1 / D-2 已完成**（见 §7）；`evolution` 单测 15/15，语料按 schema v2 重导、聚类重新出具。
 - 语料 20 条仅达门槛；聚类尚无可操作结论。
 - B-002（上游 Feishu 用例）仍失败，与本阶段无关；B-006（令牌轮换）仍待操作者执行。
 
 ## 9. Next（修订后的顺序）
 
 1. ~~F-1…F-4：修端点参数与输出名，重跑 IC50-descv2 验证面~~ ✅ 已完成（2026-11-06 03:10）；
-2. **D-1**：trace 补 stderr 文本（P4-04 的前置）；
+2. ~~D-1：trace 补 stderr 文本~~ ✅ 已完成（2026-11-06 03:20）；~~D-2 经验 payload~~ ✅ 已完成；
 3. **Engine pass**：评测自动触发，闭环脱离人工调用；
 4. **P4-04**：从 trace + 失败簇自动产候选；
 5. P5-03 统一硬门禁 → P5-04 Pareto → P5-05 VersionManager。

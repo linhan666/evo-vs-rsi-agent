@@ -1,7 +1,7 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-kor-ki-v2-87a60d5e5849",
-  "exported_at": "2026-11-05T18:41:19+00:00",
+  "exported_at": "2026-11-05T19:08:20+00:00",
   "steps": [
     {
       "job_id": "6c8ad6230dbc",
@@ -34,6 +34,8 @@
       "wall_seconds": 5.06,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/features_v2.npz",
@@ -80,6 +82,8 @@
       "wall_seconds": 5.33,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/models/xgboost/metrics.json",
@@ -126,6 +130,8 @@
       "wall_seconds": 3.77,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/evaluation/receipt.json",

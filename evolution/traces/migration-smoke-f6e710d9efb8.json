@@ -1,7 +1,7 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/migration-smoke-f6e710d9efb8",
-  "exported_at": "2026-11-05T18:41:21+00:00",
+  "exported_at": "2026-11-05T19:08:22+00:00",
   "steps": [
     {
       "job_id": "b1ce9f737f7d",
@@ -25,6 +25,8 @@
       "wall_seconds": 0.1,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/experience/mor_model.json",
@@ -62,6 +64,8 @@
       "wall_seconds": 4.28,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/features.npz",

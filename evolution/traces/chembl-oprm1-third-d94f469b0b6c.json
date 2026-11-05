@@ -1,7 +1,7 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-oprm1-third-d94f469b0b6c",
-  "exported_at": "2026-11-05T18:41:20+00:00",
+  "exported_at": "2026-11-05T19:08:21+00:00",
   "steps": [
     {
       "job_id": "c1eec341bbf4",
@@ -32,6 +32,8 @@
       "wall_seconds": 2.31,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/features.npz",
@@ -78,6 +80,8 @@
       "wall_seconds": 3.54,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/models/xgboost/metrics.json",
@@ -130,6 +134,8 @@
       "wall_seconds": 69.35,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/screening/ranked_100k.csv",

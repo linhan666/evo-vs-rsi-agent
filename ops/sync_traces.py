@@ -19,14 +19,18 @@ PY = os.environ.get("EVOVS_PYTHON") or os.path.join(ROOT, "scientific/.venv/bin/
 
 
 def has_scientific_jobs(ticket_dir: str) -> bool:
+    """True when the ticket tried a scientific tool at all.
+
+    Deliberately state-agnostic: a ticket whose jobs all failed is exactly the
+    interesting one for failure clustering (D-1), so it must enter the corpus.
+    """
     for result in glob.glob(os.path.join(ticket_dir, ".jobs", "*", "result.json")):
         try:
             record = json.load(open(result, encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
             continue
         if record.get("tool_id", "").startswith(("rdkit.", "ml.", "sklearn.", "screening.", "experience.")):
-            if record.get("state") == "SUCCEEDED":
-                return True
+            return True
     return False
 
 

@@ -1,7 +1,7 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-oprk1-check-b6d4f508294d",
-  "exported_at": "2026-11-05T18:41:20+00:00",
+  "exported_at": "2026-11-05T19:08:21+00:00",
   "steps": [
     {
       "job_id": "54f52dc523c9",
@@ -25,6 +25,8 @@
       "wall_seconds": 0.07,
       "exit_code": 1,
       "error": "",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/src/evovs_science/experience/store.py\", line 108, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/src/evovs_science/experience/store.py\", line 99, in main\n    with open(args.out, \"w\", encoding=\"utf-8\") as handle:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'runs/experience/kor_dataset.json'",
+      "stdout_tail": "",
       "artifacts": []
     },
     {
@@ -49,6 +51,8 @@
       "wall_seconds": 0.07,
       "exit_code": 1,
       "error": "",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/src/evovs_science/experience/store.py\", line 108, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/src/evovs_science/experience/store.py\", line 99, in main\n    with open(args.out, \"w\", encoding=\"utf-8\") as handle:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'runs/experience/mor_model.json'",
+      "stdout_tail": "",
       "artifacts": []
     },
     {
@@ -73,6 +77,8 @@
       "wall_seconds": 0.08,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/experience/kor_dataset.json",
@@ -103,6 +109,8 @@
       "wall_seconds": 0.07,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/experience/mor_model.json",
@@ -140,6 +148,8 @@
       "wall_seconds": 2.22,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/features.npz",
@@ -186,6 +196,8 @@
       "wall_seconds": 4.09,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/models/xgboost/metrics.json",
@@ -238,6 +250,8 @@
       "wall_seconds": 64.99,
       "exit_code": 1,
       "error": "",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/src/evovs_science/screening/predict.py\", line 110, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/src/evovs_science/screening/predict.py\", line 45, in main\n    model = joblib.load(args.model)\n            ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/joblib/numpy_pickle.py\", line 650, in load\n    with open(filename, 'rb') as f:\n         ^^^^^^^^^^^^^^^^^^^^\nIsADirectoryError: [Errno 21] Is a directory: 'runs/models/xgboost'",
+      "stdout_tail": "",
       "artifacts": []
     },
     {
@@ -269,6 +283,8 @@
       "wall_seconds": 68.5,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/screening/ranked_100k.csv",

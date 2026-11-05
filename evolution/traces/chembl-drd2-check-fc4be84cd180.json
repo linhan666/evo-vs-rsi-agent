@@ -1,7 +1,7 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-drd2-check-fc4be84cd180",
-  "exported_at": "2026-11-05T18:41:17+00:00",
+  "exported_at": "2026-11-05T19:08:18+00:00",
   "steps": [
     {
       "job_id": "8cd8f2794110",
@@ -25,6 +25,8 @@
       "wall_seconds": 0.08,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/experience/drd2_dataset.json",
@@ -55,6 +57,8 @@
       "wall_seconds": 0.08,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/experience/mor_model.json",
@@ -85,6 +89,8 @@
       "wall_seconds": 0.07,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/experience/drd2_transfer.json",
@@ -122,6 +128,8 @@
       "wall_seconds": 3.66,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/features.npz",
@@ -168,6 +176,8 @@
       "wall_seconds": 4.63,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/models/xgboost/metrics.json",
@@ -220,6 +230,8 @@
       "wall_seconds": 87.65,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/screening/ranked_100k.csv",

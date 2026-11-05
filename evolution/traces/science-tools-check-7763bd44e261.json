@@ -1,7 +1,7 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/science-tools-check-7763bd44e261",
-  "exported_at": "2026-11-05T18:41:22+00:00",
+  "exported_at": "2026-11-05T19:08:23+00:00",
   "steps": [
     {
       "job_id": "3b2042ff6a15",
@@ -28,6 +28,8 @@
       "wall_seconds": 0.37,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/features.npz",
@@ -68,6 +70,8 @@
       "wall_seconds": 3.14,
       "exit_code": 0,
       "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
       "artifacts": [
         {
           "path": "runs/model/metrics.json",
