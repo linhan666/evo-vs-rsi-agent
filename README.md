@@ -38,7 +38,7 @@ PYTHONPATH=scientific/src python3 -m unittest discover -s scientific/tests -v
 ## 目录
 
 ```
-├── src/                 保留的上游 TypeScript（app/ core/ executor/ sources/ …）
+├── src/                 上游 TypeScript + 新增 src/sources/local.ts（本地任务文件 Source）
 ├── scientific/          【新增】Python 科研环境（当前仅 JobSpec/JobResult schema 占位）
 ├── ops/                 运维脚本（Node 引导、基线检查、远程控制）
 ├── docs/                上游 001-008 + 本项目审计/架构/日志/阻塞/阶段报告
@@ -53,6 +53,7 @@ PYTHONPATH=scientific/src python3 -m unittest discover -s scientific/tests -v
 | 文档 | 内容 |
 |---|---|
 | `docs/UPSTREAM_AUDIT.md` | 上游真实接口、版本、构建与测试证据、Gate 0 判定 |
+| `docs/LOCAL_SOURCE.md` | 本地任务文件 Source：格式、配置、已验证行为、**当前被 setup 门禁挡住的实测证据** |
 | `docs/ARCHITECTURE.md` | 分层、三类修改面隔离、计划新增模块 |
 | `docs/BLOCKERS.md` | 5 项阻塞与处置 |
 | `docs/PHASE0_REPORT.md` | 按蓝图 §21 格式的阶段报告 |

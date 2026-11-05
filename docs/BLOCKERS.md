@@ -51,3 +51,44 @@ expected { state: 'ready' } to match { state: 'error', detail: contains 'JSON' }
 当前 `linhan_cluster` 的 home 下有 220 个既有项目目录，直接暴露给自修改 Agent 不可接受。
 
 **Phase 5（自修改闭环）之前必须**：专用 OS 账号 / 容器边界 / 受保护资产不可读 / 外部硬预算。当前处于 Phase 0，暂不阻塞，但不得跳过。
+
+---
+
+## B-001 补记（2026-11-05，本地 Source 实现后的实测结论）
+
+**已完成**：`src/sources/local.ts`（本地任务文件 Source）+ `tests/local.spec.ts`（7/7 通过）+ 四处注册，提交 `6433123`。
+详见 `docs/LOCAL_SOURCE.md`。
+
+**新证据：本地 Source 仍然无法单独打通 Gate 0。** 实测启动 profile `superagent`（port 3082）后：
+
+```json
+"health": { "runtime": "paused", "github": "paused", "local": "paused", ... },
+"setup": { "place": "github", "code": "repositoryUnset",
+           "detail": "The GitHub Source names no repository." }
+```
+
+代码路径（已逐行核对）：
+
+- `src/deployment.ts:resolveDeployment()`：`repository` 为空 → `throw new SetupError('repositoryUnset')`；
+  有仓库还要求 `gh api user` 已登录、`repos/<owner>/<name>` 的 `permissions.push === true`。
+- `src/app/setup.ts:configured()`：仅当 `resolved !== undefined` 为真。
+- 本地 Source 与上游 Source 遵守同一约定：`await ctx.ready; if (!ctx.configured()) → report('local','setupPending')`，
+  因此 setup 未解析时**不扫描收件目录**。
+
+**耦合面已确认（决定了补丁可以做得很小）**：
+
+| 位置 | 是否依赖 repository |
+|---|---|
+| `ticketExecution()`（`src/executor/dsh.ts`） | 否，Ticket 目录来自 `executionRoot(settings, stateDir)` |
+| `writeEnvironment()`（`src/infra/environment.ts`） | 仅用 `github.cli` 生成 `gh` shim；空值会生成必失败的 shim，但不抛错 |
+
+**因此只剩两条路，必须由你裁定：**
+
+- **(A) 提供 GitHub 仓库 + 专用 Agent 账号**：零上游语义改动，T-002 直接可跑；代价是外部账号与 `gh` 登录。
+- **(B) 批准"本地部署模式"补丁**：给 `Config` 加 `mode: 'github' | 'local'`（默认 `github`），
+  `resolveDeployment()` 在 `local` 下跳过仓库与账号校验，返回空 `repository` 与空 `github`；
+  `writeEnvironment()` 把 `gh` shim 换成显式失败提示。影响面约 2 个文件、15 行 + 1 个配置项。
+  风险：改动的是**上游部署/安全语义**，与 ADR-001"最小侵入"存在张力；需在 `UPSTREAM.md` 登记为本地补丁，
+  且后续每次同步上游都要重新确认。收益：不依赖任何外部账号即可跑通 `Source→Engine→Executor→Report`。
+
+**已撤销**：早期把"集成测试当作 Gate 0 证据"列为选项 3 —— 与蓝图 §3.4 冲突，作废。

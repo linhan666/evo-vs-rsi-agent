@@ -28,7 +28,9 @@
 | `scientific/pyproject.toml`、`src/evovs_science/{__init__,schemas,cli}.py`、`tests/test_schemas.py`、`examples/job_spec.example.json`、`README.md` | 蓝图 §20 第 7 条：最小 `scientific/` 包与 schema 占位（**仅契约，无科研实现**） |
 | `ops/bootstrap_node.sh`、`ops/phase0_run.sh`、`ops/rctl.py` | 用户态 Node 引导、基线检查、远程控制（凭据走 gitignored `ops/local.env`） |
 | `.gitignore` | 追加 `logs/ reference/ runs/ workspaces/ artifacts/ benchmarks/heldout/ ops/local.env` |
-| `src/`、`prompts/`、`skills/`、`tests/`、`package.json`、`pnpm-lock.yaml` | **未修改**（上游原样） |
+| `src/sources/local.ts`、`tests/local.spec.ts`、`docs/LOCAL_SOURCE.md`、`ops/register_local_source.py` | 本地任务文件 Source（蓝图 §7.2 可选扩展）：把 JSON 任务文件映射为 Trigger/Thread/Actor/Channel，7 个单测覆盖翻译、入库与归档、坏文件、scope、幂等回复、setup 与开关状态 |
+| `tsdown.config.ts`、`package.json`、`cordis.patch.yml`、`docs/007-architecture.md`、`tests/bundle-patch.spec.ts` | 按 cookbook 第 10 步注册新 Source（构建入口、导出、bundle 插入、模块/测试索引、patch 列表断言同步） |
+| `src/`（除新增文件）、`prompts/`、`skills/`、`tests/`（除新增 spec） | 既有文件**语义未改**（Engine / Store / Policy / Executor 未动） |
 
 ### Executed commands (real, not assumed)
 
@@ -47,12 +49,18 @@
 | `npx @deepseek-ai/dsh headless "Reply with exactly: SMOKE_OK"` | PASS — `SMOKE_OK`，`api.deepseek.com` 返回 2 个模型 | 同上 |
 | `PYTHONPATH=scientific/src python3 -m unittest discover -s scientific/tests` | 见下（本轮新增） | `docs/evidence/phase0/scientific_tests.log` |
 | `PYTHONPATH=scientific/src python3 -m evovs_science.cli validate-spec …` | 见下（本轮新增） | 同上 |
+| `npx tsc --noEmit`（加入本地 Source 后） | PASS | `docs/evidence/phase0/` |
+| `npx vitest run tests/local.spec.ts` | **PASS — 7/7** | 同上 |
+| `npx vitest run tests/local.spec.ts tests/docs.spec.ts tests/bundle-patch.spec.ts` | **PASS — 15/15** | 同上 |
+| `pnpm check`（含本地 Source） | 59/60 文件通过；唯一失败为 B-002 | `docs/evidence/phase0/pnpm_check_local_source.log` |
+| `pnpm build` | PASS，产出 `lib/local-watch.js` 9,411 B | 同上 |
+| `dsh superagent --from-default-profile web` + `dsh plugin add link:$PWD` + `scripts/dsh-superagent start` | 服务启动成功，但 setup 报 `github/repositoryUnset`；健康中 `local: paused` | `docs/LOCAL_SOURCE.md` §5 |
 
 ### Acceptance tests
 
 - **Test IDs completed**：无完整通过的 T-ID。
 - **T-001（不破坏上游 `pnpm check`）**：**PARTIAL**。`typecheck` 与 `build` 通过；上游自身 `tests/sources.spec.ts` 有 1 例 Feishu 用例可复现失败。加入本项目新增文件后重跑结果一致（58/59），可证明**未引入新破坏**，但不能宣称 `pnpm check` 全绿。
-- **T-002（Ticket 启动→Worker→报告）**：**BLOCKED**。缺 `gh` CLI 与专用 Agent GitHub 账号，真实 Source 无法投递 Trigger（B-001）。已完成的替代验证**不构成 T-002 通过证据**。
+- **T-002（Ticket 启动→Worker→报告）**：**BLOCKED（阻塞点已精确定位）**。本地 Source 已实现并通过 7 个单测、已注册进 bundle、启动后出现在健康表（`local`），但上游 `Setup` 强制要求 GitHub 仓库与可推送的 Agent CLI：实测 `setup = {place: github, code: repositoryUnset}`，本地 Source 因此停在 `paused`，不扫描收件目录。两条可选路径见 `docs/BLOCKERS.md` B-001 补记。**任何替代验证都不构成 T-002 通过证据。**
 - **Test IDs blocked**：T-002（依赖 B-001）；T-003（重启恢复，依赖 T-002 先通过）。
 - **Known failures**：`tests/sources.spec.ts > feishu event consumer > …reports a malformed line without stopping`，断言 `health.feishu` 应为 `error` 实为 `ready`（B-002，上游缺陷，不修不回退）。
 - **未进入范围**：T-004…T-020 属 Phase 2+ 科学/进化/Benchmark 测试，Phase 0 不得声称通过。
