@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "ticket_id": "mor_bind_001",
+  "experiment_id": "exp_012",
+  "tool_id": "rdkit.featurize",
+  "workspace_id": "ws_mor_bind_001",
+  "argv": ["python3", "-m", "evovs_science.cli", "version"],
+  "input_artifacts": ["artifact_library_100k"],
+  "output_prefix": "runs/mor_bind_001/features",
+  "resources": {
+    "max_cpu_cores": 4,
+    "max_gpu_count": 0,
+    "max_wall_seconds": 900,
+    "max_memory_gb": 8
+  },
+  "environment_ref": null,
+  "idempotency_key": "sha256:deadbeef"
+}

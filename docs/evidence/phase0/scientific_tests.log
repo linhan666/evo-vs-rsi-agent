@@ -1,0 +1,16 @@
+test_rejects_unknown_state (test_schemas.JobResultTests.test_rejects_unknown_state) ... ok
+test_serialise_omits_absent_fields (test_schemas.JobResultTests.test_serialise_omits_absent_fields) ... ok
+test_terminal_classification (test_schemas.JobResultTests.test_terminal_classification) ... ok
+test_usage_serialised (test_schemas.JobResultTests.test_usage_serialised) ... ok
+test_bool_is_not_an_integer_resource (test_schemas.JobSpecTests.test_bool_is_not_an_integer_resource) ... ok
+test_rejects_argv_as_shell_string (test_schemas.JobSpecTests.test_rejects_argv_as_shell_string) ... ok
+test_rejects_empty_argv (test_schemas.JobSpecTests.test_rejects_empty_argv) ... ok
+test_rejects_missing_idempotency_key (test_schemas.JobSpecTests.test_rejects_missing_idempotency_key) ... ok
+test_rejects_negative_gpu_or_zero_cpu (test_schemas.JobSpecTests.test_rejects_negative_gpu_or_zero_cpu) ... ok
+test_rejects_wrong_schema_version (test_schemas.JobSpecTests.test_rejects_wrong_schema_version) ... ok
+test_valid_spec_roundtrip (test_schemas.JobSpecTests.test_valid_spec_roundtrip) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.001s
+
+OK
