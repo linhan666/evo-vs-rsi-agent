@@ -1,10 +1,10 @@
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { SCIENTIFIC_TOOLS, describeTools, findTool, withinWorkspace, type ScientificToolDefinition } from '../src/research/registry.ts'
-import { jobStatus, runScientificJob } from '../src/research/job-runner.ts'
+import { jobStatus, listArtifacts, runScientificJob } from '../src/research/job-runner.ts'
 
 const roots: string[] = []
 afterEach(() => { for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true }) })
@@ -111,6 +111,43 @@ describe('scientific job runner', () => {
     const record = await runScientificJob(exitTool(0), {}, { workspace: root, python })
     expect(record.state).toBe('FAILED')
     expect(record.error).toMatch(/none of its declared outputs/)
+  })
+
+  it('reuses a finished job for the same tool, arguments and inputs', async () => {
+    const root = workspace()
+    const first = await runScientificJob(writeTool('same'), {}, { workspace: root, python })
+    const second = await runScientificJob(writeTool('same'), {}, { workspace: root, python })
+    expect(first.reused).toBeUndefined()
+    expect(second.reused).toBe(true)
+    expect(second.job_id).toBe(first.job_id)
+    expect(listArtifacts(root).map(row => row.path)).toContain('out.txt')
+  })
+
+  it('records the CPU time the child actually burned', async () => {
+    const root = workspace()
+    const busy: ScientificToolDefinition = {
+      id: 'test.busy', version: '0.0.1', description: 'stub', capabilities: ['test'], resources: ['cpu'],
+      sideEffects: [], failureCodes: [], input: z.object({}).strict(),
+      argv: (_args, context) => [context.python, '-c',
+        's = 0\nfor i in range(20000000): s += i\nopen("busy.txt", "w").write(str(s))'],
+      outputs: () => ['busy.txt'],
+    }
+    const record = await runScientificJob(busy, {}, { workspace: root, python })
+    expect(record.state).toBe('SUCCEEDED')
+    expect(record.usage.cpu_seconds).toBeGreaterThan(0)
+  })
+
+  it.skipIf(!existsSync('/usr/bin/prlimit'))('enforces the address-space limit', async () => {
+    const root = workspace()
+    const hog: ScientificToolDefinition = {
+      id: 'test.hog', version: '0.0.1', description: 'stub', capabilities: ['test'], resources: ['cpu'],
+      sideEffects: [], failureCodes: [], input: z.object({}).strict(),
+      argv: (_args, context) => [context.python, '-c', 'x = bytearray(2 * 1024 ** 3)'],
+      outputs: () => [],
+    }
+    const record = await runScientificJob(hog, {}, { workspace: root, python, resources: { max_memory_gb: 1 } })
+    expect(record.state).toBe('FAILED')
+    expect(record.exit_code).not.toBe(0)
   })
 
   it('reports an abandoned job as INTERRUPTED instead of leaving it RUNNING', () => {
