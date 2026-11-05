@@ -1,7 +1,7 @@
 {
   "candidate_id": "candidate2-pooled-recalibration",
   "version": "0.1.0-draft",
-  "status": "proposal",
+  "status": "rejected",
   "changes": [
     {
       "type": "experiment",
@@ -16,5 +16,39 @@
     "kor_drd2_delta_within": 0.02
   },
   "risk": "reduces MOR signal share; MOR locked-test AUROC may fall further below its per-target baseline; requires locked evaluator rerun and a fresh transfer CI before any authorization",
-  "basis": "experience transfer_MOR_001 (negative transfer) + docs/TRANSFER_DESIGN.md pre-registered rules"
+  "basis": "experience transfer_MOR_001 (negative transfer) + docs/TRANSFER_DESIGN.md pre-registered rules",
+  "intake_review": {
+    "validator": "pass",
+    "checks": "6/6 pass",
+    "reviewed_at": "2026-11-06T00:55:00+08:00",
+    "weights_pre_registered": "MOR:0.5,KOR:1.0,DRD2:1.0"
+  },
+  "shadow_result": {
+    "MOR": {
+      "pooled_weighted": 0.8725,
+      "delta": -0.0614,
+      "ci95": [
+        -0.0922,
+        -0.0322
+      ],
+      "negative_transfer": true
+    },
+    "KOR": {
+      "pooled_weighted": 0.8507,
+      "delta": -0.0178,
+      "ci95": [
+        -0.0448,
+        0.0086
+      ]
+    },
+    "DRD2": {
+      "pooled_weighted": 0.8832,
+      "delta": -0.0183,
+      "ci95": [
+        -0.0313,
+        -0.0058
+      ]
+    }
+  },
+  "verdict": "REJECTED: down-weighting MOR 0.5 worsened negative transfer (delta -0.0614 vs -0.0468 unweighted); per-target remains the safe default; cross-target interference appears structural"
 }

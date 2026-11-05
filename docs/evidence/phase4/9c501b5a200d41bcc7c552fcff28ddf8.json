@@ -1,0 +1,8 @@
+{
+  "id": "9c501b5a200d41bcc7c552fcff28ddf8",
+  "kind": "acknowledgement",
+  "task_id": "smoke_001",
+  "ticket_id": "2fa505775dd03e69a222cc2babfdf2fe",
+  "text": "On it: running the single bounded printf command in the ticket directory to create smoke_output.txt, then replying SMOKE_OK.",
+  "at": "2026-11-05T08:15:12.650Z"
+}

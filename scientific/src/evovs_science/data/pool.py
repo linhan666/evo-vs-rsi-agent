@@ -32,11 +32,24 @@ def main(argv: list[str] | None = None) -> int:
                         help="comma-separated TARGET:dir under the data root, e.g. MOR:oprm1,KOR:oprk1,DRD2:drd2")
     parser.add_argument("--data-root", required=True)
     parser.add_argument("--output-dir", required=True)
+    parser.add_argument("--weights", default=None,
+                        help="candidate2 recalibration: TARGET:factor pairs, e.g. MOR:0.5; writes a weight column")
     args = parser.parse_args(argv)
 
     specs = [(part.split(":")[0].strip(), part.split(":")[1].strip()) for part in args.specs.split(",") if part.strip()]
     if [target for target, _ in specs] != list(TARGET_ORDER):
         raise SystemExit(f"--specs targets must be exactly {','.join(TARGET_ORDER)} in that order")
+
+    weights: dict[str, float] | None = None
+    if args.weights:
+        weights = {}
+        for part in args.weights.split(","):
+            name, _, factor = part.strip().partition(":")
+            if name not in TARGET_ORDER:
+                raise SystemExit(f"unknown target {name!r} in --weights")
+            weights[name] = float(factor)
+        if set(weights) != set(TARGET_ORDER):
+            raise SystemExit("--weights must cover every target")
 
     pooled_rows: list[dict] = []
     per_target_counts: dict[str, int] = {}
@@ -57,6 +70,7 @@ def main(argv: list[str] | None = None) -> int:
                 "canonical_smiles": row[columns["canonical_smiles"]],
                 "label": row[columns["label"]],
                 "target": target,
+                "weight": weights[target] if weights else 1.0,
             })
             kept += 1
         per_target_counts[target] = kept
@@ -66,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
     os.makedirs(args.output_dir, exist_ok=True)
     pooled_csv = os.path.join(args.output_dir, "pooled_train.csv")
     with open(pooled_csv, "w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=["molecule_chembl_id", "canonical_smiles", "label", "target"])
+        writer = csv.DictWriter(handle, fieldnames=["molecule_chembl_id", "canonical_smiles", "label", "target", "weight"])
         writer.writeheader()
         writer.writerows(pooled_rows)
 
@@ -75,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
     ids, matrix, descriptors, invalid = featurize(pairs, radius=2, n_bits=2048)
     label_of = {row["molecule_chembl_id"]: row["label"] for row in pooled_rows}
     target_of = {row["molecule_chembl_id"]: row["target"] for row in pooled_rows}
+    weight_of = {row["molecule_chembl_id"]: row["weight"] for row in pooled_rows}
     keep = [index for index, molecule in enumerate(ids) if label_of.get(molecule, "") != ""]
     ids = [ids[index] for index in keep]
     matrix = matrix[keep]
@@ -92,9 +107,9 @@ def main(argv: list[str] | None = None) -> int:
     labels_csv = os.path.join(args.output_dir, "labels.csv")
     with open(labels_csv, "w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
-        writer.writerow(["id", "label"])
+        writer.writerow(["id", "label", "weight"])
         for molecule in ids:
-            writer.writerow([molecule, label_of[molecule]])
+            writer.writerow([molecule, label_of[molecule], weight_of.get(molecule, 1.0)])
 
     audit = {
         "schema_version": "1",
@@ -106,6 +121,7 @@ def main(argv: list[str] | None = None) -> int:
         "rows_invalid": len(invalid),
         "features_dim": int(matrix.shape[1] + descriptors_aug.shape[1]),
         "rule": "train splits only; one target-hot block appended after descriptors; grey-zone rows excluded",
+        "weights": weights,
     }
     audit_path = os.path.join(args.output_dir, "pooled_audit.json")
     with open(audit_path, "w", encoding="utf-8") as handle:

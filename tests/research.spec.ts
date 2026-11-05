@@ -64,12 +64,13 @@ const SAMPLE_ARGS: Record<string, Record<string, unknown>> = {
     output: 'runs/screening/ranked.csv', top_output: 'runs/screening/top.csv', report: 'runs/screening/report.json' },
   'experience.retrieve': { store: 'experience/experience.json', out: 'runs/experience/retrieved.json',
     target: 'KOR', kind: 'model' },
+  'evaluation.locked': { target: 'DRD2', model: 'runs/models/m/model.joblib', receipt: 'runs/evaluation/receipt.json' },
 }
 
 describe('scientific registry', () => {
   it('publishes both shipped tools with a JSON Schema the Agent can read', () => {
     const described = describeTools()
-    expect(described.map(item => item.tool_id)).toEqual(['rdkit.featurize', 'ml.train', 'screening.rank', 'experience.retrieve'])
+    expect(described.map(item => item.tool_id)).toEqual(['rdkit.featurize', 'ml.train', 'screening.rank', 'experience.retrieve', 'evaluation.locked'])
     for (const item of described) {
       expect(item.input_schema).toBeTruthy()
       expect(item.failure_codes.length).toBeGreaterThan(0)

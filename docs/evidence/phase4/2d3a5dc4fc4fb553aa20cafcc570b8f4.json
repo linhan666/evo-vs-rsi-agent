@@ -1,0 +1,8 @@
+{
+  "id": "2d3a5dc4fc4fb553aa20cafcc570b8f4",
+  "kind": "reply",
+  "task_id": "science_005",
+  "ticket_id": "3eee106a930c070e55d3c76f2baa28f4",
+  "text": "This run is blocked before training: the installed science tools don't match the request — `featurize` rejects the id/smiles column options, `ml.train` only offers logreg/rf and no split manifest or label columns, and `screening.rank` doesn't exist (probe calls rejected; details in the ticket's runs/BLOCKER.md).\n\nCan you redeploy/restart the runtime with that tool surface, or authorize a registry patch plus restart?",
+  "at": "2026-11-05T12:38:33.735Z"
+}

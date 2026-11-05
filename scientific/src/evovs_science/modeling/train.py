@@ -52,19 +52,24 @@ def build_model(kind: str, seed: int):
     raise SystemExit(f"unknown model kind: {kind}")
 
 
-def read_labels(path: str, id_column: str = "id", label_column: str = "label") -> dict[str, int]:
+def read_labels(path: str, id_column: str = "id", label_column: str = "label") -> tuple[dict[str, int], dict[str, float]]:
     labels: dict[str, int] = {}
+    weights: dict[str, float] = {}
     with open(path, newline="", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
         fields = {name.lower(): name for name in (reader.fieldnames or [])}
         if id_column.lower() not in fields or label_column.lower() not in fields:
             raise SystemExit(f"{path} needs {id_column!r} and {label_column!r} columns; found {reader.fieldnames}")
+        weight_field = fields.get("weight")
         for row in reader:
             raw = row[fields[label_column.lower()]]
             if raw == "":
                 continue  # grey-zone rows are present but deliberately unlabeled
-            labels[str(row[fields[id_column.lower()]])] = int(float(raw))
-    return labels
+            molecule = str(row[fields[id_column.lower()]])
+            labels[molecule] = int(float(raw))
+            if weight_field:
+                weights[molecule] = float(row[weight_field])
+    return labels, weights
 
 
 def read_split_ids(manifest_path: str) -> dict[str, set[str]]:
@@ -115,6 +120,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="split_manifest.json from data.normalize; train/validation then follow scaffolds")
     parser.add_argument("--no-validation", action="store_true",
                         help="pooled mode: fit on every row; metrics come from the locked evaluator per target")
+    parser.add_argument("--sample-weights", action="store_true",
+                        help="use the weight column from --labels as per-row fit weights (candidate2 recalibration)")
     parser.add_argument("--label-source", default="fixture")
     parser.add_argument("--label-id-column", default="id")
     parser.add_argument("--label-column", default="label")
@@ -124,7 +131,7 @@ def main(argv: list[str] | None = None) -> int:
     ids = [str(item) for item in data["ids"]]
     matrix, descriptors = data["X"], data["D"]
 
-    labels = read_labels(args.labels, args.label_id_column, args.label_column)
+    labels, sample_weights = read_labels(args.labels, args.label_id_column, args.label_column)
     keep = [index for index, molecule_id in enumerate(ids) if molecule_id in labels]
     if len(keep) < 4:
         print(json.dumps({"error": "NOT_ENOUGH_RELIABLE_DATA", "joined": len(keep)}))
@@ -154,11 +161,17 @@ def main(argv: list[str] | None = None) -> int:
         split_strategy = "internal-random"
 
     model = make_pipeline(StandardScaler(), build_model(args.model, args.seed))
-    model.fit(features[train], y[train])
+    if args.sample_weights:
+        step_name = model.steps[-1][0]
+        weight_vector = np.asarray([sample_weights.get(kept_ids[index], 1.0) for index in train], dtype=np.float64)
+        model.fit(features[train], y[train], **{f"{step_name}__sample_weight": weight_vector})
+    else:
+        model.fit(features[train], y[train])
     if args.no_validation:
         metrics = {
             "schema_version": "1", "created_at": utc_now(), "label_source": args.label_source,
             "model": args.model, "seed": args.seed, "split_strategy": split_strategy,
+            "sample_weights": bool(args.sample_weights),
             "counts": {"fitted_rows": int(len(train)), "positives": int(y.sum())},
             "metrics": {key: None for key in ("auroc", "auprc", "accuracy", "f1", "ef_at_1pct", "ef_at_5pct")},
             "notes": ["Pooled fit-all model: per-target metrics come only from the locked evaluator."],

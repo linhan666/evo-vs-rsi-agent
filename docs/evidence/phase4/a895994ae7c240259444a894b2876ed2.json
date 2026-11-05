@@ -1,0 +1,8 @@
+{
+  "id": "a895994ae7c240259444a894b2876ed2",
+  "kind": "reply",
+  "task_id": "science_008",
+  "ticket_id": "b6d4f508294d7fa145572e8ba5264ce4",
+  "text": "Featurized 1,899 molecules; validation AUROC 0.8765; ranked 100,000 library molecules; top-1 score 0.999433; applicability limit: scores are predictions on an unlabeled library, so no hit rate or EF is defined.",
+  "at": "2026-11-05T13:36:21.370Z"
+}

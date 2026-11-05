@@ -176,8 +176,30 @@ const EXPERIENCE_TOOL = {
   outputs: (args: z.infer<typeof ExperienceInput>) => [args.out],
 } as ScientificToolDefinition
 
+const LockedInput = z.object({
+  target: z.enum(['MOR', 'KOR', 'DRD2']),
+  model: RelativePath.describe('Fitted pipeline FILE from ml.train in this workspace'),
+  receipt: RelativePath.describe('Where the summary receipt is written'),
+}).strict()
+
+const LOCKED_TOOL = {
+  id: 'evaluation.locked',
+  version: '0.1.0',
+  description: 'Trigger a locked final-test evaluation for a model in this workspace. Test set and output location are fixed per target; the raw result stays in the protected tree — you get a receipt with summary metrics. One evaluation per target per ticket.',
+  capabilities: ['evaluation', 'locked_test'],
+  resources: ['cpu'],
+  sideEffects: ['write_artifacts'],
+  failureCodes: ['RATE_LIMITED', 'MODEL_NOT_FOUND'],
+  input: LockedInput,
+  argv: (args: z.infer<typeof LockedInput>, context) => [
+    context.python, '-m', 'evovs_science.evaluation.locked',
+    '--target', args.target, '--model', args.model, '--workspace', '.', '--receipt', args.receipt,
+  ],
+  outputs: (args: z.infer<typeof LockedInput>) => [args.receipt],
+} as ScientificToolDefinition
+
 export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] =
-  [...SCIENTIFIC_TOOLS_BASE, SCIENTIFIC_TOOLS_APPEND, EXPERIENCE_TOOL]
+  [...SCIENTIFIC_TOOLS_BASE, SCIENTIFIC_TOOLS_APPEND, EXPERIENCE_TOOL, LOCKED_TOOL]
 
 
 export function findTool(id: string): ScientificToolDefinition {

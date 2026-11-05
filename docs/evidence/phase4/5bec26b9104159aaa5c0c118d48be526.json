@@ -1,0 +1,8 @@
+{
+  "id": "5bec26b9104159aaa5c0c118d48be526",
+  "kind": "reply",
+  "task_id": "science_011",
+  "ticket_id": "fc4be84cd18000458e6a24f5b9bd57cc",
+  "text": "Featurized 3293/3293 (all valid); validation AUROC 0.9214; library ranked 100000/100000; top-1 score 0.996710; applicability limit from dataset_DRD2_007: Ki only, pX≥7/≤6 pre-registered, scaffold split (the store has 0 DRD2 transfer records, so no transfer warning applied).",
+  "at": "2026-11-05T15:01:25.686Z"
+}

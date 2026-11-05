@@ -28,6 +28,14 @@
 - **Phase 4 开始时**：实现方案 2（垫片 + 限频），作为"Agent 自治"与"标签隔离"的兼容点。
 - **Phase 5（自修改闭环）**：迁移到方案 3。
 
+## 方案 2 已实现（2026-11-06 00:15，适配说明）
+
+**适配**：worker 无 shell（B-005 后裁剪），垫片从 worker-bin 脚本改为**注册工具** `evaluation.locked`——能力等价：
+- Agent 只传 `target`（MOR/KOR/DRD2）与 `model`（workspace 内相对路径）；测试集与输出位置**硬编码**在 `evaluation/locked.py`；
+- 原始指标 600 写 protected（agent 不可达）；Agent 只拿到 workspace 内的 receipt 摘要（允许的"摘要数字"）；
+- **限频**：每 Ticket 每靶点一次（`.evaluation/<target>.done` 标记）；
+- 生产验证：science_014（Ticket `26cf2e58…`）——Agent 训练 DRD2 模型后自主触发，回复 "validation AUROC 0.9214; locked-test AUROC 0.9015"（与 operator 一致）。
+
 ## 无论哪条路都不变的三条红线
 
 1. 评测器是唯一读最终测试标签的组件；
