@@ -1,0 +1,8 @@
+{
+  "id": "b79300f22ae9ef537d6e38eff0da818c",
+  "kind": "acknowledgement",
+  "task_id": "science_008",
+  "ticket_id": "b6d4f508294d7fa145572e8ba5264ce4",
+  "text": "On it: retrieving the two experience entries first, then featurizing the OPRK1 Ki dataset, training xgboost on the fixed split, ranking the 100k library, and replying with the counts, AUROC, top-1 score and one applicability limit.",
+  "at": "2026-11-05T13:32:24.501Z"
+}

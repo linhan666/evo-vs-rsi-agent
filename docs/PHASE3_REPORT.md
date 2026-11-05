@@ -31,9 +31,20 @@
 
 `experience/store.py`：`record`（dataset/model/screening 三类，payload 摘要 + sha256 + **applicability 一句话**）与 `retrieve`（按 target/kind 过滤）。当前 9 条记录（3 靶点 × 3 类），每条明确"跨靶点迁移不成立"等边界。
 
-## P3-02 状态（不宣称完成）
+## P3-02 完成（2026-11-05 21:45，science_008）
 
-检索 CLI 完成；**Agent 侧注入未做**——如何把经验以"事实 + 适用性限制"的形式进入 prompt、并防止硬编码结论，需要 Phase 3 后半的机制设计。
+**核查结论（为什么之前没做）**：检索 CLI 早已可用，缺的是**注入路径的设计决策**。写入系统提示的方案被否——静态事实会成为无出处的权威、且撑爆 worker 字符预算。选定**按需检索**：新增只读工具 `experience.retrieve`（4 号工具），检索行为本身落一个可审计工件（`runs/experience/*.json`），provenance（experience_id + payload sha256）保留在轨迹里。
+
+**实测（Ticket `science_008` → `b6d4f508…`，无 shell）**：Agent 先检索 KOR dataset 与 MOR model 两条经验，然后完成 KOR 全链路，回复引用**逐字的适用性限制**（"scores are predictions on an unlabeled library, so no hit rate or EF is defined"）。Agent 模型锁定测试 **AUROC 0.8685 / AUPRC 0.9263**——与 operator 模型完全一致。
+
+**契约测试当场抓到两处真实契约缺陷并修复**：
+1. `--store` 定义在顶层 parser，而工具 argv 把它放在子命令后——argparse 会拒绝；已让 `record`/`retrieve` 子命令都接受 `--store`（SUPPRESS 默认防覆盖顶层值）。
+2. 契约测试最初只查顶层 `--help`，子命令式 CLI 的 flag 检查不到——测试已支持子命令式 argv。
+
+**Agent 三次自纠暴露的工具层毛刺（已修，无需重建 lib）**：
+1. `screening.rank --model` 传目录 → 现在给出明确报错（"must be the fitted pipeline FILE …"）；
+2. `experience.retrieve --out` 父目录不存在 → 现在 `os.makedirs` 自动创建（实测验证）；
+3. Agent 靠重试绕过的错误，不该靠重试——这两处修完，重试路径消失。
 
 ## 防再发机制（承接 Gate 2 两缺陷）
 

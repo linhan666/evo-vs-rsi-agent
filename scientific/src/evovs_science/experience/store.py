@@ -72,10 +72,13 @@ def main(argv: list[str] | None = None) -> int:
     rec.add_argument("--target", required=True)
     rec.add_argument("--payload", required=True, help="audit/metrics/report json to store")
     rec.add_argument("--note", required=True, help="applicability limits, one sentence")
+    rec.add_argument("--store", default=argparse.SUPPRESS)
 
     get = sub.add_parser("retrieve")
     get.add_argument("--target", default=None)
     get.add_argument("--kind", default=None)
+    get.add_argument("--out", default=None, help="write the retrieval result here (auditable artifact)")
+    get.add_argument("--store", default=argparse.SUPPRESS)
 
     args = parser.parse_args(argv)
     path = args.store or store_path()
@@ -86,9 +89,19 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     records = retrieve(path, args.target, args.kind)
-    print(json.dumps({"count": len(records),
-                      "records": [{key: item[key] for key in ("experience_id", "kind", "target", "applicability")}
-                                  for item in records]}, ensure_ascii=False))
+    result = {
+        "count": len(records),
+        "records": [{key: item[key] for key in ("experience_id", "kind", "target", "applicability",
+                                                "payload_sha256", "created_at")}
+                    for item in records],
+    }
+    if args.out:
+        os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+        with open(args.out, "w", encoding="utf-8") as handle:
+            handle.write(json.dumps(result, ensure_ascii=False, indent=2))
+            handle.write("\n")
+        os.chmod(args.out, 0o600)
+    print(json.dumps({"count": result["count"], "out": args.out or "-"}))
     return 0
 
 

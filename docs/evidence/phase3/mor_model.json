@@ -1,0 +1,13 @@
+{
+  "count": 1,
+  "records": [
+    {
+      "experience_id": "model_MOR_002",
+      "kind": "model",
+      "target": "MOR",
+      "applicability": "xgboost on scaffold-train only; metrics are scaffold-validation; locked test via evaluator",
+      "payload_sha256": "2586400c6a7ff0cc1ea6de654a7223e4d9895d070a2992ba75a240d4874101b0",
+      "created_at": "2026-11-05T13:09:56+00:00"
+    }
+  ]
+}

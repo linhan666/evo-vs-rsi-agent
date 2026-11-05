@@ -36,6 +36,8 @@ def main(argv: list[str] | None = None) -> int:
     import joblib
 
     started = time.time()
+    if not os.path.isfile(args.model):
+        raise SystemExit(f"--model must be the fitted pipeline FILE from modeling.train (e.g. runs/models/<name>/model.joblib); got {args.model}")
     rows = read_smiles(args.library, None, args.id_column, args.smiles_column)
     ids, matrix, descriptors, invalid = featurize(rows, radius=args.radius, n_bits=args.n_bits)
     if not ids:

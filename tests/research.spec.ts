@@ -62,12 +62,14 @@ const SAMPLE_ARGS: Record<string, Record<string, unknown>> = {
     split_manifest: 'split_manifest.json', label_id_column: 'molecule_chembl_id', label_column: 'label' },
   'screening.rank': { model: 'runs/models/m/model.joblib', library: 'library.smi',
     output: 'runs/screening/ranked.csv', top_output: 'runs/screening/top.csv', report: 'runs/screening/report.json' },
+  'experience.retrieve': { store: 'experience/experience.json', out: 'runs/experience/retrieved.json',
+    target: 'KOR', kind: 'model' },
 }
 
 describe('scientific registry', () => {
   it('publishes both shipped tools with a JSON Schema the Agent can read', () => {
     const described = describeTools()
-    expect(described.map(item => item.tool_id)).toEqual(['rdkit.featurize', 'ml.train', 'screening.rank'])
+    expect(described.map(item => item.tool_id)).toEqual(['rdkit.featurize', 'ml.train', 'screening.rank', 'experience.retrieve'])
     for (const item of described) {
       expect(item.input_schema).toBeTruthy()
       expect(item.failure_codes.length).toBeGreaterThan(0)
@@ -82,10 +84,17 @@ describe('scientific registry', () => {
       const argv = tool.argv(SAMPLE_ARGS[tool.id] as never, { python: VENV_PYTHON })
       expect(argv[1]).toBe('-m')
       const module = argv[2] as string
-      const flags = argv.filter(part => typeof part === 'string' && part.startsWith('--'))
-      const help = await runFile(VENV_PYTHON, ['-m', module, '--help'], { timeout: 120_000 })
+      // Sub-command CLIs (experience.store retrieve) own their flags below the sub-command.
+      let sub: string | undefined
+      let rest = argv.slice(3)
+      if (rest.length > 0 && typeof rest[0] === 'string' && !rest[0].startsWith('--')) {
+        sub = rest[0]
+        rest = rest.slice(1)
+      }
+      const flags = rest.filter(part => typeof part === 'string' && part.startsWith('--'))
+      const help = await runFile(VENV_PYTHON, ['-m', module, ...(sub ? [sub] : []), '--help'], { timeout: 120_000 })
       const missing = flags.filter(flag => !help.stdout.includes(flag))
-      expect(missing, `${tool.id}: flags missing from ${module} --help`).toEqual([])
+      expect(missing, `${tool.id}: flags missing from ${module}${sub ? ` ${sub}` : ''} --help`).toEqual([])
     }
   })
 

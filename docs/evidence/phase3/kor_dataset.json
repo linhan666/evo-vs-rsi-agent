@@ -1,0 +1,13 @@
+{
+  "count": 1,
+  "records": [
+    {
+      "experience_id": "dataset_KOR_004",
+      "kind": "dataset",
+      "target": "KOR",
+      "applicability": "Ki only; pX>=7/<=6 pre-registered; scaffold split; same 100k library as MOR",
+      "payload_sha256": "96aaff99597306b73b484b9b6e720c44a7583feff5366d4d5a748307237add43",
+      "created_at": "2026-11-05T13:09:56+00:00"
+    }
+  ]
+}

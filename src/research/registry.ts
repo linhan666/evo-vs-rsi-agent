@@ -151,7 +151,33 @@ const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
   },
 ]
 
-export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] = [...SCIENTIFIC_TOOLS_BASE, SCIENTIFIC_TOOLS_APPEND]
+const ExperienceInput = z.object({
+  target: z.string().trim().min(1).max(60).optional(),
+  kind: z.enum(['dataset', 'model', 'screening']).optional(),
+  store: DataPath.describe('Experience store json; absolute under the data root or relative'),
+  out: RelativePath.describe('Where the retrieval result is written'),
+}).strict()
+
+const EXPERIENCE_TOOL = {
+  id: 'experience.retrieve',
+  version: '0.1.0',
+  description: 'Read past experiences (dataset/model/screening facts with provenance and applicability limits). Facts are context only: check each applicability note before relying on one.',
+  capabilities: ['experience', 'provenance'],
+  resources: ['cpu'],
+  sideEffects: ['write_artifacts'],
+  failureCodes: ['STORE_UNREADABLE'],
+  input: ExperienceInput,
+  argv: (args: z.infer<typeof ExperienceInput>, context) => [
+    context.python, '-m', 'evovs_science.experience.store', 'retrieve',
+    '--store', args.store, '--out', args.out,
+    ...(args.target ? ['--target', args.target] : []),
+    ...(args.kind ? ['--kind', args.kind] : []),
+  ],
+  outputs: (args: z.infer<typeof ExperienceInput>) => [args.out],
+} as ScientificToolDefinition
+
+export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] =
+  [...SCIENTIFIC_TOOLS_BASE, SCIENTIFIC_TOOLS_APPEND, EXPERIENCE_TOOL]
 
 
 export function findTool(id: string): ScientificToolDefinition {
