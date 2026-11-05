@@ -45,7 +45,15 @@ expected { state: 'ready' } to match { state: 'error', detail: contains 'JSON' }
 | 无 `gh` | B-001 | 视 B-001 决策 |
 | `dsh` 未全局安装 | 无（`npx` 可用） | 保持 `npx`/项目内安装，不污染全局 |
 
-## B-005 · 隔离等级不满足蓝图要求（HIGH；已做第一步缓解，Phase 5 前仍需专用账号）
+## B-005 · 隔离等级不满足蓝图要求（**已解决 2026-11-05：Harness 迁至独立服务器 172.25.16.37**）
+
+用户三选一选定 ②。迁移内容：repo（含 .git）、运行状态 DB（设置/工单）、数据根（ChEMBL 快照×3、ZINC 库、模型、矩阵）、protected 目录、经验库、gh-agent 凭据（该机自己的 600 配置）、secrets（API key）。双端 sha256 校验通过；node/pnpm/venv 在新机重建（非拷贝）。
+
+**隔离边界的变化**：worker 现在与 `.26` 上的 227 个项目、操作者主研究栈**物理隔离**（跨机、不同 home）。
+残余：`.37` 的 home 也有操作者的其它项目（A-GPCR-Agent 等）——但泛用 fs 工具已裁剪（science_010 复测），科学工具路径受限，金丝雀监控继续有效。
+**migration smoke（science_012）**：经验检索 1 条 + featurize 2,790，与 .26 结果一致。
+
+原文如下。
 
 **2026-11-05 更新**：已从 worker 与主 Session 的允许工具列表移除 shell 工具（`src/app/sessions.ts` 的 `WORK_TOOLS` 与主 Session 的 restrict 列表）。
 DSH 的文件工具由 `dsh-fs-sandbox` 约束可写根，shell 是此前唯一没有路径沙箱的通用通道；移除后"一条命令碰到别的项目"的路径被关闭。

@@ -59,6 +59,7 @@ PYTHONPATH=scientific/src python3 -m unittest discover -s scientific/tests -v
 | `docs/PHASE1_REPORT.md` | Phase 1 报告：Gate 1 证据、已知缺口、Phase 2 前置 |
 | `docs/TRANSFER_DESIGN.md` | §12 迁移实验预注册口径（pooled vs per-target、负迁移判定、scaffold 聚类 bootstrap） |
 | `docs/EVALUATOR_TRIGGER_DESIGN.md` | 锁定评测的触发方式设计（手动/垫片/orchestrator pass 三案比较） |
+| 运行主机 | **172.25.16.37**（8×H100；`rctl --host 172.25.16.37`）。`.26` 为迁移前存档 |
 | `docs/ARCHITECTURE.md` | 分层、三类修改面隔离、计划新增模块 |
 | `docs/BLOCKERS.md` | 5 项阻塞与处置 |
 | `docs/PHASE0_REPORT.md` | 按蓝图 §21 格式的阶段报告 |

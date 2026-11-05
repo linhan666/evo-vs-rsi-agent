@@ -96,6 +96,14 @@ pooled 模型（三靶点 train 合并 + 预注册 target one-hot，6,573 行 / 
 
 **新缺陷（经验库分裂脑，已修）**：`store` 默认路径依赖 cwd，三条 transfer 记录写进了 `scientific/experience/`（旧位置），agent 如实报告 "0 DRD2 transfer records" 暴露了分裂。已合并（12 条）并删除游离文件；规则改为**始终显式传 `--store`**（数据根内路径）。
 
+## Harness 迁移至独立服务器（B-005 方案 ②，2026-11-05 23:35）
+
+- 目标机：`172.25.16.37`（8×H100，128 核，Python 3.12.3 同版本）；操作者凭据不随迁（该机自己的配置 600）。
+- 迁移校验：两包双端 sha256 一致；venv/node/pnpm 在新机重建；freshness gate 通过；gh-agent 登录态继承。
+- 冒烟（science_012，Ticket `f6e710d9…`）：`experience.retrieve`（1 条）+ `rdkit.featurize`（2,790）——与 .26 结果一致。
+- 运行要点（新机）：`rctl --host 172.25.16.37`；启动命令同前（EVOVS_PYTHON/EVOVS_DATA_ROOT/EVOVS_GPU 三件套）；金丝雀基线已在该机重建。
+- **B-005 状态：RESOLVED**（方案 ②）。Phase 4 可开工。
+
 ## Next phase
 
 - Phase 3 后半：Memory 注入机制设计 → 经真实 Ticket 的 KOR/DRD2 执行（复用经验库）；
