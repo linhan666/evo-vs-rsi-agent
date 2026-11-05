@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-drd2-check-fc4be84cd180",
-  "exported_at": "2026-11-05T16:42:13+00:00",
+  "exported_at": "2026-11-05T17:08:20+00:00",
   "steps": [
     {
       "job_id": "8cd8f2794110",
@@ -23,6 +23,8 @@
         "dataset"
       ],
       "wall_seconds": 0.08,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/experience/drd2_dataset.json",
@@ -51,6 +53,8 @@
         "model"
       ],
       "wall_seconds": 0.08,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/experience/mor_model.json",
@@ -79,6 +83,8 @@
         "transfer"
       ],
       "wall_seconds": 0.07,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/experience/drd2_transfer.json",
@@ -114,6 +120,8 @@
         "canonical_smiles"
       ],
       "wall_seconds": 3.66,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/features.npz",
@@ -158,6 +166,8 @@
         "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/drd2/ki/split_manifest.json"
       ],
       "wall_seconds": 4.63,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/models/xgboost/metrics.json",
@@ -208,6 +218,8 @@
         "2048"
       ],
       "wall_seconds": 87.65,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/screening/ranked_100k.csv",

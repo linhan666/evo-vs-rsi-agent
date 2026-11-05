@@ -36,23 +36,35 @@ def save(path: str, records: list[dict]) -> None:
 
 
 def record(path: str, kind: str, target: str, payload_path: str, *, note: str) -> dict:
-    """Append one experience record; `payload_path` is summarised and hashed."""
+    """Append one experience record; `payload_path` is summarised and hashed.
+
+    The load-modify-save is serialised with an flock on `<store>.lock`, so two
+    writers (operator + engine pass) cannot interleave and lose records.
+    """
+    import fcntl
+
+    lock_path = path + ".lock"
     with open(payload_path, encoding="utf-8") as handle:
         payload = json.load(handle)
-    entry = {
-        "schema_version": SCHEMA_VERSION,
-        "experience_id": f"{kind}_{target}_{len(load(path)) + 1:03d}",
-        "kind": kind,
-        "target": target,
-        "created_at": utc_now(),
-        "payload_path": os.path.basename(payload_path),
-        "payload_sha256": sha256_file(payload_path),
-        "payload": payload,
-        "applicability": note,
-    }
-    records = load(path)
-    records.append(entry)
-    save(path, records)
+    with open(lock_path, "w") as lock_handle:
+        fcntl.flock(lock_handle, fcntl.LOCK_EX)
+        try:
+            records = load(path)
+            entry = {
+                "schema_version": SCHEMA_VERSION,
+                "experience_id": f"{kind}_{target}_{len(records) + 1:03d}",
+                "kind": kind,
+                "target": target,
+                "created_at": utc_now(),
+                "payload_path": os.path.basename(payload_path),
+                "payload_sha256": sha256_file(payload_path),
+                "payload": payload,
+                "applicability": note,
+            }
+            records.append(entry)
+            save(path, records)
+        finally:
+            fcntl.flock(lock_handle, fcntl.LOCK_UN)
     return entry
 
 

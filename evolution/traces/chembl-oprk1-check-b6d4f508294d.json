@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-oprk1-check-b6d4f508294d",
-  "exported_at": "2026-11-05T16:42:14+00:00",
+  "exported_at": "2026-11-05T17:08:20+00:00",
   "steps": [
     {
       "job_id": "54f52dc523c9",
@@ -23,6 +23,8 @@
         "dataset"
       ],
       "wall_seconds": 0.07,
+      "exit_code": 1,
+      "error": "",
       "artifacts": []
     },
     {
@@ -45,6 +47,8 @@
         "model"
       ],
       "wall_seconds": 0.07,
+      "exit_code": 1,
+      "error": "",
       "artifacts": []
     },
     {
@@ -67,6 +71,8 @@
         "dataset"
       ],
       "wall_seconds": 0.08,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/experience/kor_dataset.json",
@@ -95,6 +101,8 @@
         "model"
       ],
       "wall_seconds": 0.07,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/experience/mor_model.json",
@@ -130,6 +138,8 @@
         "canonical_smiles"
       ],
       "wall_seconds": 2.22,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/features.npz",
@@ -174,6 +184,8 @@
         "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprk1/ki/split_manifest.json"
       ],
       "wall_seconds": 4.09,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/models/xgboost/metrics.json",
@@ -224,6 +236,8 @@
         "2048"
       ],
       "wall_seconds": 64.99,
+      "exit_code": 1,
+      "error": "",
       "artifacts": []
     },
     {
@@ -253,6 +267,8 @@
         "2048"
       ],
       "wall_seconds": 68.5,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "runs/screening/ranked_100k.csv",

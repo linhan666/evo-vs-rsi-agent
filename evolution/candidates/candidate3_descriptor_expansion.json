@@ -1,0 +1,23 @@
+{
+  "candidate_id": "candidate3-descriptor-expansion",
+  "version": "0.1.0-draft",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "chemistry/featurize.py DESCRIPTOR_NAMES + _descriptor_row",
+      "value": "extend the descriptor block from 7 to ~40 RDKit 2D descriptors (Crippen molar refs, Chi/penalised LogP, BCH, FpDensityMorgan1-3, EState_VSA counts); feature dim 2048+7 -> 2048+40"
+    }
+  ],
+  "hypothesis": "A richer physical descriptor block improves per-target locked-test AUROC by >=0.005 on at least two of MOR/KOR/DRD2 without dropping any target by more than 0.02.",
+  "acceptance": {
+    "equivalence": "not byte-comparable: this candidate changes the feature space, so equivalence is metric-level",
+    "improve_targets": 2,
+    "improve_delta": 0.005,
+    "max_drop": 0.02
+  },
+  "evaluation_protocol": "for each target: featurize(train+val with new descriptors) -> ml.train --split-manifest -> evaluator on locked test; compare against the frozen per-target baselines (MOR 0.9339 / KOR 0.8685 / DRD2 0.9015)",
+  "risk": "more descriptors = more noise per row; xgboost may need depth tuning later (out of scope here); descriptor computation cost ~2x",
+  "basis": "docs/PHASE4_DESIGN.md shadow protocol; science_007 trace as the replay baseline",
+  "note": "metric-level candidate: artifact byte/npz equivalence does NOT apply (feature space changes by design); the shadow report must record AUROC deltas instead"
+}

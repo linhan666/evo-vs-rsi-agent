@@ -1,0 +1,42 @@
+{
+  "schema_version": "1",
+  "created_at": "2026-11-05T17:08:54+00:00",
+  "corpus": {
+    "traces": 14,
+    "steps": 37,
+    "failed": 5
+  },
+  "clusters": {
+    "experience.retrieve :: exit_1": {
+      "count": 2,
+      "tickets": [
+        "chembl-oprk1-check-b6d4f508294d.json"
+      ],
+      "sample_errors": [
+        "",
+        ""
+      ]
+    },
+    "rdkit.featurize :: exit_1": {
+      "count": 2,
+      "tickets": [
+        "chembl-oprm1-e2e-3eee106a930c.json",
+        "chembl-oprm1-rerun-3c9ea202ad68.json"
+      ],
+      "sample_errors": [
+        "",
+        ""
+      ]
+    },
+    "screening.rank :: exit_1": {
+      "count": 1,
+      "tickets": [
+        "chembl-oprk1-check-b6d4f508294d.json"
+      ],
+      "sample_errors": [
+        ""
+      ]
+    }
+  },
+  "note": "Pattern surfacing only. Clusters become meaningful as the corpus grows past ~20 traces."
+}

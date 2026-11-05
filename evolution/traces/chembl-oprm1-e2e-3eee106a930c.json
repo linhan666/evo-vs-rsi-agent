@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-oprm1-e2e-3eee106a930c",
-  "exported_at": "2026-11-05T16:42:14+00:00",
+  "exported_at": "2026-11-05T17:08:21+00:00",
   "steps": [
     {
       "job_id": "94838384c829",
@@ -26,6 +26,8 @@
         "3"
       ],
       "wall_seconds": 0.14,
+      "exit_code": 1,
+      "error": "",
       "artifacts": []
     },
     {
@@ -51,6 +53,8 @@
         "3"
       ],
       "wall_seconds": 0.27,
+      "exit_code": 0,
+      "error": "",
       "artifacts": [
         {
           "path": "probe/library_sample.npz",

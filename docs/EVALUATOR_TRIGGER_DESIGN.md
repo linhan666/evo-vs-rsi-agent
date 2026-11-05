@@ -36,6 +36,13 @@
 - **限频**：每 Ticket 每靶点一次（`.evaluation/<target>.done` 标记）；
 - 生产验证：science_014（Ticket `26cf2e58…`）——Agent 训练 DRD2 模型后自主触发，回复 "validation AUROC 0.9214; locked-test AUROC 0.9015"（与 operator 一致）。
 
+### 方案 3 实现草案（Phase 5，**未实现**——按"最后做"暂缓）
+
+- 触点：`src/executor/dsh.ts` 的 report 处理段（P0 审计已定位）：Ticket 进入 report/reply 且最近回复引用 `runs/models/*/model.joblib` 时，由 orchestrator（非 worker）调用 locked 评测（复用 `evaluation/locked.py`，限频标记同路径）。
+- 保障：评测失败只记 warning 不阻塞 Ticket 结束；限频不变；评测与 provider 调用互斥。
+- 测试：`runtime.spec.ts` 增加"report 阶段自动触发一次且仅一次"用例；B-005 隔离已就位（独立机器）。
+- 未实现原因：侵入上游 Engine，需要完整回归；当前垫片（方案 2）已覆盖"Agent 可触发"场景，方案 3 的增益只是免手写一步。
+
 ## 无论哪条路都不变的三条红线
 
 1. 评测器是唯一读最终测试标签的组件；

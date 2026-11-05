@@ -1,0 +1,25 @@
+{
+  "candidate_id": "candidate4-ic50-channel",
+  "version": "0.1.0-draft",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "data.normalize --endpoint IC50 (per target, separate channel)",
+      "value": "build separate IC50 datasets for MOR/KOR/DRD2 (already pulled in the snapshots: MOR 3571 / KOR 4337 / DRD2 2442 rows); NEVER mixed into the Ki channel"
+    }
+  ],
+  "hypothesis": "Per-target IC50 models are trainable to usable AUROC (>=0.80 on scaffold validation) and enlarge the target panel for the 100k screen \u2014 as separate channels only.",
+  "acceptance": {
+    "equivalence": "metric-level vs its own locked test",
+    "min_val_auroc": 0.8,
+    "endpoint_mixing": "forbidden"
+  },
+  "risk": "IC50 for antagonists vs agonists differs by assay design (\u00a79.2 item 5); functional potency is a different physical quantity from binding affinity",
+  "section_9_2_review": {
+    "merged-Ki+IC50 variant": "REJECTED by \u00a79.2 item 2 (different standard types must not be pooled without methodological justification) \u2014 will not be implemented",
+    "separate-IC50-channel variant": "ALLOWED: own normalize --endpoint IC50 run, own scaffold split, own locked test, own models; labelled IC50 everywhere; never averaged or compared with Ki numbers",
+    "reviewed_at": "2026-11-06T00:58:00+08:00"
+  },
+  "basis": "docs/PHASE4_DESIGN.md Intake; ChEMBL_37 snapshots already contain the IC50 rows (see dataset audits)"
+}

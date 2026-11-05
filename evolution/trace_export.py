@@ -32,6 +32,8 @@ def export(ticket_dir: str) -> dict:
             "started_at": record.get("started_at"),
             "argv": record.get("argv", []),
             "wall_seconds": record.get("usage", {}).get("wall_seconds"),
+            "exit_code": record.get("exit_code"),
+            "error": (record.get("error") or "")[:400],
             "artifacts": artifacts,
         })
     steps.sort(key=lambda step: step["started_at"] or "")
