@@ -1,0 +1,8 @@
+{
+  "id": "759469364abfd4ee405f9273cce9f623",
+  "kind": "acknowledgement",
+  "task_id": "science_003",
+  "ticket_id": "12f2e89f11e78a1cf98cf8839662820e",
+  "text": "On it: listing scientific_tools ids, then running the fingerprint tool directly on the read-only fixture path into runs/features.npz and reporting valid/invalid rows.",
+  "at": "2026-11-05T09:51:07.553Z"
+}

@@ -70,6 +70,24 @@
 
 不适用：本阶段没有任何 Harness 候选或影子评估。`scientific_*` 工具是新能力，不是"进化"。
 
+### Post-Gate verification（2026-11-05 19:02，两个教训与一次复验）
+
+**science_003 启动失败（根因：我自己的推送配置）**
+
+- 现象：worker 回了 acknowledgement 后 assignment 立即失败，无任何作业。
+- 根因（store 中 assignment 报告原文）：`The git configuration of the repository in <ticket dir> sets credential.helper, which the agent's git would also read; remove them.` —— 我为推送 GitHub 在**仓库本地** `.git/config` 写入了 `credential.helper`，而 ticket 目录在该仓库内；`docs/003-execution.md` 明确规定 ticket 目录所在仓库不得携带凭据配置。
+- 修复：撤掉仓库级配置，凭据只在推送命令上以 `git -c credential.helper=…` 临时传入（`ops/push.sh`，永不落盘）。**教训：任何会改变仓库配置的全局性操作，都要先对照 docs/003 的 ticket 目录规则。**
+
+**science_004（无 shell + 只读数据根）：PASS**
+
+| 项 | 值 |
+|---|---|
+| Ticket | `5eb61a30e3975893fa2cdd97a47c5290` |
+| Worker 动作 | `scientific_tools` → `scientific_run_job`（输入为 `EVOVS_DATA_ROOT` 下的**绝对路径**，未复制文件） |
+| 作业 | `rdkit.featurize` SUCCEEDED，产物 `runs/features.npz`、`runs/feature_meta.json` |
+| 回复 | `valid rows 24, invalid rows 1.`（与 fixture 完全一致） |
+| 意义 | worker 与主 Session 均已无 shell；读取只读数据根、产出带 sha256 的工件，链路仍然完整 |
+
 ### Next phase
 
 - **Recommended tasks（Phase 2，P2-01…P2-06）**：
