@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "decided_at": "2026-11-06T02:20:00+08:00",
+  "decision": "KEEP v1 as default descriptor set",
+  "candidate_id": "candidate3-descriptor-expansion",
+  "rationale": [
+    "all three locked-test CIs contain 0 \u2014 benefit unproven",
+    "next major work (IC50 dual ranking on 100k) should run on a single feature generation",
+    "promotion window stays open; a later reversal would force retraining"
+  ],
+  "revival_conditions": [
+    "IC50 channels re-shadowed with descv2 as independent validation surfaces",
+    "corpus growth tightens locked-test CIs",
+    "re-review via Intake with the new evidence"
+  ],
+  "rollback_note": "v2 branch retained behind EVOVS_DESC_SET=v2; single code path"
+}

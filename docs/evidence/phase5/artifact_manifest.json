@@ -1,0 +1,45 @@
+{
+  "schema_version": "1",
+  "created_at": "2026-11-05T18:17:41+00:00",
+  "generator": "evovs_science.screening.dual_endpoint",
+  "environment": {
+    "python": "3.12.3",
+    "implementation": "CPython",
+    "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39"
+  },
+  "code_commit": "unknown",
+  "parameters": {
+    "target": "DRD2",
+    "top_k": 100
+  },
+  "inputs": [
+    {
+      "path": "ranked_100k.csv",
+      "sha256": "501b7454a3a85844aca51980657c5a9e7ea9ae943686e0629c217a3d8833ec23",
+      "size": 7220835
+    },
+    {
+      "path": "ranked_100k.csv",
+      "sha256": "0605bd543c0faff7bcfb4d95d5a5343d79142d649c826dcb84b7820b9b5bd401",
+      "size": 7220835
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "DRD2_ki_vs_ic50.csv",
+      "sha256": "87794d5b3e923f38864fccb278792b9751ffbe80a3732f22b6019e76b9cb97b3",
+      "size": 8709757,
+      "content_type": "text/csv",
+      "generator": "evovs_science.screening.dual_endpoint",
+      "description": "dual-endpoint joined ranks"
+    },
+    {
+      "path": "DRD2_dual_report.json",
+      "sha256": "4735423279b1a4be9eea5acfea0fc1c2df15fbcb8f6a3072ea65556613e4ee18",
+      "size": 746,
+      "content_type": "application/json",
+      "generator": "evovs_science.screening.dual_endpoint",
+      "description": "agreement report"
+    }
+  ]
+}
