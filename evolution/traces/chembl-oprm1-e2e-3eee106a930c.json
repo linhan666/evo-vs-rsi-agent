@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-oprm1-e2e-3eee106a930c",
-  "exported_at": "2026-11-05T18:29:19+00:00",
+  "exported_at": "2026-11-05T18:41:20+00:00",
   "steps": [
     {
       "job_id": "94838384c829",

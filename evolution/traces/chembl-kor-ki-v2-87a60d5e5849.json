@@ -1,0 +1,138 @@
+{
+  "schema_version": "1",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-kor-ki-v2-87a60d5e5849",
+  "exported_at": "2026-11-05T18:41:19+00:00",
+  "steps": [
+    {
+      "job_id": "6c8ad6230dbc",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T18:40:08.624Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprk1/ki/dataset.csv",
+        "--output",
+        "runs/features_v2.npz",
+        "--report",
+        "runs/feature_meta_v2.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "molecule_chembl_id",
+        "--smiles-column",
+        "canonical_smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 5.06,
+      "exit_code": 0,
+      "error": "",
+      "artifacts": [
+        {
+          "path": "runs/features_v2.npz",
+          "recorded_sha256": "7b8f41784b95268c1f2dd12f77231dbfcfaa122cad8c709d713b89a0e86a66f2",
+          "digest": "npz:680f034f27d21bda6a1f2233dba572b273d488f81d7feb251f0f01d96c1f28fc"
+        },
+        {
+          "path": "runs/feature_meta_v2.json",
+          "recorded_sha256": "978d890301fabc5e35773f4ff240e41ae8df0853639106b0007d454672bd9751",
+          "digest": "json:904a576bda26208475d4597f0c9372bfcd891df2f134e0e937aa21ceadf57148"
+        }
+      ]
+    },
+    {
+      "job_id": "eb2f934aca45",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T18:40:18.280Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "runs/features_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprk1/ki/dataset.csv",
+        "--output-dir",
+        "runs/models/xgboost",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl37_ki_pX7_6_descv2",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprk1/ki/split_manifest.json"
+      ],
+      "wall_seconds": 5.33,
+      "exit_code": 0,
+      "error": "",
+      "artifacts": [
+        {
+          "path": "runs/models/xgboost/metrics.json",
+          "recorded_sha256": "614ddedd5afb2d5ccb194b64d2523b5660e4a7aa8e0a294a4849e20a64b1f81c",
+          "digest": "json:102689599336bbfeb9d4aaa9861564336dc807e13ef858b46c6a0c40fea0b4a6"
+        },
+        {
+          "path": "runs/models/xgboost/predictions.csv",
+          "recorded_sha256": "51cb0b7d0805228482fc6bf8eae1c131d2459d23a138933f0f32bb413435c192",
+          "digest": "sha256:51cb0b7d0805228482fc6bf8eae1c131d2459d23a138933f0f32bb413435c192"
+        },
+        {
+          "path": "runs/models/xgboost/model.joblib",
+          "recorded_sha256": "027f46545d2f04b33b17aaf95f26a4a173cbbbc526489e9a5a803a54b5d413a7",
+          "digest": "sha256:027f46545d2f04b33b17aaf95f26a4a173cbbbc526489e9a5a803a54b5d413a7"
+        },
+        {
+          "path": "runs/models/xgboost/artifact_manifest.json",
+          "recorded_sha256": "c3cf2c86e7e3224377287077405581aa4887a29bfad9c62e2e65c5dce1b69d47",
+          "digest": "json:86eb43ca002fdf426f531ee9abfad2569f0b9719f1a37c285005d2f003782011"
+        }
+      ]
+    },
+    {
+      "job_id": "4179c1b2c495",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T18:40:25.664Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "KOR",
+        "--model",
+        "runs/models/xgboost/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "runs/evaluation/receipt.json",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 3.77,
+      "exit_code": 0,
+      "error": "",
+      "artifacts": [
+        {
+          "path": "runs/evaluation/receipt.json",
+          "recorded_sha256": "79bbc3396d062e3eb415498ebf76a38834d5c31351ba09841775f4bda2571eb0",
+          "digest": "json:a44ad6dda2d3f6439ad9a5bc29d0a98a762873f5991220e97518b0e09c2efd7c"
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-drd2-ic50-a9a66c0e48d0",
-  "exported_at": "2026-11-05T18:29:18+00:00",
+  "exported_at": "2026-11-05T18:41:17+00:00",
   "steps": [
     {
       "job_id": "b80e0dc51363",
