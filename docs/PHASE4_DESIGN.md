@@ -76,6 +76,7 @@ trace：science_007（featurize → ml.train → screening.rank，真实 Ticket�
 - acceptance：等价率 1.0 ✓；featurize-heavy 时间比 ≤1.2 ✓；加速 ≥2× ✓ → **candidate1 影子验收通过**
 - ml.train 重放慢于 trace 基线是跨机冷缓存差异（.26 记录 vs .37 重放），与候选无关
 - digest 规则单测 5/5；证据：`docs/evidence/phase4/`（trace + 双报告）
+- **candidate2（pooled 重校准）已关闭：REJECTED** —— MOR:0.5 降权使负迁移恶化（Δ −0.0468 → −0.0614，CI 全负）；结论：跨靶点干扰是结构性的，per-target 是安全默认。spec 状态 rejected，经验库 transfer_MOR_014/015/016。
 
 - trace_export 对真实 ticket 导出成功且 digest 可复算；
 - candidate1 影子重放：等价率 100%、加速 ≥ 2×（或如实报告未达标）；
