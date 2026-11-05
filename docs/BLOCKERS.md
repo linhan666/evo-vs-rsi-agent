@@ -49,7 +49,14 @@ expected { state: 'ready' } to match { state: 'error', detail: contains 'JSON' }
 
 **2026-11-05 更新**：已从 worker 与主 Session 的允许工具列表移除 shell 工具（`src/app/sessions.ts` 的 `WORK_TOOLS` 与主 Session 的 restrict 列表）。
 DSH 的文件工具由 `dsh-fs-sandbox` 约束可写根，shell 是此前唯一没有路径沙箱的通用通道；移除后"一条命令碰到别的项目"的路径被关闭。
-**仍缺**：专用 OS 账号或容器；`dsh-fs-sandbox` 的实际可写根仍需一次显式验证；外部资源硬限仍只有墙钟 + `prlimit`。
+**2026-11-05 晚更新（用户决定不建专用账号后的替代方案）**：
+1. **边界实测**（science_009）：泛用 fs 工具可写根远宽于 ticket 目录——ticket 外写 succeeded、protected 测试标签可读；
+2. **工具面裁剪**（science_010 复测通过）：worker 与主 Session 移除全部泛用文件/网络工具，仅留 job 工具——三类修改面之外的能力面归零；
+3. **作业 HOME=工作区** + **金丝雀完整性检查**（ops/canary_check.py：API key、gh token、home 金丝雀、protected 权限）；
+4. **残余风险**：同用户上限仍在（应用层约束挡不住进程级逃逸），金丝雀只检测不阻止。
+   **Phase 4 硬前置**：专用账号 / 独立机器 / 书面接受残余风险，三选一；在此之前 Phase 4 不开工。
+
+原文如下。
 
 原文保留如下。
 

@@ -111,7 +111,7 @@ export function idempotencyKeyFor(definition: ScientificToolDefinition, argv: st
   return sha256Text(JSON.stringify({ tool: definition.id, version: definition.version, argv, inputs: inputDigest(workspace, args) }))
 }
 
-function childEnvironment(resources: JobResources): NodeJS.ProcessEnv {
+function childEnvironment(resources: JobResources, workspace: string): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = {
     PYTHONHASHSEED: '0',
     OMP_NUM_THREADS: String(resources.max_cpu_cores),
@@ -119,10 +119,13 @@ function childEnvironment(resources: JobResources): NodeJS.ProcessEnv {
     // Single-GPU policy: GPU0/1 belong to other people's jobs.
     CUDA_VISIBLE_DEVICES: resources.max_gpu_count > 0 ? (process.env.EVOVS_GPU ?? '2') : '',
   }
-  for (const key of ['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR', 'TZ']) {
+  for (const key of ['PATH', 'LANG', 'LC_ALL', 'TMPDIR', 'TZ']) {
     const value = process.env[key]
     if (value !== undefined) env[key] = value
   }
+  // HOME is the workspace: a job that touches ~ lands in the ticket directory, not in
+  // the operator's home (same-user limitation, B-005). Library caches follow.
+  env.HOME = workspace
   return env
 }
 
@@ -197,7 +200,7 @@ export async function runScientificJob(
     const command = commandFor(argv, resources)
     try {
       child = spawn(command.file, command.args, {
-        cwd: options.workspace, env: childEnvironment(resources), shell: false, detached: true,
+        cwd: options.workspace, env: childEnvironment(resources, options.workspace), shell: false, detached: true,
         stdio: ['ignore', stdout, stderr],
       })
     } catch (error) {

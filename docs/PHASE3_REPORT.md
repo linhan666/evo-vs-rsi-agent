@@ -59,6 +59,21 @@
 - P3-05 的 selectivity 列与 OOD/不确定性列（§9.6 全量字段）——待校准模块；
 - 经验库当前为文件存储，并发写未加锁（单人 operator 场景可接受）。
 
+## 边界测绘与收紧（science_009/010，B-005 无账号替代方案）
+
+**测绘（science_009，裁剪前，Ticket `fa6b99e6…`）**：泛用 fs 工具的可写根**远宽于 ticket 目录**——
+ticket 外写文件 succeeded（探针文件已清理）、**protected 测试标签可读**；科学工具的路径 schema 正确拒绝数据根外路径。
+**收紧**：worker 与主 Session 的泛用文件/网络工具全部移除（write/edit/read/glob/grep/read_image/web_search/web_fetch），
+仅保留 job 工具——依据：science_007/008 全链路只用了 scientific_* + orchestrator_*。
+**复测（science_010，裁剪后，Ticket `395d0521…`）**：A/B 探针报 "no file-write/read tool is available"、逃逸文件未创建、featurize 正常（2,790）。
+
+**附加加固**：scientific 作业的 `HOME` 指向 ticket 工作区（~ 访问落在工作区）；`ops/canary_check.py` 金丝雀
+监控 API key 文件、gh-agent hosts.yml、home 金丝雀、protected 目录权限（基线已记录，Ticket 前后各跑一次）。
+
+**残余风险（诚实声明）**：同用户上限仍在——以上都是应用层约束；若上游 DSH 或我们工具层出现可执行任意代码的
+漏洞，逃逸进程仍拥有 `linhan_cluster` 的全部权限，金丝雀只能**检测**不能**阻止**。Phase 4 前必须三选一：
+专用账号 / 另一台机器跑 Harness / 书面接受残余风险并限制 Phase 4 能力面。
+
 ## Next phase
 
 - Phase 3 后半：Memory 注入机制设计 → 经真实 Ticket 的 KOR/DRD2 执行（复用经验库）；
