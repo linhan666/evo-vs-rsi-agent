@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "job_id": "3b2042ff6a15",
+  "tool_id": "rdkit.featurize",
+  "created_at": "2026-11-05T08:51:37.792Z",
+  "artifacts": [
+    {
+      "path": "runs/features.npz",
+      "sha256": "6c272c174de6d19c5725a64fadfa26f100679a444e2a0c8551d6070bcb35dd8b",
+      "size": 2899
+    },
+    {
+      "path": "runs/feature_meta.json",
+      "sha256": "cc2906bb5901f4b0d7618e4bb4ed57406de6e294cd1d7ca6d5c6b1ca1861f9b2",
+      "size": 548
+    }
+  ]
+}

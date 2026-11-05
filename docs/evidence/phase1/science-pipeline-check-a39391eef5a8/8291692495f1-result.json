@@ -1,0 +1,45 @@
+{
+  "job_id": "8291692495f1",
+  "tool_id": "rdkit.featurize",
+  "tool_version": "0.1.0",
+  "state": "SUCCEEDED",
+  "started_at": "2026-11-05T08:40:49.832Z",
+  "argv": [
+    "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+    "-m",
+    "evovs_science.chemistry.featurize",
+    "--input",
+    "data.csv",
+    "--output",
+    "runs/features.npz",
+    "--report",
+    "runs/feature_meta.json",
+    "--radius",
+    "2",
+    "--n-bits",
+    "2048",
+    "--limit",
+    "0"
+  ],
+  "artifacts": [
+    {
+      "path": "runs/features.npz",
+      "sha256": "6c272c174de6d19c5725a64fadfa26f100679a444e2a0c8551d6070bcb35dd8b",
+      "size": 2899
+    },
+    {
+      "path": "runs/feature_meta.json",
+      "sha256": "5372efeebffa3e60b9f54d285e524af144c0831237fddc50303b4a8f36798aa0",
+      "size": 548
+    }
+  ],
+  "usage": {
+    "wall_seconds": 1.68,
+    "cpu_seconds": null,
+    "gpu_seconds": null,
+    "max_rss_mb": null
+  },
+  "ended_at": "2026-11-05T08:40:51.508Z",
+  "exit_code": 0,
+  "signal": null
+}

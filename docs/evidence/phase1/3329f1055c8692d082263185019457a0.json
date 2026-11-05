@@ -1,0 +1,8 @@
+{
+  "id": "3329f1055c8692d082263185019457a0",
+  "kind": "acknowledgement",
+  "task_id": "smoke_002",
+  "ticket_id": "1f66bccd0d4a285a9a53eadd15069520",
+  "text": "On it: running the single bounded printf command in the ticket directory to create restart_proof.txt, then replying RESTART_OK.",
+  "at": "2026-11-05T08:16:10.032Z"
+}

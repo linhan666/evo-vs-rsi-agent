@@ -41,22 +41,20 @@ flowchart TB
 
 **硬约束**：B 的候选 patch 若触碰 C 的路径或评测器，必须 `REJECT_SECURITY`，且该判定由固定代码执行，不由 LLM 自报。
 
-## 3. 计划新增模块 `[PLANNED]`
+## 3. 新增模块（`src/research/` 与 `scientific/` 已实现；`src/evolution/`、`evolution/` 仍为 `[PLANNED]`）
 
 ```
-src/research/          # 科学作业适配层（TS）
-  job-schema.ts        #   JobSpec / JobResult（蓝图 §8.1 的 z 校验）
-  job-runner.ts        #   沙箱子进程执行 argv 白名单
-  job-store.ts         #   sidecar DB，不混入 Store 主库
-  resource-guard.ts    #   GPU/CPU/时长硬限（外部强制）
-  artifact-registry.ts #   sha256 + provenance
-  tool-adapters.ts
+src/research/          # 【已实现】
+  registry.ts          #   白名单工具：能力/失败码/zod 输入/固定 argv
+  job-runner.ts        #   沙箱执行：shell:false、独立进程组、墙钟强杀、sha256 清单
+  tools.ts             #   worker 工具：discovery + run + job(status/read/cancel/list)
 
 src/evolution/         # 候选协调端口（TS）
   candidate-types.ts / trace-collector.ts / version-registry.ts / evolution-hooks.ts
 
-scientific/            # 科研环境（Python，独立进程）
-  src/evovs_science/{cli,schemas,chemistry,data,modeling,evaluation,screening}/
+scientific/            # 【部分实现】Python 科研环境
+  src/evovs_science/{cli,schemas,manifest,chemistry/featurize,modeling/train}/
+  # data/ evaluation/ screening/ 仍待 Phase 2
 
 evolution/             # 独立 RSI 控制器（不在候选信任边界内）
   diagnosis/ shadow_eval/ selection/ candidate_editor/ run_evolution.py

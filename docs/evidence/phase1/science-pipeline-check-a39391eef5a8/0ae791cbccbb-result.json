@@ -1,0 +1,57 @@
+{
+  "job_id": "0ae791cbccbb",
+  "tool_id": "sklearn.train",
+  "tool_version": "0.1.0",
+  "state": "SUCCEEDED",
+  "started_at": "2026-11-05T08:40:53.560Z",
+  "argv": [
+    "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+    "-m",
+    "evovs_science.modeling.train",
+    "--features",
+    "runs/features.npz",
+    "--labels",
+    "data.csv",
+    "--output-dir",
+    "runs/model",
+    "--model",
+    "logreg",
+    "--seed",
+    "17",
+    "--test-fraction",
+    "0.3",
+    "--label-source",
+    "fixture"
+  ],
+  "artifacts": [
+    {
+      "path": "runs/model/metrics.json",
+      "sha256": "b9e82c8bbfc08f1f5ac179c906cf082823f50b3a41673326474b01ec0bfed3b2",
+      "size": 570
+    },
+    {
+      "path": "runs/model/predictions.csv",
+      "sha256": "cf558fc20168c525f442b35bda25f01ebb14b9815aa17920e3f4ba8496c4a99a",
+      "size": 553
+    },
+    {
+      "path": "runs/model/model.joblib",
+      "sha256": "2e769c641395166a9f4755d2b3c8f668eea4528ffd720255080756a329fbb905",
+      "size": 67102
+    },
+    {
+      "path": "runs/model/artifact_manifest.json",
+      "sha256": "b4b5da8a663612c028a2b35c38d00b2a91d16795567440450bfd65b6fa8b65b9",
+      "size": 1725
+    }
+  ],
+  "usage": {
+    "wall_seconds": 2.29,
+    "cpu_seconds": null,
+    "gpu_seconds": null,
+    "max_rss_mb": null
+  },
+  "ended_at": "2026-11-05T08:40:55.854Z",
+  "exit_code": 0,
+  "signal": null
+}

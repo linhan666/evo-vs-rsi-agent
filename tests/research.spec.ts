@@ -59,6 +59,11 @@ describe('scientific registry', () => {
     expect(SCIENTIFIC_TOOLS.every(item => item.argv.length > 0)).toBe(true)
   })
 
+  it('produces discovery output that survives a JSON round trip', () => {
+    const payload = { tools: describeTools(), interpreter_configured: true }
+    expect(JSON.parse(JSON.stringify(payload))).toEqual(payload)
+  })
+
   it('refuses unknown tools and paths that leave the workspace', () => {
     expect(() => findTool('nope.nope')).toThrow(/unknown scientific tool/)
     const root = workspace()

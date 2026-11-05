@@ -1,0 +1,28 @@
+{
+  "schema_version": "1",
+  "job_id": "00f671a2cc97",
+  "tool_id": "sklearn.train",
+  "created_at": "2026-11-05T08:51:44.015Z",
+  "artifacts": [
+    {
+      "path": "runs/model/metrics.json",
+      "sha256": "da214a1f56992a685dcca3f84b96d7db2fd627679cc9edb03ba1b46f13a6706c",
+      "size": 570
+    },
+    {
+      "path": "runs/model/predictions.csv",
+      "sha256": "cf558fc20168c525f442b35bda25f01ebb14b9815aa17920e3f4ba8496c4a99a",
+      "size": 553
+    },
+    {
+      "path": "runs/model/model.joblib",
+      "sha256": "2e769c641395166a9f4755d2b3c8f668eea4528ffd720255080756a329fbb905",
+      "size": 67102
+    },
+    {
+      "path": "runs/model/artifact_manifest.json",
+      "sha256": "fa9ad835562137a32920ffe681efbeef616e45d15662de719b21a42ebebd8d58",
+      "size": 1725
+    }
+  ]
+}

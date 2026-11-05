@@ -105,9 +105,14 @@ export function findTool(id: string): ScientificToolDefinition {
   return found
 }
 
-/** Metadata for discovery; the JSON Schema comes from the same zod object the runner validates with. */
+/**
+ * Metadata for discovery; the JSON Schema comes from the same zod object the runner
+ * validates with. The result is normalised through JSON because `z.toJSONSchema`
+ * may return non-plain objects, and DSH rejects a tool result that is not lossless
+ * JSON (`isJsonValue` checks the prototype, not just `JSON.stringify`).
+ */
 export function describeTools() {
-  return SCIENTIFIC_TOOLS.map(item => ({
+  const described = SCIENTIFIC_TOOLS.map(item => ({
     tool_id: item.id,
     version: item.version,
     description: item.description,
@@ -117,4 +122,5 @@ export function describeTools() {
     failure_codes: item.failureCodes,
     input_schema: z.toJSONSchema(item.input),
   }))
+  return JSON.parse(JSON.stringify(described)) as typeof described
 }

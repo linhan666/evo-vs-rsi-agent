@@ -1,0 +1,8 @@
+{
+  "id": "2817eb853d6bbf3cfc13d03f22ff27e5",
+  "kind": "acknowledgement",
+  "task_id": "science_002",
+  "ticket_id": "7763bd44e261c31502dd90d67b2739f9",
+  "text": "On it: calling scientific_tools first to list the environment's tool ids, then featurizing the synthetic fixture and training a small classifier to report valid/invalid rows with AUROC.",
+  "at": "2026-11-05T08:51:28.998Z"
+}
