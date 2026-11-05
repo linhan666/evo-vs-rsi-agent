@@ -1,0 +1,54 @@
+{
+  "schema_version": "1",
+  "sandbox": "/tmp/evovs_shadow/candidate",
+  "steps": [
+    {
+      "tool_id": "rdkit.featurize",
+      "baseline_wall_seconds": 2.31,
+      "candidate_wall_seconds": 1.09,
+      "exit_code": 0,
+      "artifacts_total": 2,
+      "artifacts_equal": 2,
+      "mismatches": [],
+      "stderr_tail": []
+    },
+    {
+      "tool_id": "ml.train",
+      "baseline_wall_seconds": 3.54,
+      "candidate_wall_seconds": 7.97,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": []
+    },
+    {
+      "tool_id": "screening.rank",
+      "baseline_wall_seconds": 69.35,
+      "candidate_wall_seconds": 19.9,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": []
+    }
+  ],
+  "equivalence_rate": 1.0,
+  "artifacts_total": 8,
+  "artifacts_equal": 8,
+  "derived_skipped": 1,
+  "candidate_id": "candidate1-featurize-parallel",
+  "hypothesis": "Chunk-parallel Morgan featurization shortens featurize-heavy steps by >=2x with identical artifact digests.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "max_time_ratio": 1.2,
+    "min_speedup": 2.0
+  },
+  "featurize_time_ratio_max": 0.47186147186147187,
+  "verdict": {
+    "equivalence_ok": true,
+    "time_ratio_ok": true,
+    "speedup_ok": true,
+    "pass": true
+  }
+}

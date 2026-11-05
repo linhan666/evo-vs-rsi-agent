@@ -1,0 +1,52 @@
+{
+  "schema_version": "1",
+  "sandbox": "/tmp/evovs_shadow/baseline",
+  "steps": [
+    {
+      "tool_id": "rdkit.featurize",
+      "baseline_wall_seconds": 2.31,
+      "candidate_wall_seconds": 3.74,
+      "exit_code": 0,
+      "artifacts_total": 2,
+      "artifacts_equal": 2,
+      "mismatches": [],
+      "stderr_tail": []
+    },
+    {
+      "tool_id": "ml.train",
+      "baseline_wall_seconds": 3.54,
+      "candidate_wall_seconds": 8.63,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": []
+    },
+    {
+      "tool_id": "screening.rank",
+      "baseline_wall_seconds": 69.35,
+      "candidate_wall_seconds": 65.52,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": []
+    }
+  ],
+  "equivalence_rate": 1.0,
+  "artifacts_total": 8,
+  "artifacts_equal": 8,
+  "derived_skipped": 1,
+  "candidate_id": "baseline",
+  "hypothesis": "Replay of the recorded tool surface without any delta.",
+  "acceptance": {
+    "equivalence": 1.0
+  },
+  "featurize_time_ratio_max": 1.619047619047619,
+  "verdict": {
+    "equivalence_ok": true,
+    "time_ratio_ok": false,
+    "speedup_ok": true,
+    "pass": false
+  }
+}

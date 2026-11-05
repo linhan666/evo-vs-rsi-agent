@@ -1,0 +1,9 @@
+{
+  "candidate_id": "baseline",
+  "version": "1",
+  "changes": [],
+  "hypothesis": "Replay of the recorded tool surface without any delta.",
+  "acceptance": {
+    "equivalence": 1.0
+  }
+}

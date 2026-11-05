@@ -60,22 +60,20 @@ def read_smiles(path: str, limit: int | None = None, id_column: str = "id", smil
     return rows
 
 
-def featurize(rows: list[tuple[str, str]], *, radius: int, n_bits: int):
+def _featurize_chunk(task: tuple):
+    """Featurize one chunk; module-level so multiprocessing can pickle it."""
+    _target, chunk, radius, n_bits = task
     from rdkit import Chem, RDLogger
     from rdkit.Chem import rdFingerprintGenerator
     from rdkit.DataStructs import ConvertToNumpyArray
 
     RDLogger.DisableLog("rdApp.*")
     generator = rdFingerprintGenerator.GetMorganGenerator(radius=radius, fpSize=n_bits)
-
     ids: list[str] = []
-    matrix = np.zeros((0, n_bits), dtype=np.uint8)
-    descriptors = np.zeros((0, len(DESCRIPTOR_NAMES)), dtype=np.float32)
-    invalid: list[dict[str, str]] = []
-
     fp_rows: list[np.ndarray] = []
     desc_rows: list[list[float]] = []
-    for molecule_id, smiles in rows:
+    invalid: list[dict[str, str]] = []
+    for molecule_id, smiles in chunk:
         mol = Chem.MolFromSmiles(smiles)
         if mol is None:
             invalid.append({"id": molecule_id, "smiles": smiles, "reason": "unparseable_smiles"})
@@ -85,10 +83,39 @@ def featurize(rows: list[tuple[str, str]], *, radius: int, n_bits: int):
         fp_rows.append(vector)
         desc_rows.append(_descriptor_row(mol))
         ids.append(molecule_id)
+    return (ids,
+            np.vstack(fp_rows) if fp_rows else np.zeros((0, n_bits), dtype=np.uint8),
+            np.asarray(desc_rows, dtype=np.float32) if desc_rows else np.zeros((0, len(DESCRIPTOR_NAMES)), dtype=np.float32),
+            invalid)
 
-    if fp_rows:
-        matrix = np.vstack(fp_rows)
-        descriptors = np.asarray(desc_rows, dtype=np.float32)
+
+def featurize(rows: list[tuple[str, str]], *, radius: int, n_bits: int):
+    """Featurize rows into ECFP + descriptors.
+
+    `EVOVS_FEAT_JOBS=N` schedules the same chunks over N workers (candidate
+    harness delta); chunk order equals input order, so the output is identical
+    to the serial path (shadow-evaluated in Phase 4, candidate1).
+    """
+    import math
+
+    jobs = max(1, int(os.environ.get("EVOVS_FEAT_JOBS", "1")))
+    if rows:
+        chunk_size = max(1, math.ceil(len(rows) / (jobs * 4)))
+        chunks = [(f"chunk{i}", rows[i:i + chunk_size], radius, n_bits)
+                  for i in range(0, len(rows), chunk_size)]
+    else:
+        chunks = []
+    if jobs > 1 and len(chunks) > 1:
+        import multiprocessing as mp
+
+        with mp.Pool(min(jobs, len(chunks))) as pool:
+            parts = pool.map(_featurize_chunk, chunks)
+    else:
+        parts = [_featurize_chunk(chunk) for chunk in chunks]
+    ids = [molecule_id for part in parts for molecule_id in part[0]]
+    matrix = np.vstack([part[1] for part in parts]) if parts else np.zeros((0, n_bits), dtype=np.uint8)
+    descriptors = np.vstack([part[2] for part in parts]) if parts else np.zeros((0, len(DESCRIPTOR_NAMES)), dtype=np.float32)
+    invalid = [item for part in parts for item in part[3]]
     return ids, matrix, descriptors, invalid
 
 
