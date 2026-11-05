@@ -10,6 +10,7 @@ import { reportRelay, threadFollowedNotice } from '../notices.ts'
 import type { Sessions } from '../sessions.ts'
 import { AcknowledgementSchema, readTool, tool, type Tool } from './tool.ts'
 import { scientificTools } from '../../research/tools.ts'
+import { runEnginePass } from '../../research/engine-pass.ts'
 
 export interface ExecutorToolsHost {
   readonly engine: Pick<EngineForExecutor, 'report' | 'reply' | 'markUnrelated' | 'handback' | 'followForContext'>
@@ -89,7 +90,7 @@ export function executorTools(host: ExecutorToolsHost, ticket: Ticket): Tool[] {
         if (!current || !liveTicket(current)) throw new Error('Ticket ended (PR was closed or work finished); do not resume it')
         const pull = args.pr_number != null ? await readPull(host.github, args.pr_number, signal) : undefined
         // Claim the PR, record the report, and queue the relay atomically so a rejected PR claim or invalid report leaves no partial state, and a recorded report always reaches the main Session.
-        return host.store.atomic(() => {
+        const outcome = host.store.atomic(() => {
           const refused = pull && claimPull(host.github, ticketId, pull)
           if (refused) throw new Error(refused)
           const report = { state: args.state, summary: args.summary, ...(args.human_action !== undefined ? { question: args.human_action } : {}),
@@ -101,6 +102,13 @@ export function executorTools(host: ExecutorToolsHost, ticket: Ticket): Tool[] {
           const notification = relay ? 'orchestrator' : 'internal_only'
           return { reported: true, notification, ...(updated.attention ? { attention: updated.attention } : {}) }
         })
+        // Engine pass: once the ticket reports ready, the Harness evaluates the model it produced,
+        // outside the transaction and without blocking the reply. Failures stay local (the ticket is done).
+        if (args.state === 'ready') {
+          const directory = host.store.tickets.get(ticketId)?.execution?.directory
+          if (directory) void runEnginePass(directory, process.env.EVOVS_PYTHON)
+        }
+        return outcome
       },
     }),
   ]

@@ -16,7 +16,8 @@
 | `data/normalize.py --endpoint IC50` | IC50 独立通道数据集（自带 split 与 protected 测试集） |
 | `screening/predict.py`、`screening/matrix.py` | 100k 排序与跨靶点矩阵（复用） |
 | `screening/dual_endpoint.py`、`screening/shortlist.py` | 双端点一致性分析 / top-K shortlist 对比 |
-| `evaluation/locked.py` 的 `--desc-set` | 垫片支持特征代参数（默认 v1，行为不变） |
+| `evaluation/locked.py` 的 `--desc-set` / `--endpoint` | 垫片支持特征代与端点（默认 v1 / Ki，行为兼容） |
+| `src/research/engine-pass.ts` + `orchestrator_report` 钩子 | **Engine pass**：Ticket 报 `ready` 后由 Harness 自动触发锁定评测（不解析 Agent 文案，复用同一垫片与限频） |
 
 ## 2. 语料与失败聚类基线
 
@@ -129,7 +130,7 @@
 ## 8. Known failures / not done
 
 - **P4-04 未做**：仍无"读 trace 自动产候选"的 Evolution Agent —— 与 Phase 4 报告同一缺口。
-- **Engine pass 未做**（草案在 `docs/EVALUATOR_TRIGGER_DESIGN.md`）：评测仍由 Agent 主动调用。
+- **Engine pass 已实现**（`src/research/engine-pass.ts` + `orchestrator_report` 事务后钩子）：8 个新单测 + runtime 91/91 + research 13/13；**尚待一次真实 Ticket 端到端确认**（下次工单应看到 `runs/evaluation/engine_receipt.json`）。
 - **P5-03 未整合**：四类硬门禁（科学质量/成本/成功率/安全）仍散在各候选的 `acceptance` 里。
 - **P5-04 / P5-05 未做**：无 Pareto 集（balanced/lite/heavy），无 VersionManager（晋升/回滚=改默认值 + JSON 记录 + git SHA 兜底）。
 - **F-1…F-4 已完成**（见 §6）；`pnpm typecheck` / `build` / `tests/research.spec.ts` 13/13 通过。
@@ -141,6 +142,6 @@
 
 1. ~~F-1…F-4：修端点参数与输出名，重跑 IC50-descv2 验证面~~ ✅ 已完成（2026-11-06 03:10）；
 2. ~~D-1：trace 补 stderr 文本~~ ✅ 已完成（2026-11-06 03:20）；~~D-2 经验 payload~~ ✅ 已完成；
-3. **Engine pass**：评测自动触发，闭环脱离人工调用；
+3. ~~**Engine pass**：评测自动触发，闭环脱离人工调用~~ ✅ 已实现（2026-11-06 03:15），待真实 Ticket 确认；
 4. **P4-04**：从 trace + 失败簇自动产候选；
 5. P5-03 统一硬门禁 → P5-04 Pareto → P5-05 VersionManager。

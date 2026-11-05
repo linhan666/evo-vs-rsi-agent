@@ -378,6 +378,7 @@ Some generic modules still refer directly to GitHub or Feishu:
 | `src/research/registry.ts` | The whitelisted scientific tools: `tool_id`, capability and failure-code metadata, a zod input schema, and the fixed argv a job runs. `ml.train` backs logreg/rf/xgboost/catboost; `screening.rank` ranks an unlabeled library with a fitted model (predictions only) — the Agent names a tool and arguments, never a command |
 | `src/research/job-runner.ts` | The sandboxed runner: `shell: false`, one process group per job, a wall-clock kill, stdout/stderr files, a sha256 artifact manifest, and `INTERRUPTED` for a job whose host stopped |
 | `src/research/tools.ts` | The worker tools `scientific_tools`, `scientific_run_job` and the action tool `scientific_job` (status, read, cancel, list), registered on every Executor Session |
+| `src/research/engine-pass.ts` | The Engine pass: after a ticket reports `ready`, derive (target, endpoint, descriptor generation, model) from the ticket's own `ml.train` job records and run the locked evaluation outside the transaction, sharing the Agent tool's rate-limit marker |
 | `src/client/index.tsx` | The client plugin entry: the sidebar entry, the main panel and the page in DeepSeek Harness's Plugin Manager |
 | `src/client/app.tsx` | The panel: header, search, glossary, tabs and the page of the current route |
 | `src/client/provider.tsx` | What every page reads from its host: copy, calls, navigation, notices, the state poll, and `restart`, which reads the state quickly while dsh-superagent restarts |
@@ -414,6 +415,7 @@ Some generic modules still refer directly to GitHub or Feishu:
 | `tests/sources.spec.ts` | The Feishu and GitHub Sources on a `SourceContext`: translation, polls and read positions, the pull request rules, health |
 | `tests/local.spec.ts` | The local task-file Source: translation into Trigger, Thread, Actor and Channel; one stored Trigger per file with archiving; malformed files left in place; scope; idempotent replies; setup and switch health |
 | `tests/research.spec.ts` | The scientific tool registry and the sandboxed job runner: schema rejection, path containment, a sha256 manifest, non-zero exit, wall-clock kill, a missing declared output, and an abandoned job reported `INTERRUPTED` |
+| `tests/engine-pass.spec.ts` | The Engine pass plan: target, endpoint and descriptor generation derived from job records, the latest successful `ml.train` winning, unknown targets refused, the shared rate-limit marker, and the no-interpreter and already-evaluated short circuits |
 | `tests/commands.spec.ts` | CLI calls as the deployment's accounts, the Channels' answers, and repository-scoped GitHub calls |
 | `tests/feishu-read.spec.ts`, `tests/github-read.spec.ts` | Feishu and GitHub reads |
 | `tests/admission-context.spec.ts`, `tests/feishu-image.spec.ts` | The Thread window of assessments, and Feishu image reads |

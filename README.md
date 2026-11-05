@@ -11,7 +11,7 @@
 - 当前阶段：**Phase 5 — 自修改闭环与科学面板扩展（尾段）**
 - 状态（2026-11-06 02:55 实测）：**Phase 0–3 的 Gate 全部通过；Phase 4/5 已跑通一次真实的"候选→影子→晋升→生产冒烟"全链条，并两次用预注册规则拒绝了不该上线的候选。**
   Agent 在真实 Ticket 中自主完成 featurize → train → 100k 筛选 → 经验检索 → 锁定评测；Harness 已完成一次证据驱动的自我修改（candidate1 并行特征化，加速 2.1×/3.3×、工件等价率 1.0）并写入生产默认。
-  **尚未完成**（见 `docs/PHASE5_REPORT.md` 末节）：Agent 自主提出候选（P4-04）、评测器自动触发（Engine pass）、Pareto 集与 VersionManager。
+  **尚未完成**（见 `docs/PHASE5_REPORT.md` 末节）：Agent 自主提出候选（P4-04）、Pareto 集与 VersionManager；评测自动触发（Engine pass）已实现、待真实 Ticket 确认。
 
 ## 阶段映射（项目阶段 ≠ 蓝图阶段，务必对照）
 

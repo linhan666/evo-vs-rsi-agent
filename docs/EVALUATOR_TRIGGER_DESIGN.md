@@ -39,12 +39,15 @@
 > **2026-11-06 修订（F-1/F-2）**：初版把测试集写死成 `final_test_Ki.csv`、且没有 endpoint 参数，导致 IC50 通道的工单实际是"IC50 模型 vs Ki 标签"的跨端点错配；同时输出名依赖 `basename(workspace)`，多通道用 `.` 调用时会互相覆盖。现已加 `--endpoint {Ki,IC50}`（映射到各自 protected 目录与测试集），输出名改为
 > `metrics_test_locked_agent_{endpoint}_{desc_set}_{ticket}_{target}.json`。详见 `docs/PHASE5_REPORT.md` §6。
 
-### 方案 3 实现草案（Phase 5，**未实现**——按"最后做"暂缓）
+### 方案 3 实现（2026-11-06，Engine pass 已落地）
 
-- 触点：`src/executor/dsh.ts` 的 report 处理段（P0 审计已定位）：Ticket 进入 report/reply 且最近回复引用 `runs/models/*/model.joblib` 时，由 orchestrator（非 worker）调用 locked 评测（复用 `evaluation/locked.py`，限频标记同路径）。
-- 保障：评测失败只记 warning 不阻塞 Ticket 结束；限频不变；评测与 provider 调用互斥。
-- 测试：`runtime.spec.ts` 增加"report 阶段自动触发一次且仅一次"用例；B-005 隔离已就位（独立机器）。
-- 未实现原因：侵入上游 Engine，需要完整回归；当前垫片（方案 2）已覆盖"Agent 可触发"场景，方案 3 的增益只是免手写一步。
+- **触点**：orchestrator 工具 `orchestrator_report` 的 `execute` 里，`host.store.atomic(...)` **事务提交之后**，若 `state === 'ready'` 则 `void runEnginePass(ticketDir, EVOVS_PYTHON)`——不阻塞回帖，事务内不做异步 I/O。
+  （草案原定点是 `src/executor/dsh.ts` 的 report 段；那是 Engine 内部状态迁移，异步副作用更难隔离。工具层"事务后钩子"能力等价且侵入更小，故改此处，`docs/ARCHITECTURE.md` 的"最小侵入"原则不变。）
+- **计划推导**（`src/research/engine-pass.ts`，纯函数 `planEnginePass`）：读该 Ticket 自己的 `.jobs/*/result.json`，取**最新一个 SUCCEEDED `ml.train`**，从 argv 的 `--labels`（`.../chembl/<oprm1|oprk1|drd2>/<ki|ic50>/...`）与 `--label-source` 推出 target / endpoint / desc_set，从 artifacts 取 `model.joblib`。**不解析 Agent 的自然语言**。
+- **复用同一垫片**：调用 `evovs_science.evaluation.locked`，因此测试集、protected 输出路径、限频标记与 Agent 主动触发完全一致——**同一 Ticket 同一 (target, endpoint) 只会评一次**，先触发者赢。
+- **失败隔离**：`runEnginePass` 永不抛错（返回 `{ran:false, reason}`），调用处也不 await；评测出问题只影响收据，不会把已完成的 Ticket 变成失败。
+- **测试**：`tests/engine-pass.spec.ts` 8/8（target/endpoint/desc_set 推导、取最新成功作业、未知靶点拒绝、标记共享、无解释器与重复触发的短路）；`runtime.spec.ts` 91/91、`research.spec.ts` 13/13。
+- **尚未验证**：需要一次真实 Ticket 才能确认端到端（下一次工单顺带确认 `runs/evaluation/engine_receipt.json` 落盘）。
 
 ## 无论哪条路都不变的三条红线
 
