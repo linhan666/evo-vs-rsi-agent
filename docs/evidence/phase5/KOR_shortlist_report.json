@@ -1,0 +1,28 @@
+{
+  "schema_version": "1",
+  "created_at": "2026-11-05T18:23:48+00:00",
+  "target": "KOR",
+  "inputs": [
+    {
+      "path": "ranked_100k.csv",
+      "sha256": "801f6aa28c3f643b4f8a3a9a6a657a6d7c8133c9e96673c1d958ad37cc46a676",
+      "size": 7220835
+    },
+    {
+      "path": "ranked_100k.csv",
+      "sha256": "c85d1ab6aa393a3cdf66f5c592763f682efac3be1e91a00e8d327f9a576d74f7",
+      "size": 7220835
+    }
+  ],
+  "top_n_per_channel": 100,
+  "union_size": 200,
+  "parseable": 200,
+  "final_size": 50,
+  "provenance": {
+    "ki": 33,
+    "ic50": 17,
+    "both": 0
+  },
+  "ordering": "greedy MaxMin Tanimoto diversity, seeded at the union head",
+  "purpose": "shortlist for the generative-model feedback loop; ranks are model predictions, not biological confirmation"
+}

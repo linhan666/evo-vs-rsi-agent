@@ -64,6 +64,7 @@ const FeaturizeInput = z.object({
   limit: z.number().int().min(0).max(200000).default(0),
   id_column: z.string().trim().min(1).max(60).default('id'),
   smiles_column: z.string().trim().min(1).max(60).default('smiles'),
+  desc_set: z.enum(['v1', 'v2']).default('v1'),
 }).strict()
 
 const TrainInput = z.object({
@@ -124,6 +125,7 @@ const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
       '--input', args.input, '--output', args.output, '--report', args.report,
       '--radius', String(args.radius), '--n-bits', String(args.n_bits), '--limit', String(args.limit),
       '--id-column', args.id_column, '--smiles-column', args.smiles_column,
+      '--desc-set', args.desc_set,
     ],
     outputs: (args: z.infer<typeof FeaturizeInput>) => [args.output, args.report],
   },
@@ -180,6 +182,7 @@ const LockedInput = z.object({
   target: z.enum(['MOR', 'KOR', 'DRD2']),
   model: RelativePath.describe('Fitted pipeline FILE from ml.train in this workspace'),
   receipt: RelativePath.describe('Where the summary receipt is written'),
+  desc_set: z.enum(['v1', 'v2']).default('v1'),
 }).strict()
 
 const LOCKED_TOOL = {
@@ -194,6 +197,7 @@ const LOCKED_TOOL = {
   argv: (args: z.infer<typeof LockedInput>, context) => [
     context.python, '-m', 'evovs_science.evaluation.locked',
     '--target', args.target, '--model', args.model, '--workspace', '.', '--receipt', args.receipt,
+    '--desc-set', args.desc_set,
   ],
   outputs: (args: z.infer<typeof LockedInput>) => [args.receipt],
 } as ScientificToolDefinition

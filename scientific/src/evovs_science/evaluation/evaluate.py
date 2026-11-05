@@ -51,6 +51,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--smiles-column", default="canonical_smiles")
     parser.add_argument("--label-column", default="label")
     parser.add_argument("--label-source", required=True, help="recorded verbatim, e.g. chembl37_ki_pX7_6")
+    parser.add_argument("--desc-set", choices=("v1", "v2"), default=None,
+                        help="must match the descriptor set the model was trained on")
     parser.add_argument("--target-indicator", choices=list(TARGET_ORDER), default=None,
                         help="pooled model: append the pre-registered one-hot for this target")
     parser.add_argument("--dump-predictions", default=None,
@@ -62,7 +64,8 @@ def main(argv: list[str] | None = None) -> int:
 
     rows = read_test_rows(args.test_csv, args.id_column, args.smiles_column, args.label_column)
     featurizable = [(row["id"], row["smiles"]) for row in rows if row["label"] is not None]
-    ids, matrix, descriptors, invalid = featurize(featurizable, radius=args.radius, n_bits=args.n_bits)
+    ids, matrix, descriptors, invalid = featurize(featurizable, radius=args.radius, n_bits=args.n_bits,
+                                                  desc_set=args.desc_set)
     if not ids:
         raise SystemExit("no test molecule could be featurized")
 
@@ -102,6 +105,7 @@ def main(argv: list[str] | None = None) -> int:
         "evaluator": "evovs_science.evaluation.evaluate",
         "label_source": args.label_source,
         "target_indicator": args.target_indicator,
+        "desc_set": args.desc_set,
         "featurization": {"radius": args.radius, "n_bits": args.n_bits, "fingerprint": "morgan"},
         "counts": {"test_rows": len(rows), "featurized": len(ids), "invalid_smiles": len(invalid),
                    "positives": int(y.sum()), "negatives": int((y == 0).sum())},

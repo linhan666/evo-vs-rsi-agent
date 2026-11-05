@@ -1,0 +1,138 @@
+{
+  "schema_version": "1",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-drd2-ic50-a9a66c0e48d0",
+  "exported_at": "2026-11-05T18:29:18+00:00",
+  "steps": [
+    {
+      "job_id": "b80e0dc51363",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T18:27:19.000Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/drd2/ic50/dataset.csv",
+        "--output",
+        "runs/features_v2.npz",
+        "--report",
+        "runs/feature_meta_v2.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "molecule_chembl_id",
+        "--smiles-column",
+        "canonical_smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 1.01,
+      "exit_code": 0,
+      "error": "",
+      "artifacts": [
+        {
+          "path": "runs/features_v2.npz",
+          "recorded_sha256": "254a3399e6ad6a789b86ac1e29bf1406739414019de95be2536e13a3eea1e341",
+          "digest": "npz:b8798897a84d75af1d30fcc61f8cbad9baf4aaef10121dacf703e22123073d48"
+        },
+        {
+          "path": "runs/feature_meta_v2.json",
+          "recorded_sha256": "f0ea6dd17a923155f4f8e2bc52cecad5b71f10e1a0a6d02a6f90d12447e18fa2",
+          "digest": "json:7437f1e971aa8ba017eb2e940de68987df3472726160e0bf137020aafce3ace9"
+        }
+      ]
+    },
+    {
+      "job_id": "257a03ad202e",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T18:27:23.089Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "runs/features_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/drd2/ic50/dataset.csv",
+        "--output-dir",
+        "runs/models/xgboost",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl37_ic50_pX7_6_descv2",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/drd2/ic50/split_manifest.json"
+      ],
+      "wall_seconds": 3.86,
+      "exit_code": 0,
+      "error": "",
+      "artifacts": [
+        {
+          "path": "runs/models/xgboost/metrics.json",
+          "recorded_sha256": "716dc41510072367bdb91b171d411e8d5d1a2891a836e4daed3da6aec5021132",
+          "digest": "json:415e7068a2214d14cfed77f8d5667616caa60ac0dd21c5edf2ece1ee93a400c9"
+        },
+        {
+          "path": "runs/models/xgboost/predictions.csv",
+          "recorded_sha256": "6dee2b503252bb75ed7f2c1a8708d2c89b39b4f693587732da7fc7f84fa5e77d",
+          "digest": "sha256:6dee2b503252bb75ed7f2c1a8708d2c89b39b4f693587732da7fc7f84fa5e77d"
+        },
+        {
+          "path": "runs/models/xgboost/model.joblib",
+          "recorded_sha256": "ef4f52b8a312d06ca332f7d1b442f45e5dcbaa991d6e87511ce61ae193cdcacb",
+          "digest": "sha256:ef4f52b8a312d06ca332f7d1b442f45e5dcbaa991d6e87511ce61ae193cdcacb"
+        },
+        {
+          "path": "runs/models/xgboost/artifact_manifest.json",
+          "recorded_sha256": "b7bee528b40438775934b707746fb498306ba7ab0f45cc2bb92f465030de5288",
+          "digest": "json:7c38a61891f84c667e1ce2fd71d5cda908dfa6f1c42920031adb33c632bc689f"
+        }
+      ]
+    },
+    {
+      "job_id": "1e64c0ef5747",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T18:27:28.836Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "DRD2",
+        "--model",
+        "runs/models/xgboost/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "runs/evaluation/receipt.json",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 6.78,
+      "exit_code": 0,
+      "error": "",
+      "artifacts": [
+        {
+          "path": "runs/evaluation/receipt.json",
+          "recorded_sha256": "c894e2c1a740a20ca266fffa73e46d5b9f03cc4045e183985c7a25493ee11fcb",
+          "digest": "json:bec23cd8f9b2fb141446adc9b4d43e7d7283705b12866b9311135fb1207e6d58"
+        }
+      ]
+    }
+  ]
+}

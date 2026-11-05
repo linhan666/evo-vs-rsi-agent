@@ -57,14 +57,16 @@ const VENV_PYTHON = process.env.EVOVS_PYTHON ?? join(REPO_ROOT, 'scientific/.ven
 
 /** Maximal arguments per tool, so the argv shows every flag the schema can produce. */
 const SAMPLE_ARGS: Record<string, Record<string, unknown>> = {
-  'rdkit.featurize': { input: 'data.csv', output: 'runs/features.npz', report: 'runs/feature_meta.json' },
+  'rdkit.featurize': { input: 'data.csv', output: 'runs/features.npz', report: 'runs/feature_meta.json',
+    desc_set: 'v1' },
   'ml.train': { features: 'runs/features.npz', labels: 'data.csv', output_dir: 'runs/models/m',
     split_manifest: 'split_manifest.json', label_id_column: 'molecule_chembl_id', label_column: 'label' },
   'screening.rank': { model: 'runs/models/m/model.joblib', library: 'library.smi',
     output: 'runs/screening/ranked.csv', top_output: 'runs/screening/top.csv', report: 'runs/screening/report.json' },
   'experience.retrieve': { store: 'experience/experience.json', out: 'runs/experience/retrieved.json',
     target: 'KOR', kind: 'model' },
-  'evaluation.locked': { target: 'DRD2', model: 'runs/models/m/model.joblib', receipt: 'runs/evaluation/receipt.json' },
+  'evaluation.locked': { target: 'DRD2', model: 'runs/models/m/model.joblib', receipt: 'runs/evaluation/receipt.json',
+    desc_set: 'v1' },
 }
 
 describe('scientific registry', () => {

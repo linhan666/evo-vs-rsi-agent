@@ -106,7 +106,7 @@ def _featurize_chunk(task: tuple):
             invalid)
 
 
-def featurize(rows: list[tuple[str, str]], *, radius: int, n_bits: int):
+def featurize(rows: list[tuple[str, str]], *, radius: int, n_bits: int, desc_set: str | None = None):
     """Featurize rows into ECFP + descriptors.
 
     `EVOVS_FEAT_JOBS=N` schedules the same chunks over N workers (candidate
@@ -118,7 +118,7 @@ def featurize(rows: list[tuple[str, str]], *, radius: int, n_bits: int):
     # PROMOTED 2026-11-05 (candidate1): default 8 after shadow acceptance
     # (equivalence 1.0, featurize 2.1x, screening 3.3x) — see docs/PHASE4_DESIGN.md §6.
     jobs = max(1, int(os.environ.get("EVOVS_FEAT_JOBS", "8")))
-    desc_set = os.environ.get("EVOVS_DESC_SET", "v1")
+    desc_set = desc_set or os.environ.get("EVOVS_DESC_SET", "v1")
     extra_names = DESCRIPTOR_SETS.get(desc_set, ())
     desc_width = len(DESCRIPTOR_NAMES) + len(extra_names)
     if rows:
@@ -151,10 +151,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--id-column", default="id")
     parser.add_argument("--smiles-column", default="smiles")
+    parser.add_argument("--desc-set", choices=list(DESCRIPTOR_SETS), default=None,
+                        help="descriptor set (candidate3); overrides EVOVS_DESC_SET")
     args = parser.parse_args(argv)
 
     rows = read_smiles(args.input, args.limit or None, args.id_column, args.smiles_column)
-    ids, matrix, descriptors, invalid = featurize(rows, radius=args.radius, n_bits=args.n_bits)
+    ids, matrix, descriptors, invalid = featurize(rows, radius=args.radius, n_bits=args.n_bits,
+                                                  desc_set=args.desc_set)
 
     os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
     np.savez_compressed(args.output, X=matrix, D=descriptors, ids=np.asarray(ids, dtype=object))

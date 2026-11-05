@@ -26,6 +26,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--model", required=True, help="fitted pipeline FILE from modeling.train")
     parser.add_argument("--workspace", required=True, help="ticket directory (rate-limit marker lives here)")
     parser.add_argument("--receipt", required=True, help="summary receipt written into the workspace")
+    parser.add_argument("--desc-set", choices=("v1", "v2"), default=None,
+                        help="must match the descriptor set the model was trained on")
     args = parser.parse_args(argv)
 
     marker_dir = os.path.join(args.workspace, ".evaluation")
@@ -47,6 +49,7 @@ def main(argv: list[str] | None = None) -> int:
         "--model", args.model,
         "--output", output,
         "--label-source", "locked_agent",
+        "--desc-set", args.desc_set or "v1",
         "--radius", "2",
         "--n-bits", "2048",
     ])

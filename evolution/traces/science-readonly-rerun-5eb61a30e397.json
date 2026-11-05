@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/science-readonly-rerun-5eb61a30e397",
-  "exported_at": "2026-11-05T17:08:23+00:00",
+  "exported_at": "2026-11-05T18:29:21+00:00",
   "steps": [
     {
       "job_id": "6f64cec77ea9",
