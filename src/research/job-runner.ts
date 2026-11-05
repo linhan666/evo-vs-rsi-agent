@@ -85,8 +85,9 @@ function inputDigest(workspace: string, args: unknown): string {
   const parts: string[] = []
   const visit = (value: unknown): void => {
     if (typeof value === 'string') {
-      if (isAbsolute(value) || value.split(/[\\/]/).includes('..')) return
-      const path = join(workspace, value)
+      if (value.split(/[\\/]/).includes('..')) return
+      // An absolute input is a read-only data-root path the schema already checked.
+      const path = isAbsolute(value) ? value : join(workspace, value)
       try {
         if (!statSync(path).isFile()) return
         const size = statSync(path).size

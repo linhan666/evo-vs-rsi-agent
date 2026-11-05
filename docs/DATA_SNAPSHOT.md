@@ -49,3 +49,26 @@
 6. **Kd 仅 42 条**：不足以单独建模，只能在方法学说明后并入 Ki 或单列小样本分析。
 
 **当前状态：这是"原始快照 + 审计"，不是可训练数据集。** 上述 6 项处理完之前，任何 MOR 模型结果都不具备科学意义。
+
+---
+
+## 归一化结果（Ki 单终点，2026-11-05）
+
+命令：`.venv/bin/python -m evovs_science.data.normalize --input .artifacts/chembl/oprm1/activities_normalized.csv --outdir .artifacts/chembl/oprm1/ki --endpoint Ki`
+
+| 项 | 值 |
+|---|---|
+| 输入行 | 16,131 |
+| 保留 | **6,339**（Ki + assay 置信度 9 + assay_type B/F） |
+| 排除 | 其他终点 7,368；置信度 8 共 2,388；assay_type 其他 36 |
+| 通道 | exact 5,310 / **censored 903** / 无关系符 126 |
+| 分子（有精确值） | 4,472 |
+| 带标签 | 3,281（**正 2,575 / 负 706**） |
+| 冲突分子（同分子同终点极差 ≥10×） | 84（标记，不平均） |
+| 划分 | train 2,297 / validation 493 / test 491 分子 |
+| scaffold 数 | 463 / 476 / 491 |
+| 检查 | `no_molecule_in_two_splits: true`、`no_scaffold_crosses_splits: true` |
+
+标签规则（预先声明）：`pX ≥ 7`（≤100 nM）为正、`pX ≤ 6`（≥1 µM）为负；**灰区与全部 censored 行不标注**；未测定对永不作为负例。
+
+产物：`measurements.csv`（逐行通道）、`dataset.csv`（每分子一行，仅精确值）、`split_manifest.json`、`dataset_audit.json`、`artifact_manifest.json`。

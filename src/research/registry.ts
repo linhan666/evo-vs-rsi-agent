@@ -40,8 +40,23 @@ export function withinWorkspace(workspace: string, relative: string): string {
 const RelativePath = z.string().trim().min(1).max(300)
   .refine(value => !isAbsolute(value) && !value.split(/[\\/]/).includes('..'), 'Use a relative path inside the workspace')
 
+/** Read-only roots outside the ticket, from `EVOVS_DATA_ROOT` (colon-separated). */
+const DATA_ROOTS = (process.env.EVOVS_DATA_ROOT ?? '').split(':').filter(Boolean)
+  .map(root => resolve(root) + sep)
+
+/**
+ * Inputs may live in a read-only data root so a ticket can read a snapshot without
+ * copying it (the worker has no shell to copy with). Outputs stay inside the ticket.
+ */
+const DataPath = z.string().trim().min(1).max(400)
+  .refine(value => {
+    if (value.split(/[\\/]/).includes('..')) return false
+    if (!isAbsolute(value)) return true
+    return DATA_ROOTS.some(root => resolve(value).startsWith(root))
+  }, 'Use a relative path inside the workspace, or an absolute path under EVOVS_DATA_ROOT')
+
 const FeaturizeInput = z.object({
-  input: RelativePath.describe('CSV with id,smiles (or a .smi file), relative to the workspace'),
+  input: DataPath.describe('CSV with id,smiles (or a .smi file); relative, or absolute under the data root'),
   output: RelativePath.describe('Output .npz path'),
   report: RelativePath.describe('Output feature report .json path'),
   radius: z.number().int().min(1).max(4).default(2),
@@ -50,8 +65,8 @@ const FeaturizeInput = z.object({
 }).strict()
 
 const TrainInput = z.object({
-  features: RelativePath.describe('npz produced by rdkit.featurize'),
-  labels: RelativePath.describe('CSV with id,label'),
+  features: DataPath.describe('npz produced by rdkit.featurize, or one under the data root'),
+  labels: DataPath.describe('CSV with id,label, or one under the data root'),
   output_dir: RelativePath.describe('Directory for metrics, predictions and the fitted model'),
   model: z.enum(['logreg', 'rf']).default('logreg'),
   seed: z.number().int().min(0).max(1_000_000).default(17),

@@ -43,6 +43,8 @@ flowchart TB
 
 ## 3. 新增模块（`src/research/` 与 `scientific/` 已实现；`src/evolution/`、`evolution/` 仍为 `[PLANNED]`）
 
+**执行面收紧（B-005 缓解）**：worker 与主 Session 的允许工具列表都已移除 shell 工具。DSH 的文件工具受 `dsh-fs-sandbox` 的可写根约束，shell 是唯一没有路径沙箱的通用工具。Ticket 读取数据快照时使用 `EVOVS_DATA_ROOT` 指向的**只读根**（输入可绝对路径，输出仍必须落在 ticket 目录）。
+
 ```
 src/research/          # 【已实现】
   registry.ts          #   白名单工具：能力/失败码/zod 输入/固定 argv

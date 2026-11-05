@@ -45,7 +45,13 @@ expected { state: 'ready' } to match { state: 'error', detail: contains 'JSON' }
 | 无 `gh` | B-001 | 视 B-001 决策 |
 | `dsh` 未全局安装 | 无（`npx` 可用） | 保持 `npx`/项目内安装，不污染全局 |
 
-## B-005 · 隔离等级不满足蓝图要求（HIGH，Phase 5 前必须解决）
+## B-005 · 隔离等级不满足蓝图要求（HIGH；已做第一步缓解，Phase 5 前仍需专用账号）
+
+**2026-11-05 更新**：已从 worker 与主 Session 的允许工具列表移除 shell 工具（`src/app/sessions.ts` 的 `WORK_TOOLS` 与主 Session 的 restrict 列表）。
+DSH 的文件工具由 `dsh-fs-sandbox` 约束可写根，shell 是此前唯一没有路径沙箱的通用通道；移除后"一条命令碰到别的项目"的路径被关闭。
+**仍缺**：专用 OS 账号或容器；`dsh-fs-sandbox` 的实际可写根仍需一次显式验证；外部资源硬限仍只有墙钟 + `prlimit`。
+
+原文保留如下。
 
 上游 `docs/006-deployment.md` 明文：worker 以**操作者 OS 用户**、`danger-full-access` 运行，可读整个 `$HOME`。
 当前 `linhan_cluster` 的 home 下有 220 个既有项目目录，直接暴露给自修改 Agent 不可接受。

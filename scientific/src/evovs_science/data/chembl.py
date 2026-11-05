@@ -75,7 +75,33 @@ def pull(target_id: str, types: list[str], outdir: str, max_pages: int) -> tuple
     return rows, pages
 
 
-def normalize(rows: list[dict], target: dict) -> tuple[list[dict], dict]:
+def fetch_assays(assay_ids: list[str], outdir: str, batch: int = 80) -> dict[str, dict]:
+    """`confidence_score` lives on the assay, not on the activity, so fetch it there.
+
+    Cached in `assays.json`; a rerun only asks for ids it has not seen.
+    """
+    cache_path = os.path.join(outdir, "assays.json")
+    cache: dict[str, dict] = {}
+    if os.path.exists(cache_path):
+        with open(cache_path, encoding="utf-8") as handle:
+            cache = json.load(handle)
+    missing = [item for item in dict.fromkeys(assay_ids) if item and item not in cache]
+    for start in range(0, len(missing), batch):
+        chunk = missing[start:start + batch]
+        url = (f"{API}/assay.json?assay_chembl_id__in={','.join(chunk)}&limit=1000"
+               f"&only=assay_chembl_id,confidence_score,assay_type")
+        payload = fetch_json(url)
+        for item in payload.get("assays", []):
+            cache[item.get("assay_chembl_id")] = {
+                "confidence_score": item.get("confidence_score"),
+                "assay_type": item.get("assay_type"),
+            }
+    with open(cache_path, "w", encoding="utf-8") as handle:
+        json.dump(cache, handle, indent=2)
+    return cache
+
+
+def normalize(rows: list[dict], target: dict, assays: dict[str, dict] | None = None) -> tuple[list[dict], dict]:
     from rdkit import Chem, RDLogger
 
     RDLogger.DisableLog("rdApp.*")
@@ -99,8 +125,8 @@ def normalize(rows: list[dict], target: dict) -> tuple[list[dict], dict]:
             "standard_value": row.get("standard_value"),
             "standard_units": row.get("standard_units"),
             "assay_chembl_id": row.get("assay_chembl_id"),
-            "assay_type": row.get("assay_type"),
-            "confidence_score": row.get("confidence_score"),
+            "assay_type": (assays or {}).get(str(row.get("assay_chembl_id")), {}).get("assay_type") or row.get("assay_type"),
+            "confidence_score": (assays or {}).get(str(row.get("assay_chembl_id")), {}).get("confidence_score"),
             "target_chembl_id": row.get("target_chembl_id"),
             "target_pref_name": target.get("pref_name"),
             "document_chembl_id": row.get("document_chembl_id"),
@@ -151,7 +177,8 @@ def main(argv: list[str] | None = None) -> int:
     os.makedirs(args.outdir, exist_ok=True)
 
     rows, pages = pull(args.target, types, args.outdir, args.max_pages)
-    normalized, extra = normalize(rows, target)
+    assays = fetch_assays([str(row.get("assay_chembl_id")) for row in rows], args.outdir)
+    normalized, extra = normalize(rows, target, assays)
 
     csv_path = os.path.join(args.outdir, "activities_normalized.csv")
     with open(csv_path, "w", newline="", encoding="utf-8") as handle:
@@ -163,7 +190,8 @@ def main(argv: list[str] | None = None) -> int:
         "schema_version": "1", "created_at": utc_now(),
         "chembl_version": version, "chembl_release_date": released,
         "api": API, "target": target, "standard_types": types,
-        "pages": len(pages), "activities_pulled": len(rows), "activities_kept": len(normalized),
+        "pages": len(pages), "assays_resolved": len(assays),
+        "activities_pulled": len(rows), "activities_kept": len(normalized),
         **extra,
     }
     audit_path = os.path.join(args.outdir, "dataset_audit.json")
