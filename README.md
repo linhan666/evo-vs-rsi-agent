@@ -9,7 +9,7 @@
 - 代码基底：`deepseek-ai/dsh-superagent-prototype`（MIT，研究原型）
 - RSI 机制参考：`pzs19/HarnessPro`（仅参考，不替代基底）
 - 当前阶段：**Phase 0 — 上游复现、运行环境与设计审计**
-- 状态：**基线可构建、可启动、可调用 LLM；真实 Ticket 生命周期未跑通（见 `docs/BLOCKERS.md` B-001）。不是可交付的科研系统。**
+- 状态：**Phase 0 Gate 0 已通过**——基线可构建、可启动，真实 Ticket 生命周期（本地 Source → Engine → DSH Worker → 报告）与重启恢复均已跑通。科研能力仍未实现（Phase 1 起）。
 
 ## 关键事实（实测，非推测）
 
@@ -22,7 +22,7 @@
 | `pnpm build` | PASS（11 文件，693.50 kB，2516 ms） |
 | `pnpm test` | 58/59 文件通过；1 例 Feishu 用例可复现失败（上游缺陷） |
 | LLM 端到端 | PASS（`deepseek-flash` → `SMOKE_OK`） |
-| Gate 0 | 有条件通过；`T-002`（Ticket 生命周期）BLOCKED |
+| Gate 0 | **通过**：`T-002`（Ticket 生命周期）与 `T-003`（重启恢复）PASS，证据在 `docs/evidence/phase0/smoke/` |
 
 ## 快速开始
 

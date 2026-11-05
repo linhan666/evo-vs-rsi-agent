@@ -2,7 +2,7 @@
 
 > 原则（蓝图 §3.4）：任一 Gate 不通过先建此文件，停止破坏性集成；允许继续做独立、离线、可验证的部分，但**不得宣称已运行完整 Harness**。
 
-## B-001 · 真实 Ticket 生命周期冒烟受阻（HIGH，需运维决策）
+## B-001 · 真实 Ticket 生命周期冒烟受阻（**已解决 2026-11-05**）
 
 **现象**：P0-04 要求"Source → Engine → Executor → Report"跑通一次受限 Ticket。当前无法完成。
 
@@ -92,3 +92,35 @@ expected { state: 'ready' } to match { state: 'error', detail: contains 'JSON' }
   且后续每次同步上游都要重新确认。收益：不依赖任何外部账号即可跑通 `Source→Engine→Executor→Report`。
 
 **已撤销**：早期把"集成测试当作 Gate 0 证据"列为选项 3 —— 与蓝图 §3.4 冲突，作废。
+
+
+---
+
+## B-006 · 令牌曾以明文进入对话记录（MEDIUM，需轮换）
+
+**事件**：2026-11-05 16:10，细粒度 PAT 被直接粘贴到对话中（此前已提示应落盘盲传）。
+
+**影响面**：该令牌为 fine-grained，仅授权 `linhan666/evo-vs-rsi-agent`（Contents: RW + Metadata: R），
+不能触达其它仓库；但对话记录可被读取，等同于凭据泄露。
+
+**已在做的缓解**：令牌只写入服务器 `~/.config/gh-agent/hosts.yml`（600），上传用的临时文件已当场删除；
+仓库内已用 `git grep` 校验无任何令牌字面量。
+
+**必须由操作者完成（Phase 0 收尾后）**：
+
+1. GitHub → Settings → Developer settings → Fine-grained tokens → 删除该令牌；
+2. 新建一个同权限令牌，**不要再贴进对话**；用 device flow（`gh-agent auth login --web`）或本地文件盲传；
+3. 服务器执行：`~/.local/bin/gh-agent auth login --with-token < 新令牌文件`，随后删除该文件；
+4. `scripts/dsh-superagent restart`，确认 `GET state.setup.problem` 仍为 `null`、`local` 仍为 `ready`。
+
+**长期规则**：密钥类内容一律不经过对话；`ops/rctl.py write` 支持从 stdin 盲写，`ops/local.env` 已在 `.gitignore`。
+
+## B-007 · 沿用本人 GitHub 账号的残余风险（LOW，已接受）
+
+上游建议专用 Agent 账号；本项目沿用 `linhan666`。当前风险被两点压住：
+
+1. 任务入口是本地 Source，Agent **不会**在 GitHub 上以你的名义发评论或开 PR；
+2. 令牌是仓库级细粒度，不是账号级。
+
+仍需注意：若将来启用 GitHub Source（需 notification 端点，细粒度令牌不支持），就必须换 classic token 或专用账号，
+届时「署名不可分辨」和「账号级写权限」两个问题会同时回来。

@@ -13,9 +13,9 @@
 | 构建 | ✅ PASS（`tsdown`，11 文件 / 693.50 kB / 2516 ms） |
 | DSH 运行时 | ✅ `0.2.1-rc.5` 可启动 |
 | LLM 端到端 | ✅ `deepseek-flash` 返回 `SMOKE_OK` |
-| Ticket 生命周期（真实 Source） | ❌ 未验证 — 缺 `gh` CLI 与 Agent GitHub 账号（B-001） |
+| Ticket 生命周期（真实 Source） | ✅ PASS — 本地 Source → Ticket `2fa5057…` → Worker → `SMOKE_OK`（证据 `docs/evidence/phase0/smoke/`） |
 
-**Gate 0 判定**：**有条件通过**。上游代码本身可构建、可测试、可调用 LLM；但"真实 Ticket 生命周期冒烟"受阻于外部账号条件，不能声称端到端已跑通。
+**Gate 0 判定**：**通过**。上游可构建、可测试、可调用 LLM；真实 Ticket 生命周期与重启恢复均已跑通并有可复核日志。唯一遗留是上游自身的 Feishu 用例失败（B-002，不影响主链路）。
 
 ## 2. 版本与 SHA
 

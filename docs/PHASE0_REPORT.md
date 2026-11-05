@@ -7,7 +7,8 @@
 - Upstream commit: `dsh-superagent-prototype` = `8c32a9dc5d72c033816c6a8110b37f40cf94fba4`（2026-10-31T20:06:31+08:00，MIT）
 - Reference commit: `pzs19/HarnessPro` = `6fd2d4dbc3b73881b2b48833764fcd803aacb7b8`（`--depth 1`，只读，gitignored）
 - DSH version: `@deepseek-ai/dsh@0.2.1-rc.5`（`npx` 调用，未全局安装；满足 `engines.dsh: ^0.2.1-alpha.2`）
-- Python/Node versions: Python 3.12.3（系统，无 `pip3`）/ Node v22.23.4（用户态）/ pnpm 11.7.0 / npm 10.9.9 / git 2.43.0
+- Python/Node versions: Python 3.12.3（系统，无 `pip3`）/ Node v22.23.4（用户态）/ pnpm 11.7.0 / npm 10.9.9 / git 2.43.0 / **gh 2.103.3（用户态）**
+- GitHub 账号: `linhan666`（沿用操作者本人账号，见 `docs/BLOCKERS.md` B-006 的风险记录），细粒度 PAT 仅授权 `linhan666/evo-vs-rsi-agent`
 - Environment / container lock: **无容器**。仅用户态工具链 `~/software/node-v22.23.4-linux-x64`；系统包、`~/.bashrc`、全局 npm prefix 均未改动。`pnpm-lock.yaml` 原样保留（172,084 B）。
 
 ### Files changed
@@ -60,8 +61,8 @@
 
 - **Test IDs completed**：无完整通过的 T-ID。
 - **T-001（不破坏上游 `pnpm check`）**：**PARTIAL**。`typecheck` 与 `build` 通过；上游自身 `tests/sources.spec.ts` 有 1 例 Feishu 用例可复现失败。加入本项目新增文件后重跑结果一致（58/59），可证明**未引入新破坏**，但不能宣称 `pnpm check` 全绿。
-- **T-002（Ticket 启动→Worker→报告）**：**BLOCKED（阻塞点已精确定位）**。本地 Source 已实现并通过 7 个单测、已注册进 bundle、启动后出现在健康表（`local`），但上游 `Setup` 强制要求 GitHub 仓库与可推送的 Agent CLI：实测 `setup = {place: github, code: repositoryUnset}`，本地 Source 因此停在 `paused`，不扫描收件目录。两条可选路径见 `docs/BLOCKERS.md` B-001 补记。**任何替代验证都不构成 T-002 通过证据。**
-- **Test IDs blocked**：T-002（依赖 B-001）；T-003（重启恢复，依赖 T-002 先通过）。
+- **T-002（Ticket 启动→Worker→报告）**：**PASS**。真实链路：`smoke_001.json` → Trigger → Ticket `2fa505775dd03e69a222cc2babfdf2fe` → DSH Worker → `acknowledgement`（08:15:12）→ `reply: SMOKE_OK`（08:15:22），产物 `.artifacts/state/work/smoke-write-file-2fa505775dd0/smoke_output.txt` = `hello-from-worker`。证据见 `docs/evidence/phase0/smoke/`。
+- **T-003（重启恢复）**：**PASS（限 Source/Engine 层）**。`scripts/dsh-superagent restart` 后 outbox 仍为 2 个文件（旧任务未重放、未重复创建 Ticket）；随后 `smoke_002` 正常完成（`RESTART_OK`，产物 `restart_proof.txt` = `after-restart`）。**未测试**：运行中作业被强杀后的 Assignment 断点续跑。
 - **Known failures**：`tests/sources.spec.ts > feishu event consumer > …reports a malformed line without stopping`，断言 `health.feishu` 应为 `error` 实为 `ready`（B-002，上游缺陷，不修不回退）。
 - **未进入范围**：T-004…T-020 属 Phase 2+ 科学/进化/Benchmark 测试，Phase 0 不得声称通过。
 
@@ -78,7 +79,7 @@
 - Dataset manifests: **无**（尚未进入 Phase 2 数据阶段）
 - Job/trace logs: 服务器 `/home/linhan_cluster/evo_vs_rsi/logs/phase0/`；关键日志已复制到 `docs/evidence/phase0/`
 - Code commit: `1e2771c`（Phase 0 审计文档与骨架）+ 本次补充提交（README / scientific 契约 / 本报告）
-- Result artifacts: 无科研工件；`scientific/examples/job_spec.example.json` 仅用于契约校验
+- Result artifacts: `docs/evidence/phase0/smoke/`（4 条 outbox 消息、2 个 worker 产物、`state_after.json`）；无科研工件，`scientific/examples/job_spec.example.json` 仅用于契约校验
 
 ### RSI classification (only for Evolution phases)
 
@@ -95,5 +96,5 @@
   5. 合法 SMILES 小样本跑 RDKit ECFP / 2D descriptors + 小模型；
   6. 失败/超时/中断恢复集成测试。
 - **Blocking decisions requiring operator authorization**：
-  - **B-001**：Phase 0 的 P0-04 需要真实 Ticket 生命周期。蓝图 §3.4 明确要求"实际从 source 接收、执行、恢复/报告的日志"，因此只有两条合规路径：**(a)** 提供专用 Agent GitHub 账号 + `gh auth login`（§7.2 的 MVP 路径）；**(b)** 按 §7.2 末段与 §008-cookbook 实现本地 CLI Source（`ResearchTaskSource`，11 步插件流程）。**不接受"用集成测试充当 Gate 0 证据"** —— 该做法与 §3.4 冲突，上一轮把它列为选项 3 是本报告的撰写错误，现予更正。
+  - ~~**B-001**~~：**已解决**。两条路径同时落地：实现本地 Source，并用操作者本人账号的细粒度 PAT 解锁上游 setup 门禁；T-002/T-003 均有真实日志。
   - **B-005**：进入 Phase 5 前必须提供隔离环境（专用 OS 账号/容器/受保护资产不可读）。

@@ -58,11 +58,14 @@
 | `pnpm build` | PASS，产出 `lib/local-watch.js`（9,411 B） |
 | `tests/docs.spec.ts` / `tests/bundle-patch.spec.ts` | PASS（模块表、测试表、patch 列表已同步） |
 | 全量 `pnpm check` | 59/60 文件通过；唯一失败仍是上游 Feishu 用例（B-002） |
-| 真实启动 | 服务可启动，`GET state` 的健康里出现 `"local": "paused"` |
+| 服务启动（未解锁 setup 时） | `GET state` 健康里出现 `"local": "paused"`（已过时的历史观察） |
+| **端到端（2026-11-05 实测）** | `smoke_001.json` → Ticket `2fa5057…` → Worker 回 `SMOKE_OK`，产物 `smoke_output.txt` = `hello-from-worker`；重启后 `smoke_002` 回 `RESTART_OK`，旧任务未重放 |
 
 ## 5. 已知限制（实测，不是推测）
 
-**本地 Source 无法单独让系统进入可执行状态。** 上游 `Setup` 在启动时强制解析 GitHub 部署：
+> **2026-11-05 更新：本条已解除。** 通过操作者本人账号的仓库级细粒度 PAT 解锁了 setup 门禁，本地 Source 已实际跑通（见 §4）。以下保留当时的分析与证据，作为「为什么必须解锁 setup」的记录。
+
+**（历史）本地 Source 无法单独让系统进入可执行状态。** 上游 `Setup` 在启动时强制解析 GitHub 部署：
 
 - `src/deployment.ts` → `resolveDeployment()`：`repository` 为空即 `throw new SetupError('repositoryUnset')`；
   有仓库还要求 `gh api user` 已登录、且对仓库 `permissions.push === true`。
