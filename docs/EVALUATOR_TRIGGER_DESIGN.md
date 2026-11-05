@@ -31,10 +31,13 @@
 ## 方案 2 已实现（2026-11-06 00:15，适配说明）
 
 **适配**：worker 无 shell（B-005 后裁剪），垫片从 worker-bin 脚本改为**注册工具** `evaluation.locked`——能力等价：
-- Agent 只传 `target`（MOR/KOR/DRD2）与 `model`（workspace 内相对路径）；测试集与输出位置**硬编码**在 `evaluation/locked.py`；
+- Agent 只传 `target`（MOR/KOR/DRD2）、`endpoint`（Ki/IC50）、`desc_set`（v1/v2）与 `model`（workspace 内相对路径）；**测试集与输出位置按 (target, endpoint) 硬编码**在 `evaluation/locked.py`；
 - 原始指标 600 写 protected（agent 不可达）；Agent 只拿到 workspace 内的 receipt 摘要（允许的"摘要数字"）；
-- **限频**：每 Ticket 每靶点一次（`.evaluation/<target>.done` 标记）；
+- **限频**：每 Ticket 每 (target, endpoint) 一次（`.evaluation/<target>_<endpoint>.done` 标记）；
 - 生产验证：science_014（Ticket `26cf2e58…`）——Agent 训练 DRD2 模型后自主触发，回复 "validation AUROC 0.9214; locked-test AUROC 0.9015"（与 operator 一致）。
+
+> **2026-11-06 修订（F-1/F-2）**：初版把测试集写死成 `final_test_Ki.csv`、且没有 endpoint 参数，导致 IC50 通道的工单实际是"IC50 模型 vs Ki 标签"的跨端点错配；同时输出名依赖 `basename(workspace)`，多通道用 `.` 调用时会互相覆盖。现已加 `--endpoint {Ki,IC50}`（映射到各自 protected 目录与测试集），输出名改为
+> `metrics_test_locked_agent_{endpoint}_{desc_set}_{ticket}_{target}.json`。详见 `docs/PHASE5_REPORT.md` §6。
 
 ### 方案 3 实现草案（Phase 5，**未实现**——按"最后做"暂缓）
 

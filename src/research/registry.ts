@@ -180,6 +180,7 @@ const EXPERIENCE_TOOL = {
 
 const LockedInput = z.object({
   target: z.enum(['MOR', 'KOR', 'DRD2']),
+  endpoint: z.enum(['Ki', 'IC50']).default('Ki').describe('Locked channel; must match the labels the model was trained on'),
   model: RelativePath.describe('Fitted pipeline FILE from ml.train in this workspace'),
   receipt: RelativePath.describe('Where the summary receipt is written'),
   desc_set: z.enum(['v1', 'v2']).default('v1'),
@@ -187,8 +188,8 @@ const LockedInput = z.object({
 
 const LOCKED_TOOL = {
   id: 'evaluation.locked',
-  version: '0.1.0',
-  description: 'Trigger a locked final-test evaluation for a model in this workspace. Test set and output location are fixed per target; the raw result stays in the protected tree — you get a receipt with summary metrics. One evaluation per target per ticket.',
+  version: '0.2.0',
+  description: 'Trigger a locked final-test evaluation for a model in this workspace. Test set and output location are fixed per target and endpoint (Ki or IC50); the raw result stays in the protected tree — you get a receipt with summary metrics. One evaluation per target per endpoint per ticket.',
   capabilities: ['evaluation', 'locked_test'],
   resources: ['cpu'],
   sideEffects: ['write_artifacts'],
@@ -196,7 +197,8 @@ const LOCKED_TOOL = {
   input: LockedInput,
   argv: (args: z.infer<typeof LockedInput>, context) => [
     context.python, '-m', 'evovs_science.evaluation.locked',
-    '--target', args.target, '--model', args.model, '--workspace', '.', '--receipt', args.receipt,
+    '--target', args.target, '--endpoint', args.endpoint, '--model', args.model,
+    '--workspace', '.', '--receipt', args.receipt,
     '--desc-set', args.desc_set,
   ],
   outputs: (args: z.infer<typeof LockedInput>) => [args.receipt],

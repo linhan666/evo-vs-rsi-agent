@@ -65,8 +65,8 @@ const SAMPLE_ARGS: Record<string, Record<string, unknown>> = {
     output: 'runs/screening/ranked.csv', top_output: 'runs/screening/top.csv', report: 'runs/screening/report.json' },
   'experience.retrieve': { store: 'experience/experience.json', out: 'runs/experience/retrieved.json',
     target: 'KOR', kind: 'model' },
-  'evaluation.locked': { target: 'DRD2', model: 'runs/models/m/model.joblib', receipt: 'runs/evaluation/receipt.json',
-    desc_set: 'v1' },
+  'evaluation.locked': { target: 'DRD2', endpoint: 'IC50', model: 'runs/models/m/model.joblib',
+    receipt: 'runs/evaluation/receipt.json', desc_set: 'v2' },
 }
 
 describe('scientific registry', () => {

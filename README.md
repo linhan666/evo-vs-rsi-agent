@@ -44,7 +44,7 @@
 | 筛选库 | ZINC250k 规范化去重 → 种子 17 抽样 **100,000**（`library_100k.smi`） |
 | Evolution 语料 / 经验库 | **20 traces** / **24 条经验记录**（model 7、screening 7、transfer 6、dataset 3、harness 1） |
 | 已晋升候选 | **candidate1**（featurize 分块并行，默认 `EVOVS_FEAT_JOBS=8`，回滚=改回 1） |
-| 被拒绝候选 | candidate2（pooled 重校准，负迁移恶化至 −0.0614）；candidate3（descv2，Ki 通道三条 CI 全含 0，保持 v1 默认） |
+| 被拒绝候选 | candidate2（pooled 重校准，负迁移恶化至 −0.0614）；candidate3（descv2，Ki 三条 CI 全含 0；IC50 通道 Δ +0.0035/+0.0037/−0.0011，同为持平 → 保持 v1） |
 
 ## 快速开始
 
