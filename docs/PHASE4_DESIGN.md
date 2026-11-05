@@ -62,6 +62,8 @@ Shadow Evaluator：在沙箱目录按 trace 重放候选工具链，比对工件
 
 **保持 v1 为默认**（operator 决策）。理由：三个 CI 全含 0（收益未证实）；IC50 双端点排序应在单一特征代上做；晋升窗口不关、降级窗口会关。复活条件：IC50 通道用 v2 重影子评估作独立验证面 + 语料增长收紧 CI 后经 Intake 重审。v2 分支保留在 `EVOVS_DESC_SET=v2`（单代码路径）。
 
+> **更正（2026-11-06，F-4）**：当时另有一条"IC50 通道 descv2 大幅劣化（0.9188→0.7898 等）"的读数，已被复核推翻——`evaluation.locked` 的测试集当时硬编码为 `final_test_Ki.csv`，那三个工单训练在 IC50 数据上、评测却对 Ki 标签，属跨端点错配，不能作为 descv2 的证据。**descv2 在 IC50 通道的真实表现：未验证**。决策本身不变（它由 Ki 通道 CI 全含 0 支撑）。详见 `docs/PHASE5_REPORT.md` §6。
+
 ## 7. candidate1 晋升记录（2026-11-06 00:47，首次真实晋升）
 
 完整门禁流程走完：影子验收 pass → operator 批准 → 应用（featurize.py 默认 1→8）→ freshness gate ✓ → rebuild ✓ → 金丝雀 ✓ → **生产冒烟 science_013（真实 Ticket，默认路径无任何环境变量）：rdkit.featurize SUCCEEDED 1.08s（串行基线 3.7–3.9s），回复 "2790 molecules featurized."** → 经验库 `harness_HARNESS_013`。回滚方式：把默认改回 "1"。

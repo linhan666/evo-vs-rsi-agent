@@ -1,12 +1,16 @@
-# EvoVS-RSI
+# EvoVS-RSI（历史快照）
+
+> **⚠️ 本文件已冻结为 Phase 0 时期的历史草稿，不再维护。**
+> 当前状态请看 `README.md`（阶段映射 + 关键事实）与 `docs/PHASE5_REPORT.md`（最新阶段报告）。
+> 保留本文件是为了记录项目骨架的演进起点；其中的"当前阶段/状态"字段均为 2026-11-05 的值。
 
 面向跨靶点药物虚拟筛选的自主 Agent Harness 与递归自进化（RSI）系统。
 
 - **设计蓝图**：`EvoVS_RSI_Harness_Codex_Blueprint.md`（v0.1.0，2026-11-05）
-- **当前阶段**：Phase 0 — 上游审计与最小运行验证（已完成，含 4 项阻塞记录）
-- **状态**：不是可运行的完整系统。目前只有上游基线的可复现构建证据与项目骨架。
+- **当前阶段（历史，2026-11-05）**：Phase 0 — 上游审计与最小运行验证（已完成，含 4 项阻塞记录）
+- **状态（历史，2026-11-05）**：不是可运行的完整系统。目前只有上游基线的可复现构建证据与项目骨架。
 
-## 关键事实（实测，非推测）
+## 关键事实（Phase 0 实测值，历史）
 
 | 项 | 值 | 证据 |
 |---|---|---|
@@ -32,7 +36,7 @@ evo_vs_rsi/
 └── package.json             # 上游原样，未改动
 ```
 
-**计划新增但尚未创建**（Phase 1+，见 `docs/ARCHITECTURE.md`）：`src/research/`、`src/evolution/`、`scientific/`、`evolution/`、`configs/`、`benchmarks/`。
+**当时计划新增、现已创建**（Phase 1+，见 `docs/ARCHITECTURE.md`）：`src/research/`、`scientific/`、`evolution/`、`protected/` 均已落地；`configs/`、`benchmarks/` 仍未创建（benchmark 设计见蓝图 §13）。
 
 ## 环境
 
