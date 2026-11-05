@@ -1,0 +1,8 @@
+{
+  "id": "507d784552dc75f400e67a3b6197b34c",
+  "kind": "acknowledgement",
+  "task_id": "science_011",
+  "ticket_id": "fc4be84cd18000458e6a24f5b9bd57cc",
+  "text": "On it: retrieving the three experience entries first, then featurizing the DRD2 Ki dataset, training xgboost on the fixed split, ranking the 100k library, and replying with the counts, AUROC, top-1 score and one applicability limit.",
+  "at": "2026-11-05T14:58:59.691Z"
+}

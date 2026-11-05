@@ -113,6 +113,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="internal random split, used only without --split-manifest")
     parser.add_argument("--split-manifest", default=None,
                         help="split_manifest.json from data.normalize; train/validation then follow scaffolds")
+    parser.add_argument("--no-validation", action="store_true",
+                        help="pooled mode: fit on every row; metrics come from the locked evaluator per target")
     parser.add_argument("--label-source", default="fixture")
     parser.add_argument("--label-id-column", default="id")
     parser.add_argument("--label-column", default="label")
@@ -132,7 +134,11 @@ def main(argv: list[str] | None = None) -> int:
     y = np.asarray([labels[ids[index]] for index in keep], dtype=int)
     kept_ids = [ids[index] for index in keep]
 
-    if args.split_manifest:
+    if args.no_validation:
+        train = np.arange(len(y))
+        val = train
+        split_strategy = "pooled-fit-all"
+    elif args.split_manifest:
         split_ids = read_split_ids(args.split_manifest)
         train = np.asarray([index for index, molecule_id in enumerate(kept_ids)
                             if molecule_id in split_ids["train"]], dtype=int)
@@ -149,6 +155,35 @@ def main(argv: list[str] | None = None) -> int:
 
     model = make_pipeline(StandardScaler(), build_model(args.model, args.seed))
     model.fit(features[train], y[train])
+    if args.no_validation:
+        metrics = {
+            "schema_version": "1", "created_at": utc_now(), "label_source": args.label_source,
+            "model": args.model, "seed": args.seed, "split_strategy": split_strategy,
+            "counts": {"fitted_rows": int(len(train)), "positives": int(y.sum())},
+            "metrics": {key: None for key in ("auroc", "auprc", "accuracy", "f1", "ef_at_1pct", "ef_at_5pct")},
+            "notes": ["Pooled fit-all model: per-target metrics come only from the locked evaluator."],
+            "versions": {"sklearn": __import__("sklearn").__version__, "numpy": np.__version__},
+        }
+        os.makedirs(args.output_dir, exist_ok=True)
+        metrics_path = os.path.join(args.output_dir, "metrics.json")
+        with open(metrics_path, "w", encoding="utf-8") as handle:
+            json.dump(metrics, handle, ensure_ascii=False, indent=2)
+            handle.write("\n")
+        model_path = os.path.join(args.output_dir, "model.joblib")
+        __import__("joblib").dump(model, model_path)
+        write_manifest(
+            args.output_dir,
+            [
+                {"path": metrics_path, "content_type": "application/json", "description": "counts only"},
+                {"path": model_path, "content_type": "application/octet-stream", "description": "pooled pipeline"},
+            ],
+            generator="evovs_science.modeling.train",
+            inputs=[describe_input(args.features), describe_input(args.labels)],
+            parameters={"model": args.model, "seed": args.seed, "split_strategy": split_strategy},
+            extra={"label_source": args.label_source},
+        )
+        print(json.dumps({"split_strategy": split_strategy, "fitted_rows": int(len(train))}))
+        return 0
     scores = model.predict_proba(features[val])[:, 1]
     predicted = (scores >= 0.5).astype(int)
     single_class = len(np.unique(y[val])) < 2

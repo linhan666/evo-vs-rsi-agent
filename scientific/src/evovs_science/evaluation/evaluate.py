@@ -20,6 +20,8 @@ from ..chemistry.featurize import featurize, read_smiles
 from ..manifest import describe_input, sha256_file, utc_now, write_manifest
 from ..modeling.train import enrichment
 
+TARGET_ORDER = ("MOR", "KOR", "DRD2")  # pre-registered in docs/TRANSFER_DESIGN.md
+
 
 def read_test_rows(path: str, id_column: str, smiles_column: str, label_column: str) -> list[dict]:
     with open(path, newline="", encoding="utf-8-sig") as handle:
@@ -49,6 +51,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--smiles-column", default="canonical_smiles")
     parser.add_argument("--label-column", default="label")
     parser.add_argument("--label-source", required=True, help="recorded verbatim, e.g. chembl37_ki_pX7_6")
+    parser.add_argument("--target-indicator", choices=list(TARGET_ORDER), default=None,
+                        help="pooled model: append the pre-registered one-hot for this target")
+    parser.add_argument("--dump-predictions", default=None,
+                        help="write per-molecule scores here (protected directory; input to bootstrap CIs)")
     args = parser.parse_args(argv)
 
     import joblib
@@ -64,6 +70,11 @@ def main(argv: list[str] | None = None) -> int:
     y = np.asarray([labels_by_id[molecule_id] for molecule_id in ids], dtype=int)
     features = np.hstack([matrix.astype(np.float32), descriptors]).astype(np.float32)
 
+    if args.target_indicator:
+        onehot = np.zeros((features.shape[0], len(TARGET_ORDER)), dtype=np.float32)
+        onehot[:, TARGET_ORDER.index(args.target_indicator)] = 1.0
+        features = np.hstack([features, onehot]).astype(np.float32)
+
     model = joblib.load(args.model)
     scores = model.predict_proba(features)[:, 1]
 
@@ -75,12 +86,22 @@ def main(argv: list[str] | None = None) -> int:
         "ef_at_5pct": None if single_class else enrichment(y, scores, 0.05),
     }
 
+    if args.dump_predictions:
+        dump_path = os.path.abspath(args.dump_predictions)
+        os.makedirs(os.path.dirname(dump_path), exist_ok=True)
+        with open(dump_path, "w", encoding="utf-8") as handle:
+            json.dump({"target": args.target_indicator or args.label_source,
+                       "records": [{"id": ids[index], "label": int(y[index]), "score": float(scores[index])}
+                                   for index in range(len(ids))]}, handle, ensure_ascii=False, indent=2)
+        os.chmod(dump_path, 0o600)
+
     record = {
         "schema_version": "1",
         "created_at": utc_now(),
         "test_locked": True,
         "evaluator": "evovs_science.evaluation.evaluate",
         "label_source": args.label_source,
+        "target_indicator": args.target_indicator,
         "featurization": {"radius": args.radius, "n_bits": args.n_bits, "fingerprint": "morgan"},
         "counts": {"test_rows": len(rows), "featurized": len(ids), "invalid_smiles": len(invalid),
                    "positives": int(y.sum()), "negatives": int((y == 0).sum())},

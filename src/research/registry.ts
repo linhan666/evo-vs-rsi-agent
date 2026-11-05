@@ -153,7 +153,7 @@ const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
 
 const ExperienceInput = z.object({
   target: z.string().trim().min(1).max(60).optional(),
-  kind: z.enum(['dataset', 'model', 'screening']).optional(),
+  kind: z.enum(['dataset', 'model', 'screening', 'transfer']).optional(),
   store: DataPath.describe('Experience store json; absolute under the data root or relative'),
   out: RelativePath.describe('Where the retrieval result is written'),
 }).strict()

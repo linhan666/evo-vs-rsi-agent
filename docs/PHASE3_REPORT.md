@@ -74,6 +74,28 @@ ticket 外写文件 succeeded（探针文件已清理）、**protected 测试标
 漏洞，逃逸进程仍拥有 `linhan_cluster` 的全部权限，金丝雀只能**检测**不能**阻止**。Phase 4 前必须三选一：
 专用账号 / 另一台机器跑 Harness / 书面接受残余风险并限制 Phase 4 能力面。
 
+## §12 迁移实验实跑（预注册口径，2026-11-05 23:05）
+
+pooled 模型（三靶点 train 合并 + 预注册 target one-hot，6,573 行 / 2,058 维）vs per-target 基线，**锁定测试**：
+
+| 靶点 | pooled AUROC | per-target AUROC | Δ | CI95（scaffold 聚类 bootstrap） | 判定 |
+|---|---|---|---|---|---|
+| MOR | 0.8872 | 0.9339 | **−0.0468** | [−0.0770, −0.0195] | **负迁移 = True**（幅度与方向均过阈值） |
+| KOR | 0.8522 | 0.8685 | −0.0163 | [−0.0457, +0.0119] | False（CI 含 0：未观察到差异） |
+| DRD2 | 0.8842 | 0.9015 | −0.0173 | [−0.0312, −0.0034] | False（CI 全负但幅度未达 −0.02 阈值——如实标注"统计可检的下降"） |
+
+三条 CI 已作为 `transfer` 类经验写入经验库（applicability：pooled 训练未经重校准不得用于该靶点）。
+**结论的表述规则已执行**：CI 含 0 只说"未观察到差异"；DRD2 不写成"无影响"。
+
+## KOR/DRD2 经真实 Ticket 复用经验库（P3-02 收尾）
+
+| Ticket | 靶点 | 经验检索 | 链路作业 | 回复要点 | Agent 模型锁定测试 |
+|---|---|---|---|---|---|
+| science_008 | KOR | 2 次（KOR dataset + MOR model） | 全 SUCCEEDED | val AUROC 0.8765 / 100k / top-1 0.999433 + 逐字限制 | **0.8685**（与 operator 一致） |
+| science_011 | DRD2 | 3 次（含 DRD2 transfer 警告） | **6 作业一次全成（零重试）** | val AUROC 0.9214 / 100k / top-1 0.996710 + 引用 dataset_DRD2_007 | **0.9015**（与 operator 一致） |
+
+**新缺陷（经验库分裂脑，已修）**：`store` 默认路径依赖 cwd，三条 transfer 记录写进了 `scientific/experience/`（旧位置），agent 如实报告 "0 DRD2 transfer records" 暴露了分裂。已合并（12 条）并删除游离文件；规则改为**始终显式传 `--store`**（数据根内路径）。
+
 ## Next phase
 
 - Phase 3 后半：Memory 注入机制设计 → 经真实 Ticket 的 KOR/DRD2 执行（复用经验库）；
