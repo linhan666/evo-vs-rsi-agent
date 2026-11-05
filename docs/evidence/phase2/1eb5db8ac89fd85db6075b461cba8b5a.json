@@ -1,0 +1,8 @@
+{
+  "id": "1eb5db8ac89fd85db6075b461cba8b5a",
+  "kind": "acknowledgement",
+  "task_id": "science_005",
+  "ticket_id": "3eee106a930c070e55d3c76f2baa28f4",
+  "text": "On it: featurizing the OPRM1 Ki dataset, training an xgboost model on the fixed scaffold split, ranking the 100k library, then replying with the featurized count, validation AUROC, ranked count and top-1 score.",
+  "at": "2026-11-05T12:34:49.620Z"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "f6969f9b15cc9f1fa1d85f03e6a41c1c",
+  "kind": "acknowledgement",
+  "task_id": "science_001",
+  "ticket_id": "a39391eef5a8f04102804a7ed225454d",
+  "text": "On it: copying the synthetic fixture to data.csv, featurizing it into runs/features.npz, training a small classifier in runs/model, then replying with the valid/invalid row counts and AUROC.",
+  "at": "2026-11-05T08:40:27.278Z"
+}

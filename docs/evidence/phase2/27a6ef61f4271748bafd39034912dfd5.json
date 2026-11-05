@@ -1,0 +1,8 @@
+{
+  "id": "27a6ef61f4271748bafd39034912dfd5",
+  "kind": "reply",
+  "task_id": "science_006",
+  "ticket_id": "3c9ea202ad6881ef33855f9ed0c6103f",
+  "text": "Same block as before, still unresolved: `rdkit.featurize` won't accept `id_column`/`smiles_column` (dataset uses `canonical_smiles`) and `ml.train` only allows `logreg|rf`, so xgboost can't be chosen.\n\nThe worker prepared a small patch (`runs/registry.patch`: two optional fields + one enum value in `src/research/registry.ts`). Do you want to apply it yourself, or authorize the worker to patch that file while you handle the rebuild and restart?",
+  "at": "2026-11-05T12:43:17.872Z"
+}

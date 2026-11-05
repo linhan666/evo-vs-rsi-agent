@@ -63,6 +63,35 @@
 
 不适用。本阶段是数据与模型能力，不是 Harness 自修改。
 
+## Gate 2：端到端（2026-11-05 20:55，PASS）
+
+真实 Ticket `science_007` → Ticket `d94f469b0b6c12a952a99d2c4ee6ce92`（**无 shell** 模式）：
+
+| 步骤 | Agent 动作 | 作业结果 |
+|---|---|---|
+| 1 | `scientific_tools` 发现 3 个工具 | — |
+| 2 | `rdkit.featurize`（输入=数据根绝对路径，列名覆盖） | SUCCEEDED → `runs/features.npz` |
+| 3 | `ml.train`（xgboost + `split_manifest`，label 列覆盖） | SUCCEEDED → `runs/models/xgboost/` |
+| 4 | `screening.rank`（用自己的模型 + 100k 库） | SUCCEEDED → `runs/screening/` |
+| 5 | 回复 | `2790 molecules featurized, validation AUROC 0.9021, 100,000 library molecules ranked, top-1 score 0.998451` |
+
+独立评测器对 **Agent 自训模型** 的锁定测试结果：**AUROC 0.9339 / AUPRC 0.9722 / EF@1% 1.379** —— 与 operator 训练的模型完全一致（同数据同参数同种子，确定性可复现）。证据：`docs/evidence/phase2/`（22 个文件）。
+
+### 排序库（ZINC250k）
+
+| 项 | 值 |
+|---|---|
+| 来源 | `aspuru-guzik-group/chemical_vae` 的 `250k_rndm_zinc_drugs_clean_3.csv` |
+| 来源 sha256 | `35e3f1a52b1badc0697e373d73a18ad773f415936ff992f4c6baa2e067b3e6ae` |
+| 解析 / 规范化去重 | 249,455 / 249,455（RDKit，全部合法） |
+| 抽样 | **种子 17 确定性抽样 100,000**（`library_100k.smi`，KOR/DRD2 复用同一文件） |
+| 筛选耗时 | 83.6 s（100k 全量特征化 + 打分 + 排序） |
+
+### 排查记录（两次失败，均为真实缺陷）
+
+1. **science_005**：lib/ 是在 `screening.rank`、label 列、split_manifest 之前构建的——**改了源码没重建**（操作顺序失误）。
+2. **science_006**：暴露真正的源码缺口——`FeaturizeInput` 缺列名字段、`TrainInput.model` 枚举只有两个。Agent 两次都准确诊断并写下了 `runs/BLOCKER.md`，且**主动请示**是否可以自己打补丁（被拒：harness 源码不在 worker 可写面内，由 operator 修复）——这正是三类修改面隔离应有的行为。
+
 ## Next phase
 
 1. **P2-06**：MOR 完整可追溯任务（经真实 Ticket、无 shell 模式）+ 100k 库排序（需要 `screening/` 模块与 100k 库文件——**库文件需要你指定来源**）；

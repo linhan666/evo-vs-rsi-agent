@@ -62,20 +62,54 @@ const FeaturizeInput = z.object({
   radius: z.number().int().min(1).max(4).default(2),
   n_bits: z.number().int().min(256).max(4096).default(2048),
   limit: z.number().int().min(0).max(200000).default(0),
+  id_column: z.string().trim().min(1).max(60).default('id'),
+  smiles_column: z.string().trim().min(1).max(60).default('smiles'),
 }).strict()
 
 const TrainInput = z.object({
   features: DataPath.describe('npz produced by rdkit.featurize, or one under the data root'),
   labels: DataPath.describe('CSV with id,label, or one under the data root'),
   output_dir: RelativePath.describe('Directory for metrics, predictions and the fitted model'),
-  model: z.enum(['logreg', 'rf']).default('logreg'),
+  model: z.enum(['logreg', 'rf', 'xgboost', 'catboost']).default('logreg'),
   seed: z.number().int().min(0).max(1_000_000).default(17),
   test_fraction: z.number().min(0.1).max(0.5).default(0.3),
   label_source: z.string().trim().min(1).max(60).default('fixture')
     .describe('Where the labels come from; "fixture" keeps a synthetic set from being reported as measured activity'),
+  split_manifest: DataPath.optional().describe('split_manifest.json: train on scaffold-train, report on scaffold-validation'),
+  label_id_column: z.string().trim().min(1).max(60).optional(),
+  label_column: z.string().trim().min(1).max(60).optional(),
 }).strict()
 
-export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] = [
+const RankInput = z.object({
+  model: RelativePath.describe('Fitted pipeline from ml.train, relative to the workspace'),
+  library: DataPath.describe('SMILES library (.smi/.csv); relative, or absolute under the data root'),
+  output: RelativePath.describe('Ranked CSV, best first'),
+  top_output: RelativePath.describe('Top-K CSV'),
+  report: RelativePath.describe('Screening report json'),
+  top_k: z.number().int().min(1).max(100000).default(100),
+  radius: z.number().int().min(1).max(4).default(2),
+  n_bits: z.number().int().min(256).max(4096).default(2048),
+}).strict()
+
+const SCIENTIFIC_TOOLS_APPEND = {
+  id: 'screening.rank',
+  version: '0.1.0',
+  description: 'Score an unlabeled library with a fitted model and rank it best-first; writes full ranking, top-K and a report. Predictions only: no hit rate is defined for an unlabeled library.',
+  capabilities: ['virtual_screening', 'ranking'],
+  resources: ['cpu'],
+  sideEffects: ['write_artifacts'],
+  failureCodes: ['MODEL_NOT_FOUND', 'LIBRARY_UNREADABLE', 'NO_VALID_MOLECULES'],
+  input: RankInput,
+  argv: (args: z.infer<typeof RankInput>, context) => [
+    context.python, '-m', 'evovs_science.screening.predict',
+    '--model', args.model, '--library', args.library, '--output', args.output,
+    '--top-output', args.top_output, '--report', args.report,
+    '--top-k', String(args.top_k), '--radius', String(args.radius), '--n-bits', String(args.n_bits),
+  ],
+  outputs: (args: z.infer<typeof RankInput>) => [args.output, args.top_output, args.report],
+} as ScientificToolDefinition
+
+const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
   {
     id: 'rdkit.featurize',
     version: '0.1.0',
@@ -89,6 +123,7 @@ export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] = [
       context.python, '-m', 'evovs_science.chemistry.featurize',
       '--input', args.input, '--output', args.output, '--report', args.report,
       '--radius', String(args.radius), '--n-bits', String(args.n_bits), '--limit', String(args.limit),
+      '--id-column', args.id_column, '--smiles-column', args.smiles_column,
     ],
     outputs: (args: z.infer<typeof FeaturizeInput>) => [args.output, args.report],
   },
@@ -106,6 +141,8 @@ export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] = [
       '--features', args.features, '--labels', args.labels, '--output-dir', args.output_dir,
       '--model', args.model, '--seed', String(args.seed), '--test-fraction', String(args.test_fraction),
       '--label-source', args.label_source,
+      '--label-id-column', args.label_id_column ?? 'id', '--label-column', args.label_column ?? 'label',
+      ...(args.split_manifest ? ['--split-manifest', args.split_manifest] : []),
     ],
     outputs: (args: z.infer<typeof TrainInput>) => [
       `${args.output_dir}/metrics.json`, `${args.output_dir}/predictions.csv`, `${args.output_dir}/model.joblib`,
@@ -113,6 +150,9 @@ export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] = [
     ],
   },
 ]
+
+export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] = [...SCIENTIFIC_TOOLS_BASE, SCIENTIFIC_TOOLS_APPEND]
+
 
 export function findTool(id: string): ScientificToolDefinition {
   const found = SCIENTIFIC_TOOLS.find(item => item.id === id)

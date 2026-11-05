@@ -375,7 +375,7 @@ Some generic modules still refer directly to GitHub or Feishu:
 | `src/sources/admission-context.ts` | The bounded window an assessment starts from: the first pages of a Trigger's Thread, read through its kind, and the messages around the Trigger |
 | `src/sources/feishu-image.ts` | Reads a Feishu message's image as an attachment for the assessing Session |
 | `src/sources/local.ts` | The local task-file kind and plugin entry, exported as `./local-watch`: one JSON file per request, an inbox directory as the receiving scope, and one reply file per message |
-| `src/research/registry.ts` | The whitelisted scientific tools: `tool_id`, capability and failure-code metadata, a zod input schema, and the fixed argv a job runs — the Agent names a tool and arguments, never a command |
+| `src/research/registry.ts` | The whitelisted scientific tools: `tool_id`, capability and failure-code metadata, a zod input schema, and the fixed argv a job runs. `ml.train` backs logreg/rf/xgboost/catboost; `screening.rank` ranks an unlabeled library with a fitted model (predictions only) — the Agent names a tool and arguments, never a command |
 | `src/research/job-runner.ts` | The sandboxed runner: `shell: false`, one process group per job, a wall-clock kill, stdout/stderr files, a sha256 artifact manifest, and `INTERRUPTED` for a job whose host stopped |
 | `src/research/tools.ts` | The worker tools `scientific_tools`, `scientific_run_job` and the action tool `scientific_job` (status, read, cancel, list), registered on every Executor Session |
 | `src/client/index.tsx` | The client plugin entry: the sidebar entry, the main panel and the page in DeepSeek Harness's Plugin Manager |

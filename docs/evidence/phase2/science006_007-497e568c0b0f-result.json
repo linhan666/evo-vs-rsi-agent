@@ -1,0 +1,55 @@
+{
+  "job_id": "497e568c0b0f",
+  "tool_id": "screening.rank",
+  "tool_version": "0.1.0",
+  "state": "SUCCEEDED",
+  "started_at": "2026-11-05T12:48:03.382Z",
+  "argv": [
+    "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+    "-m",
+    "evovs_science.screening.predict",
+    "--model",
+    "runs/models/xgboost/model.joblib",
+    "--library",
+    "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+    "--output",
+    "runs/screening/ranked_100k.csv",
+    "--top-output",
+    "runs/screening/top_100.csv",
+    "--report",
+    "runs/screening/report.json",
+    "--top-k",
+    "100",
+    "--radius",
+    "2",
+    "--n-bits",
+    "2048"
+  ],
+  "artifacts": [
+    {
+      "path": "runs/screening/ranked_100k.csv",
+      "sha256": "6da19387238280a46b4edbd7fd702b646f6595f1424af3d68267ffdef50ebcb4",
+      "size": 7220835
+    },
+    {
+      "path": "runs/screening/top_100.csv",
+      "sha256": "b3b732e14f378c550fa1714e9b4d6a854ab23c3a224f57acdffbb11339576647",
+      "size": 7592
+    },
+    {
+      "path": "runs/screening/report.json",
+      "sha256": "420ca7c303d61023a61635dfadee6ec9943ff0573d29665eb3f5e1b845230fc1",
+      "size": 761
+    }
+  ],
+  "idempotency_key": "3133e0177549aee6a9e4eef6e75ae49560316aeece490c4f7705235fd656e7c9",
+  "usage": {
+    "wall_seconds": 69.35,
+    "cpu_seconds": 69.49,
+    "gpu_seconds": null,
+    "max_rss_mb": null
+  },
+  "ended_at": "2026-11-05T12:49:12.734Z",
+  "exit_code": 0,
+  "signal": null
+}
