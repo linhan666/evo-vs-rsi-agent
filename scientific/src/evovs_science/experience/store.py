@@ -68,7 +68,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
 
     rec = sub.add_parser("record")
-    rec.add_argument("--kind", required=True, choices=["dataset", "model", "screening", "transfer"])
+    rec.add_argument("--kind", required=True, choices=["dataset", "model", "screening", "transfer", "harness"])
     rec.add_argument("--target", required=True)
     rec.add_argument("--payload", required=True, help="audit/metrics/report json to store")
     rec.add_argument("--note", required=True, help="applicability limits, one sentence")

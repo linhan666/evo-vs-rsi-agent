@@ -1,0 +1,91 @@
+{
+  "schema_version": "1",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/science-tools-check-7763bd44e261",
+  "exported_at": "2026-11-05T16:42:16+00:00",
+  "steps": [
+    {
+      "job_id": "3b2042ff6a15",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T08:51:37.419Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "data.csv",
+        "--output",
+        "runs/features.npz",
+        "--report",
+        "runs/feature_meta.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0"
+      ],
+      "wall_seconds": 0.37,
+      "artifacts": [
+        {
+          "path": "runs/features.npz",
+          "recorded_sha256": "6c272c174de6d19c5725a64fadfa26f100679a444e2a0c8551d6070bcb35dd8b",
+          "digest": "npz:8595cebe72387c28a7be38131c577494f9bc7788df9b6629a93fa12e2a9dd5cb"
+        },
+        {
+          "path": "runs/feature_meta.json",
+          "recorded_sha256": "cc2906bb5901f4b0d7618e4bb4ed57406de6e294cd1d7ca6d5c6b1ca1861f9b2",
+          "digest": "json:65ea496aea7a2ca64f75034ae0cbe2dcc467c5fac86e884a550e20a0ab2229ee"
+        }
+      ]
+    },
+    {
+      "job_id": "00f671a2cc97",
+      "tool_id": "sklearn.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T08:51:40.873Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "runs/features.npz",
+        "--labels",
+        "data.csv",
+        "--output-dir",
+        "runs/model",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "fixture"
+      ],
+      "wall_seconds": 3.14,
+      "artifacts": [
+        {
+          "path": "runs/model/metrics.json",
+          "recorded_sha256": "da214a1f56992a685dcca3f84b96d7db2fd627679cc9edb03ba1b46f13a6706c",
+          "digest": "json:072f89bad818233ec0abdd227bcd08e30bd412da253f94276159c8fe49a7c7ba"
+        },
+        {
+          "path": "runs/model/predictions.csv",
+          "recorded_sha256": "cf558fc20168c525f442b35bda25f01ebb14b9815aa17920e3f4ba8496c4a99a",
+          "digest": "sha256:cf558fc20168c525f442b35bda25f01ebb14b9815aa17920e3f4ba8496c4a99a"
+        },
+        {
+          "path": "runs/model/model.joblib",
+          "recorded_sha256": "2e769c641395166a9f4755d2b3c8f668eea4528ffd720255080756a329fbb905",
+          "digest": "sha256:2e769c641395166a9f4755d2b3c8f668eea4528ffd720255080756a329fbb905"
+        },
+        {
+          "path": "runs/model/artifact_manifest.json",
+          "recorded_sha256": "fa9ad835562137a32920ffe681efbeef616e45d15662de719b21a42ebebd8d58",
+          "digest": "json:8bf9baf54753fa115c6c5dcc4c7940514b9f3f76d3a3fb99e33a51a7bb9700f9"
+        }
+      ]
+    }
+  ]
+}

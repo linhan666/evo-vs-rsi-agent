@@ -1,0 +1,68 @@
+{
+  "schema_version": "1",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-oprm1-rerun-3c9ea202ad68",
+  "exported_at": "2026-11-05T16:42:14+00:00",
+  "steps": [
+    {
+      "job_id": "f2aa075125f3",
+      "tool_id": "rdkit.featurize",
+      "state": "FAILED",
+      "started_at": "2026-11-05T12:40:23.574Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output",
+        "runs/features.npz",
+        "--report",
+        "runs/feature_meta.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0"
+      ],
+      "wall_seconds": 0.14,
+      "artifacts": []
+    },
+    {
+      "job_id": "936a5e561eac",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T12:42:28.632Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "runs/probe/probe_input.csv",
+        "--output",
+        "runs/probe/probe_features.npz",
+        "--report",
+        "runs/probe/probe_meta.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0"
+      ],
+      "wall_seconds": 0.26,
+      "artifacts": [
+        {
+          "path": "runs/probe/probe_features.npz",
+          "recorded_sha256": "ee3b4e0e600ae226380463860bd537cd97131847ce9a0ce336130e4fe491d73f",
+          "digest": "npz:23c31105fd573feec051f478e18ab41020c57c4544400cba5cf45a71a4726bd6"
+        },
+        {
+          "path": "runs/probe/probe_meta.json",
+          "recorded_sha256": "e73aa01387f357e3d7b237eefeb4608110412b7e5977bb6053c9e941bc887e24",
+          "digest": "json:fd073ecb12a6a8da52a7a46553e964f3d7db3b27fcccd5297ac48b87f8e126ff"
+        }
+      ]
+    }
+  ]
+}

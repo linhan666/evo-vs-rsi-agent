@@ -1,0 +1,20 @@
+{
+  "candidate_id": "candidate2-pooled-recalibration",
+  "version": "0.1.0-draft",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "pool.py --weights MOR:0.5",
+      "value": "per-target sample weights in pooled training; implemented only after this spec passes Intake review"
+    }
+  ],
+  "hypothesis": "Down-weighting MOR rows in pooled training removes the pre-registered negative transfer (Delta AUROC -0.0468, CI [-0.0770,-0.0195]) while KOR/DRD2 stay within +/-0.02 of their per-target baselines.",
+  "acceptance": {
+    "equivalence": null,
+    "negative_transfer_absent": true,
+    "kor_drd2_delta_within": 0.02
+  },
+  "risk": "reduces MOR signal share; MOR locked-test AUROC may fall further below its per-target baseline; requires locked evaluator rerun and a fresh transfer CI before any authorization",
+  "basis": "experience transfer_MOR_001 (negative transfer) + docs/TRANSFER_DESIGN.md pre-registered rules"
+}

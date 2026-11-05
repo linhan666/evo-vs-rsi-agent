@@ -1,0 +1,47 @@
+{
+  "schema_version": "1",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/sandbox-probes-trim-395d05214d42",
+  "exported_at": "2026-11-05T16:42:15+00:00",
+  "steps": [
+    {
+      "job_id": "e867a9798cee",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T14:40:53.145Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output",
+        "runs/features.npz",
+        "--report",
+        "runs/feature_meta.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "molecule_chembl_id",
+        "--smiles-column",
+        "canonical_smiles"
+      ],
+      "wall_seconds": 3.49,
+      "artifacts": [
+        {
+          "path": "runs/features.npz",
+          "recorded_sha256": "8c2ccc239e0a33e34b270f320074770776f53d44c9fd9ad72d2b52f174bcec84",
+          "digest": "npz:21636ae089128f573231c3d16ab9e67ca60e965457e28d6fe5b5508a2a900340"
+        },
+        {
+          "path": "runs/feature_meta.json",
+          "recorded_sha256": "84f4b5996be2f44f9a3e968683f667645a5acb3febe6a8c095d9c8d7f04c8501",
+          "digest": "json:9ade37cd0850552e2e3040c52929f5b4c50d42306a4f87388f561e8f81e6c05c"
+        }
+      ]
+    }
+  ]
+}

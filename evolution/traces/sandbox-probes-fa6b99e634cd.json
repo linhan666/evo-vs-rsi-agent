@@ -1,0 +1,33 @@
+{
+  "schema_version": "1",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/sandbox-probes-fa6b99e634cd",
+  "exported_at": "2026-11-05T16:42:15+00:00",
+  "steps": [
+    {
+      "job_id": "693f219f3430",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T14:37:02.483Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience.json",
+        "--out",
+        "runs/experience/probe.json",
+        "--target",
+        "KOR"
+      ],
+      "wall_seconds": 0.08,
+      "artifacts": [
+        {
+          "path": "runs/experience/probe.json",
+          "recorded_sha256": "5584b54b4c2f2d2f06eac79c3b9bea8e2e27b75158314386441c7e16fc41d6b2",
+          "digest": "json:bcd6e8c7b3fc966dac0354017dd28e190fe6c75347e4f470c3361589ec34e60e"
+        }
+      ]
+    }
+  ]
+}

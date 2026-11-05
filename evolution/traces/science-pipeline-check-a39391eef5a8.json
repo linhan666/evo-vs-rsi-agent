@@ -1,0 +1,91 @@
+{
+  "schema_version": "1",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/science-pipeline-check-a39391eef5a8",
+  "exported_at": "2026-11-05T16:42:15+00:00",
+  "steps": [
+    {
+      "job_id": "8291692495f1",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T08:40:49.832Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "data.csv",
+        "--output",
+        "runs/features.npz",
+        "--report",
+        "runs/feature_meta.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0"
+      ],
+      "wall_seconds": 1.68,
+      "artifacts": [
+        {
+          "path": "runs/features.npz",
+          "recorded_sha256": "6c272c174de6d19c5725a64fadfa26f100679a444e2a0c8551d6070bcb35dd8b",
+          "digest": "npz:8595cebe72387c28a7be38131c577494f9bc7788df9b6629a93fa12e2a9dd5cb"
+        },
+        {
+          "path": "runs/feature_meta.json",
+          "recorded_sha256": "5372efeebffa3e60b9f54d285e524af144c0831237fddc50303b4a8f36798aa0",
+          "digest": "json:65ea496aea7a2ca64f75034ae0cbe2dcc467c5fac86e884a550e20a0ab2229ee"
+        }
+      ]
+    },
+    {
+      "job_id": "0ae791cbccbb",
+      "tool_id": "sklearn.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T08:40:53.560Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "runs/features.npz",
+        "--labels",
+        "data.csv",
+        "--output-dir",
+        "runs/model",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "fixture"
+      ],
+      "wall_seconds": 2.29,
+      "artifacts": [
+        {
+          "path": "runs/model/metrics.json",
+          "recorded_sha256": "b9e82c8bbfc08f1f5ac179c906cf082823f50b3a41673326474b01ec0bfed3b2",
+          "digest": "json:072f89bad818233ec0abdd227bcd08e30bd412da253f94276159c8fe49a7c7ba"
+        },
+        {
+          "path": "runs/model/predictions.csv",
+          "recorded_sha256": "cf558fc20168c525f442b35bda25f01ebb14b9815aa17920e3f4ba8496c4a99a",
+          "digest": "sha256:cf558fc20168c525f442b35bda25f01ebb14b9815aa17920e3f4ba8496c4a99a"
+        },
+        {
+          "path": "runs/model/model.joblib",
+          "recorded_sha256": "2e769c641395166a9f4755d2b3c8f668eea4528ffd720255080756a329fbb905",
+          "digest": "sha256:2e769c641395166a9f4755d2b3c8f668eea4528ffd720255080756a329fbb905"
+        },
+        {
+          "path": "runs/model/artifact_manifest.json",
+          "recorded_sha256": "b4b5da8a663612c028a2b35c38d00b2a91d16795567440450bfd65b6fa8b65b9",
+          "digest": "json:8bf9baf54753fa115c6c5dcc4c7940514b9f3f76d3a3fb99e33a51a7bb9700f9"
+        }
+      ]
+    }
+  ]
+}

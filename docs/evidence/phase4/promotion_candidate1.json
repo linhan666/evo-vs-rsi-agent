@@ -1,0 +1,26 @@
+{
+  "schema_version": "1",
+  "promoted_at": "2026-11-06T00:45:00+08:00",
+  "candidate_id": "candidate1-featurize-parallel",
+  "change": "EVOVS_FEAT_JOBS default 1 -> 8 in scientific/src/evovs_science/chemistry/featurize.py",
+  "basis": {
+    "shadow_reports": [
+      "evolution/reports/baseline.json",
+      "evolution/reports/candidate1.json"
+    ],
+    "equivalence_rate": 1.0,
+    "speedups": {
+      "rdkit.featurize": 2.1,
+      "screening.rank": 3.3
+    },
+    "digest_rule_tests": "5/5"
+  },
+  "gates": {
+    "shadow_acceptance": "pass",
+    "operator_approval": "granted 2026-11-06",
+    "freshness_gate": "pending rebuild",
+    "canary": "pending rebuild",
+    "smoke_ticket": "pending"
+  },
+  "rollback": "revert default to '1' in featurize.py; single code path"
+}

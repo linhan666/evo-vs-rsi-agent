@@ -1,0 +1,68 @@
+{
+  "schema_version": "1",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-oprm1-e2e-3eee106a930c",
+  "exported_at": "2026-11-05T16:42:14+00:00",
+  "steps": [
+    {
+      "job_id": "94838384c829",
+      "tool_id": "rdkit.featurize",
+      "state": "FAILED",
+      "started_at": "2026-11-05T12:36:24.293Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output",
+        "probe/features.npz",
+        "--report",
+        "probe/feature_meta.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "3"
+      ],
+      "wall_seconds": 0.14,
+      "artifacts": []
+    },
+    {
+      "job_id": "f99892ebb0e5",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-05T12:37:10.053Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "probe/library_sample.npz",
+        "--report",
+        "probe/library_sample_meta.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "3"
+      ],
+      "wall_seconds": 0.27,
+      "artifacts": [
+        {
+          "path": "probe/library_sample.npz",
+          "recorded_sha256": "93f515528997546d58abc739ad0e840574ac04f3e1c849f9c37452f862fd8676",
+          "digest": "npz:6bb3d1d3385051d72f232471109f15c4f6745811df7cd88df8b85490ab28998a"
+        },
+        {
+          "path": "probe/library_sample_meta.json",
+          "recorded_sha256": "d1c75974fa1f0f3e4b8be3f9f7e501f7417d7b3e6c46a6fc58e066752a8a0875",
+          "digest": "json:92b1dff6a99773cf939cd82ff8c90206cf68486341f065eaf4afcc3e55d0717f"
+        }
+      ]
+    }
+  ]
+}

@@ -98,7 +98,9 @@ def featurize(rows: list[tuple[str, str]], *, radius: int, n_bits: int):
     """
     import math
 
-    jobs = max(1, int(os.environ.get("EVOVS_FEAT_JOBS", "1")))
+    # PROMOTED 2026-11-05 (candidate1): default 8 after shadow acceptance
+    # (equivalence 1.0, featurize 2.1x, screening 3.3x) — see docs/PHASE4_DESIGN.md §6.
+    jobs = max(1, int(os.environ.get("EVOVS_FEAT_JOBS", "8")))
     if rows:
         chunk_size = max(1, math.ceil(len(rows) / (jobs * 4)))
         chunks = [(f"chunk{i}", rows[i:i + chunk_size], radius, n_bits)

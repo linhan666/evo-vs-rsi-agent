@@ -14,6 +14,7 @@ import subprocess
 import time
 
 from artifacts import artifact_digest
+from spec import validate_spec
 
 
 def run_step(argv: list[str], cwd: str, env_delta: dict[str, str], timeout: int) -> dict:
@@ -91,6 +92,9 @@ def main(argv: list[str] | None = None) -> int:
 
     trace = json.load(open(args.trace, encoding="utf-8"))
     spec = json.load(open(args.spec, encoding="utf-8"))
+    errors = validate_spec(spec)
+    if errors:
+        raise SystemExit(f"invalid CandidateSpec {spec.get('candidate_id', '?')}: " + "; ".join(errors))
     env_delta = {change["key"]: change["value"] for change in spec.get("changes", [])
                  if change.get("type") == "env"}
     steps = args.steps.split(",") if args.steps else None
