@@ -71,6 +71,19 @@
       "topk": false
     },
     {
+      "ticket": "chembl-drd2-ctl-m-3d239bb3330b",
+      "target": "DRD2",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": null,
+      "jobs": 38,
+      "jobs_failed": 4,
+      "jobs_reused": 0,
+      "wall_seconds": 154.1,
+      "topk": false
+    },
+    {
       "ticket": "chembl-drd2-ic50-a9a66c0e48d0",
       "target": "DRD2",
       "auroc": 0.88,
@@ -409,6 +422,19 @@
       "topk": false
     },
     {
+      "ticket": "kor-control-m-ac771baa068d",
+      "target": "KOR",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "scaffold",
+      "jobs": 45,
+      "jobs_failed": 3,
+      "jobs_reused": 0,
+      "wall_seconds": 198.2,
+      "topk": false
+    },
+    {
       "ticket": "kor-custom-model-f23c435ee86d",
       "target": "KOR",
       "auroc": null,
@@ -623,10 +649,23 @@
       "auprc": null,
       "ef_at_1pct": null,
       "split_strategy": "scaffold",
-      "jobs": 28,
+      "jobs": 36,
       "jobs_failed": 4,
       "jobs_reused": 0,
-      "wall_seconds": 134.1,
+      "wall_seconds": 184.7,
+      "topk": false
+    },
+    {
+      "ticket": "mor-control-m-dfdaa3e2a2b5",
+      "target": "MOR",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": null,
+      "jobs": 35,
+      "jobs_failed": 3,
+      "jobs_reused": 0,
+      "wall_seconds": 134.7,
       "topk": false
     },
     {
@@ -1070,117 +1109,256 @@
       "jobs_reused": 0,
       "wall_seconds": 0,
       "topk": false
+    },
+    {
+      "ticket": "phase6-w-DRD2_rep1",
+      "target": "DRD2",
+      "auroc": 0.9214,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "random",
+      "jobs": 3,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 26.6,
+      "topk": true
+    },
+    {
+      "ticket": "phase6-w-DRD2_rep2",
+      "target": "DRD2",
+      "auroc": 0.9214,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "random",
+      "jobs": 3,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 28.6,
+      "topk": true
+    },
+    {
+      "ticket": "phase6-w-DRD2_rep3",
+      "target": "DRD2",
+      "auroc": 0.9214,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "random",
+      "jobs": 3,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 32.14,
+      "topk": true
+    },
+    {
+      "ticket": "phase6-w-KOR_rep1",
+      "target": "KOR",
+      "auroc": 0.8765,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "random",
+      "jobs": 3,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 25.94,
+      "topk": true
+    },
+    {
+      "ticket": "phase6-w-KOR_rep2",
+      "target": "KOR",
+      "auroc": 0.8765,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "random",
+      "jobs": 3,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 25.25,
+      "topk": true
+    },
+    {
+      "ticket": "phase6-w-KOR_rep3",
+      "target": "KOR",
+      "auroc": 0.8765,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "random",
+      "jobs": 3,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 25.14,
+      "topk": true
+    },
+    {
+      "ticket": "phase6-w-MOR_rep1",
+      "target": "MOR",
+      "auroc": 0.9021,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "random",
+      "jobs": 3,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 29.49,
+      "topk": true
+    },
+    {
+      "ticket": "phase6-w-MOR_rep2",
+      "target": "MOR",
+      "auroc": 0.9021,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "random",
+      "jobs": 3,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 23.88,
+      "topk": true
+    },
+    {
+      "ticket": "phase6-w-MOR_rep3",
+      "target": "MOR",
+      "auroc": 0.9021,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "random",
+      "jobs": 3,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 27.38,
+      "topk": true
     }
   ],
   "summary": {
-    "tickets": 82,
+    "tickets": 94,
     "science": {
-      "auroc_mean": 0.9012,
+      "auroc_mean": 0.901,
       "auprc_mean": 0.9412,
       "ef_at_1pct_mean": 1.5647,
       "split_strategies": [
+        "random",
         "scaffold"
       ],
-      "topk_rate": 0.402
+      "topk_rate": 0.447
     },
     "code": {
-      "jobs_total": 818,
-      "jobs_failed": 114,
+      "jobs_total": 971,
+      "jobs_failed": 124,
       "jobs_reused": 0,
-      "failure_rate": 0.139,
-      "wall_mean": 38.9
+      "failure_rate": 0.128,
+      "wall_mean": 42.3
     }
   },
   "by_group": {
     "A": {
-      "tickets": 5,
+      "tickets": 3,
       "science": {
-        "auroc_mean": 0.8893,
-        "auprc_mean": 0.9407,
-        "ef_at_1pct_mean": 1.4025,
+        "auroc_mean": null,
+        "auprc_mean": null,
+        "ef_at_1pct_mean": null,
         "split_strategies": [
           "scaffold"
         ],
-        "topk_rate": 0.4
+        "topk_rate": 0.0
       },
       "code": {
-        "jobs_total": 95,
+        "jobs_total": 97,
         "jobs_failed": 9,
         "jobs_reused": 0,
-        "failure_rate": 0.095,
-        "wall_mean": 94.0
+        "failure_rate": 0.093,
+        "wall_mean": 158.1
       }
     },
     "M": {
-      "tickets": 2,
+      "tickets": 3,
       "science": {
-        "auroc_mean": 0.8893,
-        "auprc_mean": 0.9407,
-        "ef_at_1pct_mean": 1.4025,
-        "split_strategies": [],
-        "topk_rate": 1.0
+        "auroc_mean": null,
+        "auprc_mean": null,
+        "ef_at_1pct_mean": null,
+        "split_strategies": [
+          "scaffold"
+        ],
+        "topk_rate": 0.0
       },
       "code": {
-        "jobs_total": 6,
-        "jobs_failed": 0,
+        "jobs_total": 118,
+        "jobs_failed": 10,
         "jobs_reused": 0,
-        "failure_rate": 0.0,
-        "wall_mean": 23.4
+        "failure_rate": 0.085,
+        "wall_mean": 162.3
       }
     },
     "R1": {
-      "tickets": 10,
+      "tickets": 4,
       "science": {
-        "auroc_mean": 0.8939,
-        "auprc_mean": 0.9416,
-        "ef_at_1pct_mean": 1.4449,
+        "auroc_mean": 0.9214,
+        "auprc_mean": 0.947,
+        "ef_at_1pct_mean": 1.699,
         "split_strategies": [
           "scaffold"
         ],
-        "topk_rate": 0.7
+        "topk_rate": 0.25
       },
       "code": {
-        "jobs_total": 131,
-        "jobs_failed": 5,
+        "jobs_total": 110,
+        "jobs_failed": 4,
         "jobs_reused": 0,
-        "failure_rate": 0.038,
-        "wall_mean": 59.0
+        "failure_rate": 0.036,
+        "wall_mean": 107.9
       }
     },
     "R2": {
-      "tickets": 10,
+      "tickets": 4,
       "science": {
-        "auroc_mean": 0.8939,
-        "auprc_mean": 0.9416,
-        "ef_at_1pct_mean": 1.4449,
+        "auroc_mean": 0.9214,
+        "auprc_mean": 0.947,
+        "ef_at_1pct_mean": 1.699,
         "split_strategies": [],
-        "topk_rate": 0.7
+        "topk_rate": 0.25
       },
       "code": {
-        "jobs_total": 96,
-        "jobs_failed": 8,
+        "jobs_total": 75,
+        "jobs_failed": 6,
         "jobs_reused": 0,
-        "failure_rate": 0.083,
-        "wall_mean": 54.6
+        "failure_rate": 0.08,
+        "wall_mean": 96.9
+      }
+    },
+    "W": {
+      "tickets": 9,
+      "science": {
+        "auroc_mean": 0.9,
+        "auprc_mean": null,
+        "ef_at_1pct_mean": null,
+        "split_strategies": [
+          "random"
+        ],
+        "topk_rate": 1.0
+      },
+      "code": {
+        "jobs_total": 27,
+        "jobs_failed": 0,
+        "jobs_reused": 0,
+        "failure_rate": 0.0,
+        "wall_mean": 27.2
       }
     },
     "other": {
-      "tickets": 55,
+      "tickets": 71,
       "science": {
-        "auroc_mean": 0.9088,
-        "auprc_mean": 0.941,
-        "ef_at_1pct_mean": 1.6809,
+        "auroc_mean": 0.9001,
+        "auprc_mean": 0.9409,
+        "ef_at_1pct_mean": 1.5572,
         "split_strategies": [
           "scaffold"
         ],
-        "topk_rate": 0.273
+        "topk_rate": 0.437
       },
       "code": {
-        "jobs_total": 490,
-        "jobs_failed": 92,
+        "jobs_total": 544,
+        "jobs_failed": 95,
         "jobs_reused": 0,
-        "failure_rate": 0.188,
-        "wall_mean": 28.0
+        "failure_rate": 0.175,
+        "wall_mean": 27.5
       }
     }
   }

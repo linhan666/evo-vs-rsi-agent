@@ -83,6 +83,25 @@ def ticket_rows() -> list[dict]:
     return rows
 
 
+def workflow_rows() -> list[dict]:
+    """Group W is a fixed script, not an agent: its records live in phase6/w."""
+    rows = []
+    for path in sorted(glob.glob(os.path.join(ROOT, "phase6", "w", "*.json"))):
+        record = json.load(open(path, encoding="utf-8"))
+        rows.append({
+            "ticket": f"phase6-w-{record['target']}_rep{record['rep']}",
+            "target": record["target"],
+            "auroc": record.get("auroc"), "auprc": None, "ef_at_1pct": None,
+            "split_strategy": "random",
+            "jobs": len(record.get("steps", [])),
+            "jobs_failed": sum(1 for step in record.get("steps", []) if step.get("exit_code") != 0),
+            "jobs_reused": 0,
+            "wall_seconds": record.get("wall_seconds", 0),
+            "topk": bool(record.get("topk")),
+        })
+    return rows
+
+
 def summarise(rows: list[dict]) -> dict:
     def mean(key):
         values = [row[key] for row in rows if row.get(key) is not None]
@@ -110,11 +129,14 @@ def summarise(rows: list[dict]) -> dict:
 
 
 
+# Exact prefixes only: a substring rule silently swallowed unrelated tickets and
+# made the group comparison dirty. task_id is the source of truth.
 GROUP_RULES = [
-    ("R2", lambda n: "rep2" in n or "open-rep2" in n),
-    ("R1", lambda n: "rep1" in n or "open-rep1" in n or "rep1b" in n),
-    ("A", lambda n: "control-a" in n or "ctl-a" in n or "-a-" in n),
-    ("M", lambda n: "control-m" in n or "ctl-m" in n or "-m-" in n),
+    ("R2", lambda n: n.startswith(("mor-open-rep2", "kor-open-rep2", "chembl-drd2-rep2"))),
+    ("R1", lambda n: n.startswith(("mor-open-rep1", "kor-open-rep1", "chembl-drd2-rep1"))),
+    ("A", lambda n: n.startswith(("mor-control-a", "kor-control-a", "chembl-drd2-ctl-a", "mor-ctl-a", "kor-ctl-a"))),
+    ("M", lambda n: n.startswith(("mor-control-m", "kor-control-m", "chembl-drd2-ctl-m", "mor-ctl-m", "kor-ctl-m"))),
+    ("W", lambda n: n.startswith("phase6-w-")),
 ]
 
 
@@ -138,7 +160,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--filter", default=None, help="substring to keep only matching tickets")
     args = parser.parse_args(argv)
 
-    rows = ticket_rows()
+    rows = ticket_rows() + workflow_rows()
     if args.filter:
         rows = [row for row in rows if args.filter in row["ticket"]]
     report = {"schema_version": "1", "axes": ["science", "code"],
