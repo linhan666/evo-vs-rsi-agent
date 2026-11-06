@@ -15,9 +15,9 @@ class ScaffoldSplitTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.csv = os.path.join(self.tmp.name, "data.csv")
         rows = ["id,smiles"]
-        for index in range(30):
-            ring = "c1ccccc1" if index % 2 else "C1CCCCC1"
-            rows.append(f"mol{index},{ring}CC")
+        rings = ["c1ccccc1", "C1CCCCC1", "c1ccncc1", "C1CCOCC1"]
+        for index in range(40):
+            rows.append(f"mol{index},{rings[index % len(rings)]}CC")
         with open(self.csv, "w", encoding="utf-8") as handle:
             handle.write("\n".join(rows) + "\n")
 
@@ -38,9 +38,9 @@ class ScaffoldSplitTests(unittest.TestCase):
         for molecule, split in manifest["rows"].items():
             by_split.setdefault(split, []).append(molecule)
         # two scaffolds -> one whole scaffold may not be split across train and test
-        self.assertGreaterEqual(len(by_split["train"]), 1)
+        self.assertGreaterEqual(len(by_split.get("train", [])), 1)
         self.assertEqual(manifest["strategy"], "scaffold")
-        self.assertEqual(len(manifest["rows"]), 30)
+        self.assertEqual(len(manifest["rows"]), 40)
 
     def test_random_split_is_deterministic_under_a_seed(self):
         first = self.run_split("random")
@@ -52,7 +52,7 @@ class ScaffoldSplitTests(unittest.TestCase):
         manifest = self.run_split("scaffold")
         for key in ("strategy", "seed", "test_fraction", "counts"):
             self.assertIn(key, manifest)
-        self.assertEqual(sum(manifest["counts"].values()), 30)
+        self.assertEqual(sum(manifest["counts"].values()), 40)
 
     def test_too_few_rows_is_refused(self):
         small = os.path.join(self.tmp.name, "small.csv")
@@ -64,6 +64,47 @@ class ScaffoldSplitTests(unittest.TestCase):
             capture_output=True, text=True)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("NOT_ENOUGH_RELIABLE_DATA", result.stderr + result.stdout)
+
+
+
+class ManifestRoundTripTests(unittest.TestCase):
+    """data.split -> ml.train must work without the Agent patching anything."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.csv = os.path.join(self.tmp.name, "data.csv")
+        rows = ["id,smiles"]
+        rings = ["c1ccccc1", "C1CCCCC1", "c1ccncc1", "C1CCOCC1"]
+        for index in range(40):
+            rows.append(f"mol{index},{rings[index % len(rings)]}CC")
+        with open(self.csv, "w", encoding="utf-8") as handle:
+            handle.write("\n".join(rows) + "\n")
+
+    def test_split_manifest_is_accepted_by_read_split_ids(self):
+        out = os.path.join(self.tmp.name, "scaffold.json")
+        result = subprocess.run(
+            [PYTHON, "-m", "evovs_science.data.split", "--input", self.csv,
+             "--output", out, "--strategy", "scaffold"],
+            capture_output=True, text=True,
+            cwd=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        from evovs_science.modeling.train import read_split_ids
+        groups = read_split_ids(out)
+        self.assertIn("train", groups)
+        self.assertIn("validation", groups)   # val is normalised
+        self.assertNotIn("val", groups)
+        self.assertGreater(len(groups["train"]), 0)
+
+    def test_molecules_layout_is_still_accepted(self):
+        legacy = os.path.join(self.tmp.name, "legacy.json")
+        with open(legacy, "w", encoding="utf-8") as handle:
+            json.dump({"molecules": {"train": ["a", "b"], "validation": ["c"]}}, handle)
+        from evovs_science.modeling.train import read_split_ids
+        groups = read_split_ids(legacy)
+        self.assertEqual(groups["train"], {"a", "b"})
+        self.assertEqual(groups["validation"], {"c"})
 
 
 if __name__ == "__main__":

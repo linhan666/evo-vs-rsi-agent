@@ -87,12 +87,31 @@ def read_labels(path: str, id_column: str = "id", label_column: str = "label",
 
 
 def read_split_ids(manifest_path: str) -> dict[str, set[str]]:
+    """Read a split manifest in either layout.
+
+    `data.split` writes `rows: {molecule: split}`; older manifests use
+    `molecules: {split: [molecule, ...]}`. Both mean the same partition, so accept
+    both and normalise `val` to `validation`, which is the name this module uses.
+    """
     with open(manifest_path, encoding="utf-8") as handle:
         manifest = json.load(handle)
-    molecules = manifest.get("molecules") or {}
-    if not {"train", "validation"} <= set(molecules):
-        raise SystemExit(f"{manifest_path} lacks train/validation molecule lists")
-    return {name: set(members) for name, members in molecules.items()}
+
+    rows = manifest.get("rows")
+    if rows:  # molecule -> split
+        grouped: dict[str, set[str]] = {}
+        for molecule, split in rows.items():
+            grouped.setdefault(split, set()).add(str(molecule))
+    else:  # split -> molecules
+        grouped = {name: {str(item) for item in members}
+                   for name, members in (manifest.get("molecules") or {}).items()}
+
+    if "val" in grouped and "validation" not in grouped:
+        grouped["validation"] = grouped.pop("val")
+    if "train" not in grouped:
+        raise SystemExit(
+            f"{manifest_path} has no train group; has {sorted(grouped)} "
+            f"(expected keys 'rows' or 'molecules')")
+    return grouped
 
 
 def split_indices(y: np.ndarray, test_fraction: float, seed: int) -> tuple[np.ndarray, np.ndarray]:

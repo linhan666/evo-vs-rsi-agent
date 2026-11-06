@@ -51,16 +51,19 @@ def murcko_scaffold(smiles: str) -> str:
 
 
 def assign(groups: dict[str, list[str]], test_fraction: float, val_fraction: float, seed: int) -> dict[str, str]:
-    """Greedy group assignment: largest groups first, so the test set gets real scaffolds."""
-    import random
+    """Greedy group assignment: largest groups first, so the test set gets real scaffolds.
 
-    rng = random.Random(seed)
+    A group is never split across partitions. If the greedy pass leaves test or val
+    empty (one giant scaffold ate the budget), the smallest remaining whole groups
+    are moved in — an empty test set is not a usable split.
+    """
     names = sorted(groups, key=lambda key: (-len(groups[key]), key))
     total = sum(len(members) for members in groups.values())
     test_budget = max(1, int(total * test_fraction))
     val_budget = max(1, int(total * val_fraction))
     assignment: dict[str, str] = {}
     used = {"test": 0, "val": 0}
+    leftovers: list[str] = []
     for name in names:
         members = groups[name]
         if used["test"] + len(members) <= test_budget:
@@ -68,14 +71,33 @@ def assign(groups: dict[str, list[str]], test_fraction: float, val_fraction: flo
         elif used["val"] + len(members) <= val_budget:
             split = "val"
         else:
-            split = "train"
-        used[split] = used.get(split, 0) + len(members)
+            leftovers.append(name)
+            continue
+        used[split] += len(members)
         for molecule in members:
             assignment[molecule] = split
-    # anything that slipped through goes to train — never to the test set
-    for members in groups.values():
-        for molecule in members:
-            assignment.setdefault(molecule, "train")
+
+    # Guarantee train first (nothing can be fit without it), then test, then val.
+    # With fewer groups than partitions, train wins and the short partition stays empty.
+    if not any(value == "train" for value in assignment.values()) and leftovers:
+        name = max(leftovers, key=lambda key: len(groups[key]))
+        leftovers.remove(name)
+        for molecule in groups[name]:
+            assignment[molecule] = "train"
+    if used["test"] == 0 and leftovers:
+        name = min(leftovers, key=lambda key: len(groups[key]))
+        leftovers.remove(name)
+        for molecule in groups[name]:
+            assignment[molecule] = "test"
+    if used["val"] == 0 and leftovers:
+        name = min(leftovers, key=lambda key: len(groups[key]))
+        leftovers.remove(name)
+        for molecule in groups[name]:
+            assignment[molecule] = "val"
+
+    for name in leftovers:
+        for molecule in groups[name]:
+            assignment[molecule] = "train"
     return assignment
 
 
@@ -120,6 +142,11 @@ def main(argv: list[str] | None = None) -> int:
     assignment = build(rows, args.strategy, args.test_fraction, args.val_fraction, args.seed)
     counts = {name: sum(1 for value in assignment.values() if value == name)
               for name in ("train", "val", "test")}
+    # Both layouts are written: `rows` (molecule -> split) is what this tool reads
+    # back, `molecules` (split -> list) is what modeling.train has always expected.
+    grouped: dict[str, list[str]] = {"train": [], "validation": [], "test": []}
+    for molecule, split in assignment.items():
+        grouped["validation" if split == "val" else split].append(molecule)
     manifest = {
         "schema_version": "1",
         "strategy": args.strategy,
@@ -129,6 +156,7 @@ def main(argv: list[str] | None = None) -> int:
         "input": os.path.basename(args.input),
         "counts": counts,
         "rows": assignment,
+        "molecules": grouped,
     }
     os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as handle:

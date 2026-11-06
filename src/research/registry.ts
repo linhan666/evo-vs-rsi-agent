@@ -139,6 +139,36 @@ const SPLIT_TOOL = {
   outputs: (args: z.infer<typeof SplitInput>) => [args.output],
 } as ScientificToolDefinition
 
+const FuseInput = z.object({
+  a: DataPath.describe('predictions.csv from model A'),
+  b: DataPath.describe('predictions.csv from model B'),
+  output: RelativePath.describe('fused ranking csv'),
+  report: RelativePath.describe('fusion report json'),
+  method: z.enum(['mean', 'rank']).default('mean').describe('mean = average calibrated scores; rank = average rank'),
+  weight_a: z.coerce.number().min(0).max(1).default(0.5).describe('weight on model A; justify it with validation AUPRC'),
+  a_uprc: z.coerce.number().min(0).max(1).optional(),
+  b_uprc: z.coerce.number().min(0).max(1).optional(),
+}).strict()
+
+const FUSE_TOOL = {
+  id: 'ml.fuse',
+  version: '0.1.0',
+  description: 'Combine two trained models into one ranking (mean of scores, or rank averaging). Weights are declared in the report and must be justified by validation AUPRC, never fitted on the test set.',
+  capabilities: ['fusion', 'ranking', 'ensemble'],
+  resources: ['cpu'],
+  sideEffects: ['write_artifacts'],
+  failureCodes: ['INPUT_NOT_FOUND', 'NO_SHARED_MOLECULES'],
+  input: FuseInput,
+  argv: (args: z.infer<typeof FuseInput>, context) => [
+    context.python, '-m', 'evovs_science.modeling.fusion',
+    '--a', args.a, '--b', args.b, '--output', args.output, '--report', args.report,
+    '--method', args.method, '--weight-a', String(args.weight_a),
+    ...(args.a_uprc !== undefined ? ['--a-uprc', String(args.a_uprc)] : []),
+    ...(args.b_uprc !== undefined ? ['--b-uprc', String(args.b_uprc)] : []),
+  ],
+  outputs: (args: z.infer<typeof FuseInput>) => [args.output, args.report],
+} as ScientificToolDefinition
+
 const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
   {
     id: 'rdkit.featurize',
@@ -159,6 +189,7 @@ const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
     outputs: (args: z.infer<typeof FeaturizeInput>) => [args.output, args.report],
   },
   SPLIT_TOOL as ScientificToolDefinition,
+  FUSE_TOOL as ScientificToolDefinition,
   {
     id: 'ml.train',
     version: '0.1.0',
