@@ -60,3 +60,12 @@ T5 的失败是**故意的**：测的是错误信息质量，不是成功率。
 - **Workflow 组无 trace** → 需在任务层记录墙钟与重试，否则该组只能比成功率；
 - **LLM 非确定性** → 每格 ≥3 次；
 - **B-002 上游竞态** 不影响本实验（Feishu 不参与）。
+
+## 7. 前置项（已完成，2026-11-06）
+
+| 前置 | 落地 | 用法 |
+|---|---|---|
+| 组开关 | `EVOVS_GROUP` + `toolsForGroup()`；`fixed` 隐藏 `experience.retrieve` | 每组独立 state 目录 + `EVOVS_GROUP=<workflow|fixed|memory|rsi>` 起服务 |
+| 成本埋点 | `ops/usage_hook.cjs`（`NODE_OPTIONS=--require`，从 fetch/http 响应里抄 usage）+ `ops/cost_report.py` 计价 | 起服务前 `export EVOVS_USAGE_LOG=$PWD/scientific/.artifacts/usage.jsonl`，跑完按窗口聚合 |
+
+已冒烟验证：mock 响应 → ledger 记下 `prompt_tokens/cached/completion` → 计价 ¥0.0011（闲时）。trace 导出时自动盖 `group` 戳。
