@@ -47,6 +47,7 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
     failures_replayed = 0
     failures_remaining = 0
     failures_by_class: dict[str, dict] = {}
+    recorded_by_class: dict[str, int] = {}
     for step in trace["steps"]:
         if steps_filter and step["tool_id"] not in steps_filter:
             continue
@@ -83,6 +84,7 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
                 step.get("stdout_tail", "")))
             row = failures_by_class.setdefault(recorded_class, {"replayed": 0, "remaining": 0})
             row["replayed"] += 1
+            recorded_by_class[recorded_class] = recorded_by_class.get(recorded_class, 0) + 1
             if run["exit_code"] != 0:
                 failures_remaining += 1
                 row["remaining"] += 1
@@ -111,6 +113,7 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
         "failures_replayed": failures_replayed,
         "failures_remaining": failures_remaining,
         "failures_by_class": failures_by_class,
+        "recorded_by_class": recorded_by_class,
     }
 
 
@@ -147,6 +150,17 @@ def main(argv: list[str] | None = None) -> int:
         baseline = item.get("replayed_baseline_wall_seconds") or item["baseline_wall_seconds"]
         item["effective_baseline_wall_seconds"] = baseline
         item["speedup"] = round(baseline / item["candidate_wall_seconds"], 3) if item["candidate_wall_seconds"] else None
+
+    if "recorded_by_class" not in report or not report["recorded_by_class"]:
+        derived: dict[str, int] = {}
+        for item in report.get("steps", []):
+            if item.get("recorded_state", "SUCCEEDED") == "SUCCEEDED":
+                continue
+            key = "{0}::{1}".format(item["tool_id"], error_class(
+                item.get("error", ""), item.get("stderr_tail", ""), item.get("exit_code"),
+                item.get("stdout_tail", "")))
+            derived[key] = derived.get(key, 0) + 1
+        report["recorded_by_class"] = derived
 
     acceptance = spec.get("acceptance", {})
     verdict = {"equivalence_ok": report["equivalence_rate"] == 1.0}

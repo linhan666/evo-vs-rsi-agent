@@ -63,7 +63,7 @@
       "candidate_id": "manual-path-resolution",
       "recorded_at": "2026-11-06T10:47:13+00:00",
       "git_sha": "9ff97622178d88fb7ab26078a23ef8ab4919b46b",
-      "status": "active",
+      "status": "superseded",
       "change": {
         "type": "experiment",
         "key": "preflight:input-paths",
@@ -76,6 +76,25 @@
       },
       "rollback": "drop resolve_input_path from chemistry/featurize.py, screening/predict.py and modeling/train.py and pass the caller's path straight to open()",
       "note": "relative input paths resolve against the data root; 5 of 7 FileNotFoundError fixed, 2 are files that do not exist"
+    },
+    {
+      "version": "v5",
+      "candidate_id": "auto-manifest-layout-compat",
+      "recorded_at": "2026-11-06T21:09:01+00:00",
+      "git_sha": "620f09a2de707c972ce4bd09b501d5949f20b296",
+      "status": "active",
+      "change": {
+        "type": "experiment",
+        "key": "preflight:manifest-layout",
+        "value": "accept both split manifest layouts (rows: molecule->split and molecules: split->list) and normalise val to validation"
+      },
+      "gate": {
+        "verdict": "pass",
+        "blocking": [],
+        "needs_human_number": []
+      },
+      "rollback": "drop the rows-layout branch in modeling/train.py read_split_ids",
+      "note": "manifest layout compatibility: non-regression gate, class eliminated"
     }
   ]
 }

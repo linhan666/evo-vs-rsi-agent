@@ -7,49 +7,49 @@
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 0.73,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 1.07,
+      "candidate_wall_seconds": 1.09,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 0.73,
-      "speedup": 0.682
+      "speedup": 0.67
     },
     {
       "tool_id": "data.split",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 1.4,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 2.38,
+      "candidate_wall_seconds": 2.31,
       "exit_code": 0,
       "artifacts_total": 1,
       "artifacts_equal": 1,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 1.4,
-      "speedup": 0.588
+      "speedup": 0.606
     },
     {
       "tool_id": "data.split",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 0.17,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 0.23,
+      "candidate_wall_seconds": 0.38,
       "exit_code": 0,
       "artifacts_total": 1,
       "artifacts_equal": 1,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 0.17,
-      "speedup": 0.739
+      "speedup": 0.447
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 2.16,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 3.4,
+      "candidate_wall_seconds": 3.51,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 1,
@@ -62,222 +62,194 @@
         "  opt_res = optimize.minimize("
       ],
       "effective_baseline_wall_seconds": 2.16,
-      "speedup": 0.635
+      "speedup": 0.615
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 4.4,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 3.89,
+      "candidate_wall_seconds": 3.71,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 4.4,
-      "speedup": 1.131
+      "speedup": 1.186
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 6.04,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 6.06,
+      "candidate_wall_seconds": 5.78,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 6.04,
-      "speedup": 0.997
+      "speedup": 1.045
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "FAILED",
       "baseline_wall_seconds": 4.1,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 27.98,
+      "candidate_wall_seconds": 20.9,
       "exit_code": 0,
       "artifacts_total": 0,
       "artifacts_equal": 0,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 4.1,
-      "speedup": 0.147
+      "speedup": 0.196
     },
     {
       "tool_id": "rdkit.featurize",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 1.28,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 1.0,
+      "candidate_wall_seconds": 0.85,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 1.28,
-      "speedup": 1.28
+      "speedup": 1.506
     },
     {
       "tool_id": "rdkit.featurize",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 1.22,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 1.21,
+      "candidate_wall_seconds": 0.78,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 1.22,
-      "speedup": 1.008
+      "speedup": 1.564
     },
     {
       "tool_id": "rdkit.featurize",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 1.33,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 1.04,
+      "candidate_wall_seconds": 0.86,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 1.33,
-      "speedup": 1.279
+      "speedup": 1.547
     },
     {
       "tool_id": "rdkit.featurize",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 6.1,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 6.71,
+      "candidate_wall_seconds": 5.28,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 6.1,
-      "speedup": 0.909
+      "speedup": 1.155
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 4.31,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 5.6,
+      "candidate_wall_seconds": 3.87,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 4.31,
-      "speedup": 0.77
+      "speedup": 1.114
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 5.99,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 5.07,
+      "candidate_wall_seconds": 5.1,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 5.99,
-      "speedup": 1.181
+      "speedup": 1.175
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 6,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 6.13,
+      "candidate_wall_seconds": 5.25,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 6,
-      "speedup": 0.979
+      "speedup": 1.143
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 4.12,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 3.96,
+      "candidate_wall_seconds": 4.67,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 4.12,
-      "speedup": 1.04
+      "speedup": 0.882
     },
     {
       "tool_id": "rdkit.featurize",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 6.37,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 5.32,
+      "candidate_wall_seconds": 6.78,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 6.37,
-      "speedup": 1.197
+      "speedup": 0.94
     },
     {
       "tool_id": "data.split",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 2,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 1.48,
+      "candidate_wall_seconds": 2.33,
       "exit_code": 0,
       "artifacts_total": 1,
       "artifacts_equal": 1,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 2,
-      "speedup": 1.351
+      "speedup": 0.858
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 3.51,
-      "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 3.58,
-      "exit_code": 0,
-      "artifacts_total": 3,
-      "artifacts_equal": 3,
-      "mismatches": [],
-      "stderr_tail": [],
-      "effective_baseline_wall_seconds": 3.51,
-      "speedup": 0.98
-    },
-    {
-      "tool_id": "ml.train",
-      "recorded_state": "SUCCEEDED",
-      "baseline_wall_seconds": 5.04,
-      "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 8.56,
-      "exit_code": 0,
-      "artifacts_total": 3,
-      "artifacts_equal": 3,
-      "mismatches": [],
-      "stderr_tail": [],
-      "effective_baseline_wall_seconds": 5.04,
-      "speedup": 0.589
-    },
-    {
-      "tool_id": "ml.train",
-      "recorded_state": "SUCCEEDED",
-      "baseline_wall_seconds": 4.57,
       "replayed_baseline_wall_seconds": null,
       "candidate_wall_seconds": 4.68,
       "exit_code": 0,
@@ -285,36 +257,64 @@
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
+      "effective_baseline_wall_seconds": 3.51,
+      "speedup": 0.75
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 5.04,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 5.63,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 5.04,
+      "speedup": 0.895
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 4.57,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 6.28,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": [],
       "effective_baseline_wall_seconds": 4.57,
-      "speedup": 0.976
+      "speedup": 0.728
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 5.5,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 3.05,
+      "candidate_wall_seconds": 3.32,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 5.5,
-      "speedup": 1.803
+      "speedup": 1.657
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 5.06,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 3.28,
+      "candidate_wall_seconds": 3.8,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 5.06,
-      "speedup": 1.543
+      "speedup": 1.332
     }
   ],
   "equivalence_rate": 0.9608,
@@ -329,10 +329,20 @@
       "remaining": 0
     }
   },
+  "recorded_by_class": {
+    "ml.train::Out of memory attempting to allocate exception": 1
+  },
   "candidate_id": "auto-manifest-layout-compat",
   "hypothesis": "A scaffold split written by data.split cannot reach ml.train because the reader only knows one layout; accepting both removes the failure class without changing any model.",
   "acceptance": {
     "equivalence": 1.0,
+    "equivalence_mode": "non-regression",
+    "allowed_mismatches": [
+      "predictions.csv",
+      "model.joblib",
+      "metrics.json",
+      "artifact_manifest.json"
+    ],
     "failures_in_replay": 0,
     "failure_clusters": [
       "ml.train :: splits/scaffold_20_15_s17.json lacks train/validation molecu"

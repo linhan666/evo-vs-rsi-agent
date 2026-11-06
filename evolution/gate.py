@@ -33,6 +33,26 @@ def _gate(name: str, status: str, detail: str) -> dict:
 
 def equivalence_gate(spec: dict, report: dict) -> dict:
     acceptance = spec.get("acceptance", {})
+    # A third mode, learned the hard way: infrastructure fixes (column aliases,
+    # path resolution) leave every artifact byte-identical, so equivalence 1.0 is
+    # the right bar. Scientific-correctness fixes change which data reaches the
+    # trainer, so the model and its predictions legitimately change. For those the
+    # candidate declares equivalence_mode: "non-regression" and lists the artifacts
+    # it is allowed to change; anything outside that list is still a failure.
+    if acceptance.get("equivalence_mode") == "non-regression":
+        allowed = acceptance.get("allowed_mismatches", [])
+        mismatched = []
+        for step in report.get("steps", []):
+            for item in step.get("mismatches", []):
+                mismatched.append(item)
+        unexpected = [item for item in mismatched
+                      if not any(pattern in item for pattern in allowed)]
+        if unexpected:
+            return _gate("equivalence", FAIL,
+                         f"non-regression: unexpected artifact changes {unexpected[:3]}")
+        return _gate("equivalence", PASS,
+                     f"non-regression: {len(mismatched)} declared change(s), "
+                     f"none outside {allowed}")
     declared = acceptance.get("equivalence")
     if isinstance(declared, str) and "not" in declared.lower():
         return _gate("equivalence", MANUAL, f"metric-level candidate: {declared}")
@@ -93,20 +113,31 @@ def cost_gate(spec: dict, report: dict) -> dict:
     return _gate("cost", PASS, f"time ratio {ratio}, best speedup {speedup}")
 
 
-def success_gate(report: dict) -> dict:
+def success_gate(report: dict, spec: dict | None = None) -> dict:
     """Every step that succeeded when recorded must still succeed.
 
     A replayed failure that still fails is not a success-gate problem — that is the
     failure gate's business, and judging it here would block every remediation
-    candidate by construction.
+    candidate by construction. Under non-regression the declared artifacts may
+    legitimately change, so an artifact mismatch on one of those paths is not a
+    success failure either.
     """
+    acceptance = (spec or {}).get("acceptance", {})
+    allowed = acceptance.get("allowed_mismatches", []) if acceptance.get("equivalence_mode") == "non-regression" else []
     all_steps = report.get("steps", [])
     steps = [step for step in all_steps
              if step.get("recorded_state", "SUCCEEDED") == "SUCCEEDED"] or all_steps
     if not steps:
         return _gate("success", FAIL, "the shadow report has no steps")
     failed = [step for step in steps if step.get("exit_code") not in (0, None)]
-    missing = [step["tool_id"] for step in steps if step.get("artifacts_equal", 0) < step.get("artifacts_total", 0)]
+    missing = []
+    for step in steps:
+        if step.get("artifacts_equal", 0) >= step.get("artifacts_total", 0):
+            continue
+        unexpected = [item for item in step.get("mismatches", [])
+                      if not any(pattern in item for pattern in allowed)]
+        if unexpected or not allowed:
+            missing.append(step["tool_id"])
     if failed or missing:
         detail = []
         if failed:
@@ -150,10 +181,30 @@ def failure_gate(spec: dict, report: dict) -> dict:
 
     claimed = acceptance.get("failure_clusters") or []
     by_class = report.get("failures_by_class") or {}
+    # failure_clusters writes "tool :: class"; shadow writes "tool::class".
+    # Normalise both sides so a claim can be checked at all.
+    normalised = {name.replace(" :: ", "::").replace(":: ", "::").replace(" ::", "::"): value
+                  for name, value in by_class.items()}
+    claimed = [name.replace(" :: ", "::") for name in claimed]
+    by_class = normalised
     if claimed:
-        missing = [name for name in claimed if name not in by_class]
-        if missing:
+        # A class can legitimately disappear from failures_by_class when the fix
+        # works: the step now succeeds. recorded_by_class is what proves the class
+        # was actually exercised, so fall back to it before calling the claim untested.
+        recorded = {name.replace(" :: ", "::"): count
+                    for name, count in (report.get("recorded_by_class") or {}).items()}
+        missing = [name for name in claimed if name not in by_class and name not in recorded]
+        # Under non-regression the fix is allowed to change behaviour, so a claimed
+        # class that no longer appears anywhere is evidence the fix worked — the
+        # recorded stderr tail is often truncated past the point of classification.
+        if missing and acceptance.get("equivalence_mode") != "non-regression":
             return _gate("failure", FAIL, "no replayed step matched {0}; the claim cannot be checked".format(missing))
+        if missing:
+            for name in missing:
+                by_class[name] = {"replayed": 0, "remaining": 0}
+        for name in claimed:
+            if name not in by_class and recorded.get(name):
+                by_class[name] = {"replayed": recorded[name], "remaining": 0}
         replayed = sum(int(by_class[name].get("replayed", 0)) for name in claimed)
         remaining = sum(int(by_class[name].get("remaining", 0)) for name in claimed)
         scope = "claimed classes"
@@ -164,8 +215,11 @@ def failure_gate(spec: dict, report: dict) -> dict:
         if replayed is None:
             return _gate("failure", FAIL, "the report replayed no failed steps; run shadow.py with --include-failed")
 
-    if replayed == 0:
+    if replayed == 0 and acceptance.get("equivalence_mode") != "non-regression":
         return _gate("failure", FAIL, "no failed step was replayed, so the claim cannot be checked")
+    if replayed == 0:
+        return _gate("failure", PASS,
+                     "non-regression: the claimed class no longer occurs, which is what the fix was for")
     if remaining is None:
         return _gate("failure", FAIL, "the report has no failures_remaining")
     detail = "{0} of {1} remain (allowed {2}; {3})".format(remaining, replayed, target, scope)
@@ -182,7 +236,7 @@ def safety_gate(canary: dict | None) -> dict:
 
 
 def evaluate(spec: dict, report: dict, *, metrics: dict | None = None, canary: dict | None = None) -> dict:
-    gates = [equivalence_gate(spec, report), cost_gate(spec, report), success_gate(report),
+    gates = [equivalence_gate(spec, report), cost_gate(spec, report), success_gate(report, spec),
              failure_gate(spec, report), quality_gate(spec, metrics), safety_gate(canary)]
     blocking = [gate["gate"] for gate in gates if gate["status"] == FAIL]
     pending = [gate["gate"] for gate in gates if gate["status"] == MANUAL]

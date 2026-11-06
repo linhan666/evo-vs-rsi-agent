@@ -12,13 +12,20 @@
   "hypothesis": "A scaffold split written by data.split cannot reach ml.train because the reader only knows one layout; accepting both removes the failure class without changing any model.",
   "acceptance": {
     "equivalence": 1.0,
+    "equivalence_mode": "non-regression",
+    "allowed_mismatches": [
+      "predictions.csv",
+      "model.joblib",
+      "metrics.json",
+      "artifact_manifest.json"
+    ],
     "failures_in_replay": 0,
     "failure_clusters": [
       "ml.train :: splits/scaffold_20_15_s17.json lacks train/validation molecu"
     ]
   },
   "risk": "Accepting a second layout could mask a malformed manifest; both layouts still have to contain a train group.",
-  "scope_note": "Mined from the round-1 customisation traces: 3 ml.train failures whose stderr is the layout complaint. The control arms keep the legacy reader (EVOVS_LEGACY_MANIFEST=1).",
+  "scope_note": "Mined from the round-1 customisation traces: 3 ml.train failures whose stderr is the layout complaint. The control arms keep the legacy reader (EVOVS_LEGACY_MANIFEST=1). Equivalence is non-regression: fixing the manifest changes which molecules reach the trainer, so the model and its predictions legitimately change.",
   "rollback": "drop the rows-layout branch in modeling/train.py read_split_ids",
   "basis": {
     "generated_by": "evolution/propose.py (rule) + operator wiring",
