@@ -204,8 +204,29 @@ const LOCKED_TOOL = {
   outputs: (args: z.infer<typeof LockedInput>) => [args.receipt],
 } as ScientificToolDefinition
 
-export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] =
-  [...SCIENTIFIC_TOOLS_BASE, SCIENTIFIC_TOOLS_APPEND, EXPERIENCE_TOOL, LOCKED_TOOL]
+/**
+ * Phase 6 experimental group (`EVOVS_GROUP`): `fixed` (group A) hides cross-task
+ * experience retrieval, so the comparison separates "memory" from "self-modification";
+ * `memory` (M) and `rsi` (R) both see it. Group W has no agent and never reaches
+ * this registry at all.
+ */
+export function experimentGroup(): string {
+  return (process.env.EVOVS_GROUP || 'rsi').toLowerCase()
+}
+
+const HIDDEN_BY_GROUP: Record<string, readonly string[]> = {
+  fixed: ['experience.retrieve'],
+  workflow: ['experience.retrieve'],
+  memory: [],
+  rsi: [],
+}
+
+export function toolsForGroup(group: string): readonly ScientificToolDefinition[] {
+  return [...SCIENTIFIC_TOOLS_BASE, SCIENTIFIC_TOOLS_APPEND, EXPERIENCE_TOOL, LOCKED_TOOL]
+    .filter(tool => !(HIDDEN_BY_GROUP[group] ?? []).includes(tool.id))
+}
+
+export const SCIENTIFIC_TOOLS: readonly ScientificToolDefinition[] = toolsForGroup(experimentGroup())
 
 
 export function findTool(id: string): ScientificToolDefinition {

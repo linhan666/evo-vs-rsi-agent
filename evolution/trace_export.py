@@ -69,6 +69,9 @@ def export(ticket_dir: str) -> dict:
     steps.sort(key=lambda step: step["started_at"] or "")
     return {
         "schema_version": "2",
+        # Phase 6 attribution: which experimental group produced this ticket.
+        # Set per service instance (EVOVS_GROUP), never guessed from the content.
+        "group": os.environ.get("EVOVS_GROUP", "rsi"),
         "ticket_dir": os.path.abspath(ticket_dir),
         "exported_at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc)
             .isoformat(timespec="seconds"),

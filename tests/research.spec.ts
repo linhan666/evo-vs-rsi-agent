@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 import { afterEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
-import { SCIENTIFIC_TOOLS, describeTools, findTool, withinWorkspace, type ScientificToolDefinition } from '../src/research/registry.ts'
+import { SCIENTIFIC_TOOLS, describeTools, findTool, toolsForGroup, withinWorkspace, type ScientificToolDefinition } from '../src/research/registry.ts'
 import { jobStatus, listArtifacts, runScientificJob } from '../src/research/job-runner.ts'
 
 const roots: string[] = []
@@ -202,5 +202,19 @@ describe('scientific job runner', () => {
     const record = jobStatus(root, jobId)
     expect(record?.state).toBe('INTERRUPTED')
     expect(jobStatus(root, jobId)?.state).toBe('INTERRUPTED')
+  })
+})
+
+describe('phase 6 group gating', () => {
+  it('hides cross-task experience from the fixed group', () => {
+    const fixed = toolsForGroup('fixed').map(tool => tool.id)
+    expect(fixed).not.toContain('experience.retrieve')
+    expect(toolsForGroup('memory').map(tool => tool.id)).toContain('experience.retrieve')
+    expect(toolsForGroup('rsi').map(tool => tool.id)).toContain('experience.retrieve')
+  })
+
+  it('keeps every scientific tool on the default group', () => {
+    expect(toolsForGroup('rsi').map(tool => tool.id).sort()).toEqual(
+      SCIENTIFIC_TOOLS.map(tool => tool.id).sort())
   })
 })
