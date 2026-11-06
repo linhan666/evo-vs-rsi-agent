@@ -108,6 +108,30 @@ def summarise(rows: list[dict]) -> dict:
     }
 
 
+
+
+GROUP_RULES = [
+    ("R2", lambda n: "rep2" in n or "open-rep2" in n),
+    ("R1", lambda n: "rep1" in n or "open-rep1" in n or "rep1b" in n),
+    ("A", lambda n: "control-a" in n or "ctl-a" in n or "-a-" in n),
+    ("M", lambda n: "control-m" in n or "ctl-m" in n or "-m-" in n),
+]
+
+
+def group_of(name: str) -> str:
+    for label, rule in GROUP_RULES:
+        if rule(name):
+            return label
+    return "other"
+
+
+def per_group(rows: list[dict]) -> dict:
+    buckets: dict[str, list[dict]] = {}
+    for row in rows:
+        buckets.setdefault(group_of(row["ticket"]), []).append(row)
+    return {label: summarise(items) for label, items in sorted(buckets.items())}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="phase6 dual-axis")
     parser.add_argument("--output", default=os.path.join(ROOT, "phase6", "dualaxis.json"))
@@ -118,12 +142,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.filter:
         rows = [row for row in rows if args.filter in row["ticket"]]
     report = {"schema_version": "1", "axes": ["science", "code"],
-              "per_ticket": rows, "summary": summarise(rows)}
+              "per_ticket": rows, "summary": summarise(rows), "by_group": per_group(rows)}
     os.makedirs(os.path.dirname(args.output), exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2)
         handle.write("\n")
-    print(json.dumps(report["summary"], ensure_ascii=False))
+    print(json.dumps({"summary": report["summary"], "by_group": report["by_group"]}, ensure_ascii=False))
     return 0
 
 

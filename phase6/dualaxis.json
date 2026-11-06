@@ -63,11 +63,11 @@
       "auroc": null,
       "auprc": null,
       "ef_at_1pct": null,
-      "split_strategy": null,
-      "jobs": 0,
-      "jobs_failed": 0,
+      "split_strategy": "scaffold",
+      "jobs": 26,
+      "jobs_failed": 1,
       "jobs_reused": 0,
-      "wall_seconds": 0,
+      "wall_seconds": 97.1,
       "topk": false
     },
     {
@@ -402,10 +402,10 @@
       "auprc": null,
       "ef_at_1pct": null,
       "split_strategy": null,
-      "jobs": 11,
-      "jobs_failed": 3,
+      "jobs": 35,
+      "jobs_failed": 4,
       "jobs_reused": 0,
-      "wall_seconds": 31.5,
+      "wall_seconds": 192.6,
       "topk": false
     },
     {
@@ -623,10 +623,10 @@
       "auprc": null,
       "ef_at_1pct": null,
       "split_strategy": "scaffold",
-      "jobs": 5,
-      "jobs_failed": 2,
+      "jobs": 28,
+      "jobs_failed": 4,
       "jobs_reused": 0,
-      "wall_seconds": 15.6,
+      "wall_seconds": 134.1,
       "topk": false
     },
     {
@@ -1084,11 +1084,104 @@
       "topk_rate": 0.402
     },
     "code": {
-      "jobs_total": 745,
-      "jobs_failed": 110,
+      "jobs_total": 818,
+      "jobs_failed": 114,
       "jobs_reused": 0,
-      "failure_rate": 0.148,
-      "wall_mean": 34.3
+      "failure_rate": 0.139,
+      "wall_mean": 38.9
+    }
+  },
+  "by_group": {
+    "A": {
+      "tickets": 5,
+      "science": {
+        "auroc_mean": 0.8893,
+        "auprc_mean": 0.9407,
+        "ef_at_1pct_mean": 1.4025,
+        "split_strategies": [
+          "scaffold"
+        ],
+        "topk_rate": 0.4
+      },
+      "code": {
+        "jobs_total": 95,
+        "jobs_failed": 9,
+        "jobs_reused": 0,
+        "failure_rate": 0.095,
+        "wall_mean": 94.0
+      }
+    },
+    "M": {
+      "tickets": 2,
+      "science": {
+        "auroc_mean": 0.8893,
+        "auprc_mean": 0.9407,
+        "ef_at_1pct_mean": 1.4025,
+        "split_strategies": [],
+        "topk_rate": 1.0
+      },
+      "code": {
+        "jobs_total": 6,
+        "jobs_failed": 0,
+        "jobs_reused": 0,
+        "failure_rate": 0.0,
+        "wall_mean": 23.4
+      }
+    },
+    "R1": {
+      "tickets": 10,
+      "science": {
+        "auroc_mean": 0.8939,
+        "auprc_mean": 0.9416,
+        "ef_at_1pct_mean": 1.4449,
+        "split_strategies": [
+          "scaffold"
+        ],
+        "topk_rate": 0.7
+      },
+      "code": {
+        "jobs_total": 131,
+        "jobs_failed": 5,
+        "jobs_reused": 0,
+        "failure_rate": 0.038,
+        "wall_mean": 59.0
+      }
+    },
+    "R2": {
+      "tickets": 10,
+      "science": {
+        "auroc_mean": 0.8939,
+        "auprc_mean": 0.9416,
+        "ef_at_1pct_mean": 1.4449,
+        "split_strategies": [],
+        "topk_rate": 0.7
+      },
+      "code": {
+        "jobs_total": 96,
+        "jobs_failed": 8,
+        "jobs_reused": 0,
+        "failure_rate": 0.083,
+        "wall_mean": 54.6
+      }
+    },
+    "other": {
+      "tickets": 55,
+      "science": {
+        "auroc_mean": 0.9088,
+        "auprc_mean": 0.941,
+        "ef_at_1pct_mean": 1.6809,
+        "split_strategies": [
+          "scaffold"
+        ],
+        "topk_rate": 0.273
+      },
+      "code": {
+        "jobs_total": 490,
+        "jobs_failed": 92,
+        "jobs_reused": 0,
+        "failure_rate": 0.188,
+        "wall_mean": 28.0
+      }
     }
   }
 }

@@ -23,7 +23,7 @@
         "v1"
       ],
       "exit_code": 0,
-      "wall_seconds": 1.02,
+      "wall_seconds": 1.05,
       "stderr_tail": []
     },
     {
@@ -53,7 +53,7 @@
         "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/split_manifest.json"
       ],
       "exit_code": 0,
-      "wall_seconds": 7.97,
+      "wall_seconds": 7.26,
       "stderr_tail": []
     },
     {
@@ -75,11 +75,11 @@
         "100"
       ],
       "exit_code": 0,
-      "wall_seconds": 19.66,
+      "wall_seconds": 21.85,
       "stderr_tail": []
     }
   ],
-  "wall_seconds": 28.65,
+  "wall_seconds": 30.16,
   "topk": "/home/linhan_cluster/evo_vs_rsi/.artifacts/workflow/oprm1_rep3/runs/MOR_topK.csv",
   "auroc": 0.9021,
   "success": true
