@@ -18,6 +18,7 @@
 | `screening/dual_endpoint.py`、`screening/shortlist.py` | 双端点一致性分析 / top-K shortlist 对比 |
 | `evaluation/locked.py` 的 `--desc-set` / `--endpoint` | 垫片支持特征代与端点（默认 v1 / Ki，行为兼容） |
 | `src/research/engine-pass.ts` + `orchestrator_report` 钩子 | **Engine pass**：Ticket 报 `ready` 后由 Harness 自动触发锁定评测（不解析 Agent 文案，复用同一垫片与限频） |
+| `evolution/propose.py` + `test_propose.py` | **P4-04（混合式）**：规则从语料挖候选机会并锁定 knob/验收，固定 LLM 只写 hypothesis/risk；产物过 `validate_spec` 才落盘 |
 
 ## 2. 语料与失败聚类基线
 
@@ -129,7 +130,7 @@
 
 ## 8. Known failures / not done
 
-- **P4-04 未做**：仍无"读 trace 自动产候选"的 Evolution Agent —— 与 Phase 4 报告同一缺口。
+- **P4-04 已实现（混合式）**：`evolution/propose.py` 用规则挖两类机会——①近 5 条 trace 内复发的失败类（旧的已修复簇会被 recency 过滤掉）；②占语料墙钟 ≥40% 且中位 ≥2s 的工具。**knob、验收阈值、风险红线由代码给定，LLM 只能写 hypothesis/risk 两句**，因此同一语料两次提案除措辞外一致；spec 落盘前必过 `validate_spec`，重复机会不再生成（幂等）。当前产出 `auto-latency-share-screening-rank`（screening.rank 占 67.4%、中位 73.7s → `EVOVS_SCREEN_JOBS=8`，验收=工件等价 1.0 + 加速 ≥1.3×），**待 Intake 审核与实现**（候选永不直接改 src）。单测 7 个（`test_propose.py`），evolution 合计 22/22。
 - **Engine pass 已实现**（`src/research/engine-pass.ts` + `orchestrator_report` 事务后钩子）：8 个新单测 + runtime 91/91 + research 13/13；**尚待一次真实 Ticket 端到端确认**（下次工单应看到 `runs/evaluation/engine_receipt.json`）。
 - **P5-03 未整合**：四类硬门禁（科学质量/成本/成功率/安全）仍散在各候选的 `acceptance` 里。
 - **P5-04 / P5-05 未做**：无 Pareto 集（balanced/lite/heavy），无 VersionManager（晋升/回滚=改默认值 + JSON 记录 + git SHA 兜底）。
@@ -143,5 +144,5 @@
 1. ~~F-1…F-4：修端点参数与输出名，重跑 IC50-descv2 验证面~~ ✅ 已完成（2026-11-06 03:10）；
 2. ~~D-1：trace 补 stderr 文本~~ ✅ 已完成（2026-11-06 03:20）；~~D-2 经验 payload~~ ✅ 已完成；
 3. ~~**Engine pass**：评测自动触发，闭环脱离人工调用~~ ✅ 已实现（2026-11-06 03:15），待真实 Ticket 确认；
-4. **P4-04**：从 trace + 失败簇自动产候选；
+4. ~~**P4-04**：从 trace + 失败簇自动产候选~~ ✅ 已实现（2026-11-06 03:30，混合式），首个提案待 Intake；
 5. P5-03 统一硬门禁 → P5-04 Pareto → P5-05 VersionManager。

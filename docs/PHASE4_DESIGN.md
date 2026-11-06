@@ -52,6 +52,26 @@ Shadow Evaluator：在沙箱目录按 trace 重放候选工具链，比对工件
 2. 候选永不直接修改 `src/`/`lib/`——晋升由 operator 手工执行；
 3. 语料 trace 只增不改；比较函数 determinism 规则改动 = 口径修订，须新增经验记录。
 
+## P4-04 实现：候选提案器（混合式，2026-11-06）
+
+**为什么不是"让 LLM 自由提候选"**：可复现性与可审计性会一起丢失——同一语料两次运行得到不同 knob、不同验收线，影子评估就无法归因。
+
+**分工（硬边界）**
+
+| 谁 | 决定什么 |
+|---|---|
+| 代码（`evolution/propose.py`） | 挖哪类机会、用哪个 knob、验收阈值、风险红线、去重与幂等 |
+| 固定 LLM（`deepseek-flash`，temperature 0） | 只写 `hypothesis` 与 `risk` 两句自然语言；返回值经 schema 校验，失败即回落到模板 |
+
+**两类机会（当前规则）**
+
+1. **失败复发**：同一 `tool::error_class` 出现在最近 5 条 trace 且至少 2 个工单 → 提案 pre-flight 校验（验收：影子重放中该类失败归零 + 成功路径工件等价）。**已修复的历史簇会被 recency 过滤**，不会反复提同一个。
+2. **墙钟占比**：某工具占语料墙钟 ≥40% 且中位 ≥2s → 提案吞吐改造（验收：工件等价 1.0 + 加速 ≥1.3× + 时间比 ≤1.2）。
+
+**首个产出**：`auto-latency-share-screening-rank`——`screening.rank` 占 67.4%、中位 73.7s（4 次调用共 294.9s / 语料 437.7s），knob `EVOVS_SCREEN_JOBS=8`。状态 `proposal`，**未实现、未晋升**，按红线走 Intake → 影子 → 人工裁决。
+
+**红线不变**：提案器只写 `evolution/candidates/*.json`，永不改 `src/`/`lib/`；重复运行不覆盖已有 spec（先到先审）。
+
 ## §3 修订记录（运行中发现的规则缺陷，已按红线 3 记录）
 
 1. **npz object 数组**：`tobytes()` 走 pickle，跨机器对相同内容编码不同（实证：ids 数组元素逐一相等但字节不等）→ object 数组改哈希**规范化字符串**。

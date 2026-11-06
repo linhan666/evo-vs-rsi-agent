@@ -1,0 +1,36 @@
+{
+  "candidate_id": "auto-latency-share-screening-rank",
+  "version": "0.1.0-auto",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "env",
+      "key": "EVOVS_SCREEN_JOBS",
+      "value": "8"
+    }
+  ],
+  "hypothesis": "Setting EVOVS_SCREEN_JOBS to 8 will reduce screening.rank latency enough to meet min_speedup while preserving equivalent rankings.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "max_time_ratio": 1.2,
+    "min_speedup": 1.3
+  },
+  "risk": "Increased job parallelism may cause resource contention or nondeterministic ranking behavior that violates equivalence or max_time_ratio acceptance.",
+  "basis": {
+    "generated_by": "evolution/propose.py",
+    "kind": "latency-share",
+    "tool_id": "screening.rank",
+    "evidence": {
+      "share": 0.6737,
+      "median_seconds": 73.71,
+      "calls": 4,
+      "tickets": [
+        "chembl-drd2-check-fc4be84cd180.json",
+        "chembl-oprk1-check-b6d4f508294d.json",
+        "chembl-oprm1-third-d94f469b0b6c.json",
+        "science_007.json"
+      ],
+      "corpus_seconds": 437.65
+    }
+  }
+}
