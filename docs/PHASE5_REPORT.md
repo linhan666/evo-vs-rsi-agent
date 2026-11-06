@@ -117,7 +117,27 @@
 | F-3 | ✅ 重跑三个 IC50-descv2 锁定评测（0.9223 / 0.8991 / 0.9146），入经验库 `model_*_025/026/027` |
 | F-4 | ✅ `docs/PHASE4_DESIGN.md` 与 `docs/EVALUATOR_TRIGGER_DESIGN.md` 均已标注本次更正 |
 
-## 7. 其他缺陷与教训
+## 7. 首个自动提案：实测否决（2026-11-06 15:10）
+
+`auto-latency-share-screening-rank`（`EVOVS_SCREEN_JOBS=8`）由混合式提案器生成后，实现并实测：
+
+| 场景 | 墙钟 | 结论 |
+|---|---|---|
+| 10k 行，`EVOVS_SCREEN_JOBS=1`（基线） | 9.0 s | — |
+| 10k 行，`EVOVS_SCREEN_JOBS=4` | 21.5 s | **慢 2.4×** |
+| 100k 行，`EVOVS_SCREEN_JOBS=1` | 21.4 s（二次 30.0 s） | 语料中位 73.7 s 已过时 |
+| 100k 行，`EVOVS_SCREEN_JOBS=8` | 300 s 内未完成 | 终止 |
+
+**根因**：`rdkit.featurize` 本身已是分块并行（`EVOVS_FEAT_JOBS=8`，candidate1 已晋升），而它才是主要成本；外层再并行会把内层强制串行（每个 worker 里 `EVOVS_FEAT_JOBS=1`），并给每个 worker 复制一份 822 MB 特征矩阵。进程池版本还会因 fork 后持有 xgboost/RDKit 状态而死锁（实测卡住，改用线程后不死锁但更慢）。
+
+**两个方法学缺陷（已修）**
+
+1. **语料跨晋升**：73.7 s 的中位来自 candidate1 之前的记录。`propose.py` 现在把 `corpus_window` 与 caveat 写进证据，并要求"调用来自至少两个工单"——单个工单（尤其是探针工单）不能代表工作负载。
+2. **影子拿 trace 记录当基线**：陈旧数字会让候选"假赢"。`shadow.py` 新增 `--baseline-replay`：现跑一遍基线，延迟结论只认现测；顺带把超时记为 `exit_code=-9` 而不是让评估器崩溃。
+
+**处置**：实现已回滚（`git checkout`），**未上线任何 knob、零行为变化**；spec 标 `rejected` 并附完整测量、根因与后续动作（`evolution/candidates/auto-latency-share-screening-rank.json`）。这是本项目第一次跑通"自动提案 → 实现 → 实测 → 否决"的完整闭环，也是蓝图 §19.2 要求的"报告被拒绝的候选"的第一条真实记录。
+
+## 8. 其他缺陷与教训
 
 | 缺陷 | 处理 / 教训 |
 |---|---|
@@ -128,18 +148,19 @@
 | 多字节/括号内容走 shell heredoc 必炸 | 一律写 `ops/*.py` 脚本文件执行 |
 | 经验库路径 | 必须显式 `--store`（默认路径依赖 cwd 的历史缺陷已修，但显式传值仍是硬规则） |
 
-## 8. Known failures / not done
+## 9. Known failures / not done
 
-- **P4-04 已实现（混合式）**：`evolution/propose.py` 用规则挖两类机会——①近 5 条 trace 内复发的失败类（旧的已修复簇会被 recency 过滤掉）；②占语料墙钟 ≥40% 且中位 ≥2s 的工具。**knob、验收阈值、风险红线由代码给定，LLM 只能写 hypothesis/risk 两句**，因此同一语料两次提案除措辞外一致；spec 落盘前必过 `validate_spec`，重复机会不再生成（幂等）。当前产出 `auto-latency-share-screening-rank`（screening.rank 占 67.4%、中位 73.7s → `EVOVS_SCREEN_JOBS=8`，验收=工件等价 1.0 + 加速 ≥1.3×），**待 Intake 审核与实现**（候选永不直接改 src）。单测 7 个（`test_propose.py`），evolution 合计 22/22。
+- **P4-04 已实现（混合式）**：`evolution/propose.py` 用规则挖两类机会——①近 5 条 trace 内复发的失败类（旧的已修复簇会被 recency 过滤掉）；②占语料墙钟 ≥40% 且中位 ≥2s、且调用来自 ≥2 个工单的工具。**knob、验收阈值、风险红线由代码给定，LLM 只能写 hypothesis/risk 两句**，因此同一语料两次提案除措辞外一致；spec 落盘前必过 `validate_spec`，重复机会不再生成（幂等）。首个产出 `auto-latency-share-screening-rank` 已被实测否决（见 §7），**暂无在审候选**。单测 9 个（`test_propose.py`），evolution 合计 24/24。
+
 - **Engine pass 已实现**（`src/research/engine-pass.ts` + `orchestrator_report` 事务后钩子）：8 个新单测 + runtime 91/91 + research 13/13；**尚待一次真实 Ticket 端到端确认**（下次工单应看到 `runs/evaluation/engine_receipt.json`）。
 - **P5-03 未整合**：四类硬门禁（科学质量/成本/成功率/安全）仍散在各候选的 `acceptance` 里。
 - **P5-04 / P5-05 未做**：无 Pareto 集（balanced/lite/heavy），无 VersionManager（晋升/回滚=改默认值 + JSON 记录 + git SHA 兜底）。
 - **F-1…F-4 已完成**（见 §6）；`pnpm typecheck` / `build` / `tests/research.spec.ts` 13/13 通过。
-- **D-1 / D-2 已完成**（见 §7）；`evolution` 单测 15/15，语料按 schema v2 重导、聚类重新出具。
+- **D-1 / D-2 已完成**（见 §8）；`evolution` 单测 24/24，语料按 schema v2 重导、聚类重新出具。
 - 语料 20 条仅达门槛；聚类尚无可操作结论。
 - B-002（上游 Feishu 用例）仍失败，与本阶段无关；B-006（令牌轮换）仍待操作者执行。
 
-## 9. Next（修订后的顺序）
+## 10. Next（修订后的顺序）
 
 1. ~~F-1…F-4：修端点参数与输出名，重跑 IC50-descv2 验证面~~ ✅ 已完成（2026-11-06 03:10）；
 2. ~~D-1：trace 补 stderr 文本~~ ✅ 已完成（2026-11-06 03:20）；~~D-2 经验 payload~~ ✅ 已完成；

@@ -99,7 +99,7 @@ describe('scientific registry', () => {
       const missing = flags.filter(flag => !help.stdout.includes(flag))
       expect(missing, `${tool.id}: flags missing from ${module}${sub ? ` ${sub}` : ''} --help`).toEqual([])
     }
-  })
+  }, 60_000)  // five interpreter startups; the 5s default is fragile on a loaded machine
 
   it('produces discovery output that survives a JSON round trip', () => {
     const payload = { tools: describeTools(), interpreter_configured: true }

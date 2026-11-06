@@ -68,7 +68,9 @@ Shadow Evaluator：在沙箱目录按 trace 重放候选工具链，比对工件
 1. **失败复发**：同一 `tool::error_class` 出现在最近 5 条 trace 且至少 2 个工单 → 提案 pre-flight 校验（验收：影子重放中该类失败归零 + 成功路径工件等价）。**已修复的历史簇会被 recency 过滤**，不会反复提同一个。
 2. **墙钟占比**：某工具占语料墙钟 ≥40% 且中位 ≥2s → 提案吞吐改造（验收：工件等价 1.0 + 加速 ≥1.3× + 时间比 ≤1.2）。
 
-**首个产出**：`auto-latency-share-screening-rank`——`screening.rank` 占 67.4%、中位 73.7s（4 次调用共 294.9s / 语料 437.7s），knob `EVOVS_SCREEN_JOBS=8`。状态 `proposal`，**未实现、未晋升**，按红线走 Intake → 影子 → 人工裁决。
+**首个产出**：`auto-latency-share-screening-rank`——`screening.rank` 占 67.4%、中位 73.7s（4 次调用共 294.9s / 语料 437.7s），knob `EVOVS_SCREEN_JOBS=8`。实现并实测后 **REJECTED**（10k 行：基线 9.0s vs 4 线程 21.5s；100k 行 jobs=8 在 300s 内未完成）。根因：`rdkit.featurize` 已因 candidate1 并行化并主导耗时，外层再并行会把内层强制串行。实现已回滚，未上线任何 knob；完整测量与后续动作见 spec 的 `verdict` 段与 `docs/PHASE5_REPORT.md` §7。
+
+**由此补的两道闸**：①`propose.py` 在延迟证据里记录 `corpus_window` 与 caveat，并要求调用来自 ≥2 个工单（单工单/探针工单不代表工作负载）；②`shadow.py --baseline-replay` 现跑基线，延迟结论不再采信 trace 里记录的旧数字。
 
 **红线不变**：提案器只写 `evolution/candidates/*.json`，永不改 `src/`/`lib/`；重复运行不覆盖已有 spec（先到先审）。
 

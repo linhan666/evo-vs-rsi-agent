@@ -91,27 +91,39 @@ def mine_failures(traces: list[dict], recent: int) -> list[dict]:
 
 
 def mine_latency(traces: list[dict]) -> list[dict]:
-    """The tool that owns the wall clock is the one worth making faster."""
-    total, count, per_tool = 0.0, 0, {}
+    """The tool that owns the wall clock is the one worth making faster.
+
+    Guards against two traps seen in practice:
+      - one ticket is one observation: a probe run cannot speak for the workload,
+        so a tool needs calls in at least two distinct tickets;
+      - a corpus spans promotions, so a slow historical number may already be
+        fixed. The window is recorded in the spec, and `shadow.py
+        --baseline-replay` is what must settle any latency claim.
+    """
+    total, per_tool = 0.0, {}
     for trace in traces:
         for step in trace.get("steps", []):
             if step.get("state") != "SUCCEEDED":
                 continue
             seconds = step.get("wall_seconds") or 0.0
             total += seconds
-            count += 1
-            row = per_tool.setdefault(step["tool_id"], {"seconds": 0.0, "n": 0, "tickets": set()})
+            row = per_tool.setdefault(step["tool_id"], {"seconds": 0.0, "n": 0, "tickets": {}})
             row["seconds"] += seconds
             row["n"] += 1
-            row["tickets"].add(trace["_name"])
+            row["tickets"][trace["_name"]] = row["tickets"].get(trace["_name"], 0) + 1
     if total <= 0:
         return []
 
+    window = {"first": traces[0].get("exported_at"), "last": traces[-1].get("exported_at"),
+              "traces": len(traces)}
     opportunities = []
     for tool_id, row in sorted(per_tool.items(), key=lambda kv: -kv[1]["seconds"]):
         share = row["seconds"] / total
         median = row["seconds"] / row["n"] if row["n"] else 0.0
-        if share < SHARE_THRESHOLD or median < MEDIAN_THRESHOLD:
+        # Two independent tickets, not one: a single ticket is one observation and
+        # cannot speak for the workload. The median also keeps sub-second probe
+        # jobs out, which is what the tail of the corpus is full of.
+        if share < SHARE_THRESHOLD or median < MEDIAN_THRESHOLD or len(row["tickets"]) < 2:
             continue
         knob = THROUGHPUT_KNOBS.get(tool_id)
         change = ({"type": "env", "key": knob[0], "value": knob[1]} if knob
@@ -121,8 +133,10 @@ def mine_latency(traces: list[dict]) -> list[dict]:
             "kind": "latency-share",
             "tool_id": tool_id,
             "evidence": {"share": round(share, 4), "median_seconds": round(median, 2),
-                         "calls": row["n"], "tickets": sorted(row["tickets"])[:8],
-                         "corpus_seconds": round(total, 2)},
+                         "calls": row["n"], "substantial_tickets": sorted(row["tickets"]),
+                         "corpus_seconds": round(total, 2), "corpus_window": window,
+                         "caveat": "wall clock spans the whole corpus, which may predate a promotion; "
+                                   "re-measure the baseline with shadow.py --baseline-replay before trusting it"},
             "change": change,
             "acceptance": {"equivalence": 1.0, "max_time_ratio": 1.2, "min_speedup": 1.3},
             "risk": "parallel work multiplies peak memory; the single code path must keep output order byte-identical",

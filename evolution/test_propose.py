@@ -24,6 +24,13 @@ def step(tool, seconds, *, state="SUCCEEDED", stderr=""):
             "error": "", "stderr_tail": stderr, "stdout_tail": "", "artifacts": []}
 
 
+def heavy_workload(directory):
+    """Two tickets that each screen twice: enough evidence for a latency claim."""
+    for index in range(2):
+        write_trace(directory, "t{}".format(index), "2026-11-0{}T00:00:00Z".format(index + 1),
+                    [step("screening.rank", 80.0), step("screening.rank", 70.0), step("ml.train", 5.0)])
+
+
 class MiningTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -45,23 +52,35 @@ class MiningTests(unittest.TestCase):
         self.assertNotIn("rdkit.featurize::ValueError", keys)
 
     def test_only_the_wall_clock_owner_is_proposed(self):
-        write_trace(self.tmp.name, "t1", "2026-11-01T00:00:00Z",
-                    [step("screening.rank", 80.0), step("rdkit.featurize", 2.0), step("ml.train", 5.0)])
+        heavy_workload(self.tmp.name)
         mined = mine_latency(load_traces(self.tmp.name))
         self.assertEqual([item["tool_id"] for item in mined], ["screening.rank"])
         self.assertGreater(mined[0]["evidence"]["share"], 0.8)
+
+    def test_a_single_ticket_cannot_speak_for_the_workload(self):
+        # One ticket with many calls is still one observation; probe tickets look
+        # exactly like this and must not generate a proposal.
+        write_trace(self.tmp.name, "only", "2026-11-01T00:00:00Z",
+                    [step("screening.rank", 80.0) for _ in range(6)])
+        self.assertEqual(mine_latency(load_traces(self.tmp.name)), [])
 
     def test_a_cheap_corpus_proposes_nothing(self):
         write_trace(self.tmp.name, "t1", "2026-11-01T00:00:00Z",
                     [step("a.tool", 0.5), step("b.tool", 0.5)])
         self.assertEqual(mine_latency(load_traces(self.tmp.name)), [])
 
+    def test_latency_evidence_names_its_window_and_caveat(self):
+        heavy_workload(self.tmp.name)
+        evidence = mine_latency(load_traces(self.tmp.name))[0]["evidence"]
+        self.assertEqual(evidence["corpus_window"]["traces"], 2)
+        self.assertIn("re-measure", evidence["caveat"])
+
 
 class SpecTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        write_trace(self.tmp.name, "t1", "2026-11-01T00:00:00Z", [step("screening.rank", 80.0)])
+        heavy_workload(self.tmp.name)
 
     def test_generated_spec_passes_the_intake_validator(self):
         opportunity = mine_latency(load_traces(self.tmp.name))[0]
@@ -80,7 +99,7 @@ class SpecTests(unittest.TestCase):
     def test_template_names_the_measured_number(self):
         opportunity = mine_latency(load_traces(self.tmp.name))[0]
         self.assertIn("screening.rank", template_hypothesis(opportunity))
-        self.assertIn("80.0", template_hypothesis(opportunity))
+        self.assertIn("75.0", template_hypothesis(opportunity))  # 150s over 2 calls
 
     def test_emit_is_idempotent(self):
         out = os.path.join(self.tmp.name, "candidates")

@@ -1,7 +1,7 @@
 {
   "candidate_id": "auto-latency-share-screening-rank",
   "version": "0.1.0-auto",
-  "status": "proposal",
+  "status": "rejected",
   "changes": [
     {
       "type": "env",
@@ -24,13 +24,48 @@
       "share": 0.6737,
       "median_seconds": 73.71,
       "calls": 4,
-      "tickets": [
+      "corpus_seconds": 437.65,
+      "substantial_tickets": [
         "chembl-drd2-check-fc4be84cd180.json",
         "chembl-oprk1-check-b6d4f508294d.json",
         "chembl-oprm1-third-d94f469b0b6c.json",
         "science_007.json"
-      ],
-      "corpus_seconds": 437.65
+      ]
     }
+  },
+  "verdict": {
+    "decided_at": "2026-11-06T15:10:00+08:00",
+    "decision": "REJECTED — the implementation regressed on measurement; reverted, no knob shipped",
+    "method": "operator-side measurement following the shadow protocol, baseline replayed on current code (the recorded trace numbers are stale)",
+    "measurements": [
+      {
+        "case": "10k rows, EVOVS_SCREEN_JOBS=1",
+        "wall_seconds": 9.0,
+        "note": "featurize uses its own 8-way process pool"
+      },
+      {
+        "case": "10k rows, EVOVS_SCREEN_JOBS=4 (threads)",
+        "wall_seconds": 21.5,
+        "note": "2.4x slower: the outer pool forces EVOVS_FEAT_JOBS=1 inside each worker"
+      },
+      {
+        "case": "100k rows, EVOVS_SCREEN_JOBS=1",
+        "wall_seconds": 21.4,
+        "note": "second run 30.0s under machine load; both far below the 73.7s corpus median"
+      },
+      {
+        "case": "100k rows, EVOVS_SCREEN_JOBS=8",
+        "wall_seconds": null,
+        "note": "did not finish inside 300s; terminated"
+      }
+    ],
+    "root_cause": "rdkit.featurize is already chunk-parallel (EVOVS_FEAT_JOBS=8, candidate1 promoted 2026-11-06) and dominates the step. Chunking the outer loop serializes exactly the stage that was already parallel, and adds one 822 MB feature matrix per worker.",
+    "corpus_confound": "The 73.7s median predates that promotion: the corpus mixes pre- and post-promotion runs, so the latency evidence was stale before the candidate was even drafted.",
+    "what_the_measurement_says_now": "screening.rank on 100k currently runs ~18-30s: featurize ~9s (parallel), predict_proba ~7s (xgboost, already multithreaded), rest is I/O. There is no 1.3x win behind an outer-pool knob.",
+    "follow_ups": [
+      "evolution/propose.py records corpus_window and a caveat, and requires calls from at least two tickets",
+      "evolution/shadow.py gained --baseline-replay so a latency claim is measured on current code, not on a recorded number"
+    ],
+    "implementation": "reverted (git checkout scientific/src/evovs_science/screening/predict.py); nothing shipped, no behaviour change"
   }
 }

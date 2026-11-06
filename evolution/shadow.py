@@ -21,17 +21,25 @@ def run_step(argv: list[str], cwd: str, env_delta: dict[str, str], timeout: int)
     env = {**os.environ, **env_delta}
     os.makedirs(cwd, exist_ok=True)
     started = time.time()
-    process = subprocess.run(argv, cwd=cwd, env=env, capture_output=True, timeout=timeout)
-    return {"exit_code": process.returncode,
+    try:
+        process = subprocess.run(argv, cwd=cwd, env=env, capture_output=True, timeout=timeout)
+        code = process.returncode
+        tail = process.stderr.decode("utf-8", "replace").strip().splitlines()[-3:]
+    except subprocess.TimeoutExpired:
+        # A candidate that cannot finish inside the budget is a failed candidate,
+        # not a broken evaluator: record it and let the verdict say so.
+        code = -9
+        tail = [f"timed out after {timeout}s"]
+    return {"exit_code": code,
             "wall_seconds": round(time.time() - started, 2),
-            "stderr_tail": process.stderr.decode("utf-8", "replace").strip().splitlines()[-3:]}
+            "stderr_tail": tail}
 
 
 DERIVED_BASENAMES = {"artifact_manifest.json"}  # index of the other artifacts; no independent information
 
 
 def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delta: dict[str, str],
-             timeout: int) -> dict:
+             timeout: int, replay_baseline: bool = False) -> dict:
     results = []
     os.makedirs(sandbox, exist_ok=True)
     derived_skipped = 0
@@ -40,6 +48,11 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
             continue
         if step["state"] != "SUCCEEDED":
             continue
+        # A trace records the wall time of a run that may predate the current code
+        # (and any promotion in between). For latency claims the baseline must be
+        # measured now, on this machine, with this code — otherwise a candidate can
+        # "win" against a stale number.
+        replayed = run_step(step["argv"], sandbox, {}, timeout) if replay_baseline else None
         run = run_step(step["argv"], sandbox, env_delta, timeout)
         mismatches: list[str] = []
         equal = 0
@@ -60,6 +73,7 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
         results.append({
             "tool_id": step["tool_id"],
             "baseline_wall_seconds": step["wall_seconds"],
+            "replayed_baseline_wall_seconds": replayed["wall_seconds"] if replayed else None,
             "candidate_wall_seconds": run["wall_seconds"],
             "exit_code": run["exit_code"],
             "artifacts_total": total_step,
@@ -87,6 +101,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--sandbox", required=True)
     parser.add_argument("--steps", default=None, help="comma-separated tool_id filter")
     parser.add_argument("--timeout", type=int, default=600)
+    parser.add_argument("--baseline-replay", action="store_true",
+                        help="re-run each step with the baseline environment too, so latency is measured on this code")
     parser.add_argument("--output", required=True)
     args = parser.parse_args(argv)
 
@@ -99,22 +115,29 @@ def main(argv: list[str] | None = None) -> int:
                  if change.get("type") == "env"}
     steps = args.steps.split(",") if args.steps else None
 
-    report = evaluate(trace, args.sandbox, steps, env_delta, args.timeout)
+    report = evaluate(trace, args.sandbox, steps, env_delta, args.timeout, args.baseline_replay)
     report["candidate_id"] = spec.get("candidate_id")
     report["hypothesis"] = spec.get("hypothesis")
     report["acceptance"] = spec.get("acceptance")
+    report["baseline_source"] = "replayed" if args.baseline_replay else "recorded in the trace"
     featurize_steps = [item for item in report["steps"] if item["tool_id"] in ("rdkit.featurize", "screening.rank")]
+    for item in report["steps"]:
+        baseline = item.get("replayed_baseline_wall_seconds") or item["baseline_wall_seconds"]
+        item["effective_baseline_wall_seconds"] = baseline
+        item["speedup"] = round(baseline / item["candidate_wall_seconds"], 3) if item["candidate_wall_seconds"] else None
     if featurize_steps:
-        ratio = max((item["candidate_wall_seconds"] / item["baseline_wall_seconds"]
-                     for item in featurize_steps if item["baseline_wall_seconds"]), default=None)
+        ratio = max((item["candidate_wall_seconds"] / item["effective_baseline_wall_seconds"]
+                     for item in featurize_steps if item["effective_baseline_wall_seconds"]), default=None)
+        speedup = max((item["speedup"] or 0) for item in featurize_steps)
         report["featurize_time_ratio_max"] = ratio
+        report["best_speedup"] = speedup
         acceptance = spec.get("acceptance", {})
         report["verdict"] = {
             "equivalence_ok": report["equivalence_rate"] == 1.0,
             "time_ratio_ok": (ratio is None) or (ratio <= acceptance.get("max_time_ratio", 1.2)),
-            "speedup_ok": True,  # recomputed in the report narrative per step
+            "speedup_ok": speedup >= acceptance.get("min_speedup", 0.0) if acceptance.get("min_speedup") else True,
         }
-        report["verdict"]["pass"] = report["verdict"]["equivalence_ok"] and report["verdict"]["time_ratio_ok"]
+        report["verdict"]["pass"] = all(report["verdict"].values())
 
     os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as handle:
