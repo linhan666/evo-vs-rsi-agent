@@ -5,7 +5,7 @@
     {
       "gate": "equivalence",
       "status": "pass",
-      "detail": "non-regression: 3 declared change(s), none outside ['.csv', '.json', '.joblib']"
+      "detail": "non-regression: 6 declared change(s), none outside ['.csv', '.json', '.joblib']"
     },
     {
       "gate": "cost",
@@ -14,8 +14,8 @@
     },
     {
       "gate": "success",
-      "status": "fail",
-      "detail": "non-zero exit: screening.rank"
+      "status": "pass",
+      "detail": "16 previously successful steps still exit 0 with their artifacts"
     },
     {
       "gate": "failure",
@@ -33,10 +33,8 @@
       "detail": "canary baseline intact"
     }
   ],
-  "verdict": "fail",
-  "blocking": [
-    "success"
-  ],
+  "verdict": "pass",
+  "blocking": [],
   "needs_human_number": [],
   "note": "A pass here is a prerequisite for promotion, never a promotion. The operator still applies the change and runs freshness, rebuild and canary."
 }

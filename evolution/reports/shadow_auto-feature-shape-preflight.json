@@ -7,63 +7,63 @@
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 0.09,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 0.08,
+      "candidate_wall_seconds": 0.32,
       "exit_code": 0,
       "artifacts_total": 1,
       "artifacts_equal": 1,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 0.09,
-      "speedup": 1.125
+      "speedup": 0.281
     },
     {
       "tool_id": "rdkit.featurize",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 0.55,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 0.64,
+      "candidate_wall_seconds": 2.38,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 0.55,
-      "speedup": 0.859
+      "speedup": 0.231
     },
     {
       "tool_id": "rdkit.featurize",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 7.48,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 7.1,
+      "candidate_wall_seconds": 9.0,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 7.48,
-      "speedup": 1.054
+      "speedup": 0.831
     },
     {
       "tool_id": "data.split",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 2.19,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 1.49,
+      "candidate_wall_seconds": 2.56,
       "exit_code": 0,
       "artifacts_total": 1,
       "artifacts_equal": 1,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 2.19,
-      "speedup": 1.47
+      "speedup": 0.855
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 3.19,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 3.39,
+      "candidate_wall_seconds": 3.83,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 1,
@@ -76,14 +76,14 @@
         "  opt_res = optimize.minimize("
       ],
       "effective_baseline_wall_seconds": 3.19,
-      "speedup": 0.941
+      "speedup": 0.833
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 2.03,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 2.79,
+      "candidate_wall_seconds": 2.91,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 1,
@@ -96,56 +96,56 @@
         "  opt_res = optimize.minimize("
       ],
       "effective_baseline_wall_seconds": 2.03,
-      "speedup": 0.728
+      "speedup": 0.698
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 4.97,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 7.8,
+      "candidate_wall_seconds": 8.03,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 4.97,
-      "speedup": 0.637
+      "speedup": 0.619
     },
     {
       "tool_id": "rdkit.featurize",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 6.08,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 7.31,
+      "candidate_wall_seconds": 7.03,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 6.08,
-      "speedup": 0.832
+      "speedup": 0.865
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 3.75,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 5.23,
+      "candidate_wall_seconds": 14.81,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 3.75,
-      "speedup": 0.717
+      "speedup": 0.253
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 25.12,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 31.54,
+      "candidate_wall_seconds": 35.85,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 2,
@@ -154,28 +154,28 @@
       ],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 25.12,
-      "speedup": 0.796
+      "speedup": 0.701
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 6.46,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 10.53,
+      "candidate_wall_seconds": 8.96,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 6.46,
-      "speedup": 0.613
+      "speedup": 0.721
     },
     {
       "tool_id": "ml.fuse",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 0.1,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 0.08,
+      "candidate_wall_seconds": 0.1,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 1,
@@ -184,14 +184,14 @@
       ],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 0.1,
-      "speedup": 1.25
+      "speedup": 1.0
     },
     {
       "tool_id": "screening.rank",
       "recorded_state": "FAILED",
       "baseline_wall_seconds": 14.57,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 15.08,
+      "candidate_wall_seconds": 24.29,
       "exit_code": 1,
       "artifacts_total": 0,
       "artifacts_equal": 0,
@@ -200,70 +200,70 @@
         "FEATURE_SHAPE_MISMATCH: screening built 2055 features (radius=2, n_bits=2048, desc_set=v1) but the fitted model expects 2091. Pass the same --radius/--n-bits/--desc-set that modeling.train was given."
       ],
       "effective_baseline_wall_seconds": 14.57,
-      "speedup": 0.966
+      "speedup": 0.6
     },
     {
       "tool_id": "rdkit.featurize",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 0.93,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 1.0,
+      "candidate_wall_seconds": 5.07,
       "exit_code": 0,
       "artifacts_total": 2,
       "artifacts_equal": 2,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 0.93,
-      "speedup": 0.93
+      "speedup": 0.183
     },
     {
       "tool_id": "ml.train",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 6.06,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 8.1,
+      "candidate_wall_seconds": 11.07,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 6.06,
-      "speedup": 0.748
+      "speedup": 0.547
     },
     {
       "tool_id": "screening.rank",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 18.57,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 15.98,
+      "candidate_wall_seconds": 43.89,
       "exit_code": 0,
       "artifacts_total": 3,
       "artifacts_equal": 3,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 18.57,
-      "speedup": 1.162
+      "speedup": 0.423
     },
     {
       "tool_id": "evaluation.locked",
       "recorded_state": "SUCCEEDED",
       "baseline_wall_seconds": 2.85,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 4.52,
+      "candidate_wall_seconds": 18.38,
       "exit_code": 0,
       "artifacts_total": 1,
       "artifacts_equal": 1,
       "mismatches": [],
       "stderr_tail": [],
       "effective_baseline_wall_seconds": 2.85,
-      "speedup": 0.631
+      "speedup": 0.155
     },
     {
       "tool_id": "screening.rank",
       "recorded_state": "FAILED",
       "baseline_wall_seconds": 13.13,
       "replayed_baseline_wall_seconds": null,
-      "candidate_wall_seconds": 17.22,
+      "candidate_wall_seconds": 53.2,
       "exit_code": 1,
       "artifacts_total": 0,
       "artifacts_equal": 0,
@@ -272,7 +272,7 @@
         "FEATURE_SHAPE_MISMATCH: screening built 2055 features (radius=2, n_bits=2048, desc_set=v1) but the fitted model expects 2091. Pass the same --radius/--n-bits/--desc-set that modeling.train was given."
       ],
       "effective_baseline_wall_seconds": 13.13,
-      "speedup": 0.762
+      "speedup": 0.247
     }
   ],
   "equivalence_rate": 0.8378,

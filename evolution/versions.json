@@ -82,7 +82,7 @@
       "candidate_id": "auto-manifest-layout-compat",
       "recorded_at": "2026-11-06T21:09:01+00:00",
       "git_sha": "620f09a2de707c972ce4bd09b501d5949f20b296",
-      "status": "active",
+      "status": "superseded",
       "change": {
         "type": "experiment",
         "key": "preflight:manifest-layout",
@@ -95,6 +95,25 @@
       },
       "rollback": "drop the rows-layout branch in modeling/train.py read_split_ids",
       "note": "manifest layout compatibility: non-regression gate, class eliminated"
+    },
+    {
+      "version": "v6",
+      "candidate_id": "auto-feature-shape-preflight",
+      "recorded_at": "2026-11-06T23:03:21+00:00",
+      "git_sha": "bb33feaa3ea2d6185a3ed9b95ed78937ee8b819f",
+      "status": "active",
+      "change": {
+        "type": "experiment",
+        "key": "preflight:screening.feature-shape",
+        "value": "compare the featurized matrix width against model.n_features_in_ before predict_proba, and carry --desc-set through screening.rank so the two sides can agree"
+      },
+      "gate": {
+        "verdict": "pass",
+        "blocking": [],
+        "needs_human_number": []
+      },
+      "rollback": "drop the width check in screening/predict.py and the --desc-set argument",
+      "note": "feature shape preflight: screening now carries --desc-set and refuses disagreeing widths"
     }
   ]
 }
