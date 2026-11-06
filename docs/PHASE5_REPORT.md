@@ -137,6 +137,22 @@
 
 **处置**：实现已回滚（`git checkout`），**未上线任何 knob、零行为变化**；spec 标 `rejected` 并附完整测量、根因与后续动作（`evolution/candidates/auto-latency-share-screening-rank.json`）。这是本项目第一次跑通"自动提案 → 实现 → 实测 → 否决"的完整闭环，也是蓝图 §19.2 要求的"报告被拒绝的候选"的第一条真实记录。
 
+### 7.1 Engine pass 端到端验证（同日 15:36，真实 Ticket）
+
+**任务**：`engine_pass_check_002` → Ticket `engine-check-exact-27505612356f`（任务里**明确禁止** Agent 自己调 `evaluation.locked`）。
+
+| 项 | 结果 |
+|---|---|
+| 作业 | `rdkit.featurize` + `ml.train`，2 个全 SUCCEEDED，40 s 内完成 |
+| **回执** | `runs/evaluation/engine_receipt.json` 自动出现：`target=MOR / endpoint=Ki / desc_set=v1` |
+| 指标 | AUROC **0.9339**、AUPRC 0.9722 —— 与 operator 的 MOR 基线**逐位一致** |
+| 限频标记 | `.evaluation/MOR_Ki.done`（与 Agent 工具共用） |
+| 证据 | `docs/evidence/phase5/engine_pass_receipt.json`、`engine_pass_marker.json` |
+
+→ **Engine pass 成立**：目标/端点/特征代全部从作业记录推导，Agent 全程未参与评测，回执与保护目录均由 Harness 写入。这是方案 3 第一次在真实 Ticket 上生效。
+
+**同日的一个反例（也是闭环的一部分）**：第一次尝试 `engine_pass_check_001` 时，Agent 未按数据集表头传 `id_column/smiles_column`，`rdkit.featurize` 连续失败 **12 次**（同一错误反复重试）。该工单已进语料，`failure_clusters` 立刻出现 `missing_column:smiles ×6`；提案器据此自动生成两个候选（`auto-failure-recurrence-rdkit-featurize-61c653` / `-f80739`），证据直接引用该 Ticket。**真实失败 → 语料 → 自动提案**这条链路当天就闭合了。
+
 ## 8. 其他缺陷与教训
 
 | 缺陷 | 处理 / 教训 |
@@ -150,9 +166,9 @@
 
 ## 9. Known failures / not done
 
-- **P4-04 已实现（混合式）**：`evolution/propose.py` 用规则挖两类机会——①近 5 条 trace 内复发的失败类（旧的已修复簇会被 recency 过滤掉）；②占语料墙钟 ≥40% 且中位 ≥2s、且调用来自 ≥2 个工单的工具。**knob、验收阈值、风险红线由代码给定，LLM 只能写 hypothesis/risk 两句**，因此同一语料两次提案除措辞外一致；spec 落盘前必过 `validate_spec`，重复机会不再生成（幂等）。首个产出 `auto-latency-share-screening-rank` 已被实测否决（见 §7），**暂无在审候选**。单测 9 个（`test_propose.py`），evolution 合计 24/24。
+- **P4-04 已实现（混合式）**：`evolution/propose.py` 用规则挖两类机会——①近 5 条 trace 内复发的失败类（旧的已修复簇会被 recency 过滤掉）；②占语料墙钟 ≥40% 且中位 ≥2s、且调用来自 ≥2 个工单的工具。**knob、验收阈值、风险红线由代码给定，LLM 只能写 hypothesis/risk 两句**，因此同一语料两次提案除措辞外一致；spec 落盘前必过 `validate_spec`，重复机会不再生成（幂等）。首个产出 `auto-latency-share-screening-rank` 已被实测否决（见 §7），随后 **当日真实失败自动生出两个失败类候选**（`auto-failure-recurrence-rdkit-featurize-61c653` / `-f80739`，待 Intake）。单测 12 个（`test_propose.py`），evolution 合计 28/28；语料 22 条 / 73 步。
 
-- **Engine pass 已实现**（`src/research/engine-pass.ts` + `orchestrator_report` 事务后钩子）：8 个新单测 + runtime 91/91 + research 13/13；**尚待一次真实 Ticket 端到端确认**（下次工单应看到 `runs/evaluation/engine_receipt.json`）。
+- **Engine pass 已验证**（`src/research/engine-pass.ts` + `orchestrator_report` 事务后钩子）：真实 Ticket `engine-check-exact-27505612356f` 在 Agent 未调用评测工具的前提下产生 `engine_receipt.json`（MOR/Ki/v1，AUROC 0.9339），见 §7.1；8 个单测 + runtime 91/91 + research 13/13。
 - **P5-03 未整合**：四类硬门禁（科学质量/成本/成功率/安全）仍散在各候选的 `acceptance` 里。
 - **P5-04 / P5-05 未做**：无 Pareto 集（balanced/lite/heavy），无 VersionManager（晋升/回滚=改默认值 + JSON 记录 + git SHA 兜底）。
 - **F-1…F-4 已完成**（见 §6）；`pnpm typecheck` / `build` / `tests/research.spec.ts` 13/13 通过。

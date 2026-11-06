@@ -1,0 +1,34 @@
+{
+  "candidate_id": "auto-failure-recurrence-rdkit-featurize-f80739",
+  "version": "0.1.0-auto",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "preflight:rdkit.featurize",
+      "value": "validate the job inputs before launch (required columns, file kind) and fail fast with an actionable message"
+    }
+  ],
+  "hypothesis": "Validating required columns and file kind before launching rdkit.featurize will prevent recurrence of the observed FileNotFoundError failures by failing fast with an actionable message while meeting the fixed equivalence and replay acceptance criteria.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "failures_in_replay": 0
+  },
+  "risk": "The preflight validation may reject legitimate jobs or miss some malformed inputs, potentially causing false failures even if the acceptance equivalence and replay failure criteria are met.",
+  "basis": {
+    "generated_by": "evolution/propose.py",
+    "kind": "failure-recurrence",
+    "tool_id": "rdkit.featurize",
+    "evidence": {
+      "tickets": [
+        "engine-pass-check-eb69ace79bac.json"
+      ],
+      "recent_hits": 7,
+      "samples": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/nope.csv'",
+        "FileNotFoundError: [Errno 2] No such file or directory: '.artifacts/chembl/oprm1/ki/dataset.csv'"
+      ]
+    },
+    "cluster": "rdkit.featurize::FileNotFoundError"
+  }
+}

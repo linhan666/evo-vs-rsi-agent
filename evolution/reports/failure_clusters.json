@@ -1,12 +1,36 @@
 {
   "schema_version": "2",
-  "created_at": "2026-11-05T19:08:53+00:00",
+  "created_at": "2026-11-06T07:37:24+00:00",
   "corpus": {
-    "traces": 20,
-    "steps": 55,
-    "failed": 5
+    "traces": 22,
+    "steps": 73,
+    "failed": 18
   },
   "clusters": {
+    "rdkit.featurize :: FileNotFoundError": {
+      "count": 7,
+      "tickets": [
+        "engine-pass-check-eb69ace79bac.json"
+      ],
+      "sample_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/nope.csv'",
+        "FileNotFoundError: [Errno 2] No such file or directory: '.artifacts/chembl/oprm1/ki/dataset.csv'",
+        "FileNotFoundError: [Errno 2] No such file or directory: 'nope.csv'"
+      ]
+    },
+    "rdkit.featurize :: missing_column:smiles": {
+      "count": 6,
+      "tickets": [
+        "chembl-oprm1-e2e-3eee106a930c.json",
+        "chembl-oprm1-rerun-3c9ea202ad68.json",
+        "engine-pass-check-eb69ace79bac.json"
+      ],
+      "sample_errors": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv has no 'smiles' column; found ['molecule_chembl_id', 'canonical_smiles', 'standard_type', 'value_nM', 'px', 'label', '",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv has no 'smiles' column; found ['molecule_chembl_id', 'canonical_smiles', 'standard_type', 'value_nM', 'px', 'label', '",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv has no 'smiles' column; found ['molecule_chembl_id', 'canonical_smiles', 'standard_type', 'value_nM', 'px', 'label', '"
+      ]
+    },
     "experience.retrieve :: FileNotFoundError": {
       "count": 2,
       "tickets": [
@@ -17,17 +41,6 @@
         "FileNotFoundError: [Errno 2] No such file or directory: 'runs/experience/mor_model.json'"
       ]
     },
-    "rdkit.featurize :: missing_column:smiles": {
-      "count": 2,
-      "tickets": [
-        "chembl-oprm1-e2e-3eee106a930c.json",
-        "chembl-oprm1-rerun-3c9ea202ad68.json"
-      ],
-      "sample_errors": [
-        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv has no 'smiles' column; found ['molecule_chembl_id', 'canonical_smiles', 'standard_type', 'value_nM', 'px', 'label', '",
-        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv has no 'smiles' column; found ['molecule_chembl_id', 'canonical_smiles', 'standard_type', 'value_nM', 'px', 'label', '"
-      ]
-    },
     "screening.rank :: IsADirectoryError": {
       "count": 1,
       "tickets": [
@@ -35,6 +48,24 @@
       ],
       "sample_errors": [
         "IsADirectoryError: [Errno 21] Is a directory: 'runs/models/xgboost'"
+      ]
+    },
+    "ml.train :: FileNotFoundError": {
+      "count": 1,
+      "tickets": [
+        "engine-pass-check-eb69ace79bac.json"
+      ],
+      "sample_errors": [
+        "FileNotFoundError: [Errno 2] No such file or directory: 'runs/features.npz'"
+      ]
+    },
+    "screening.rank :: --model must be the fitted pipeline FILE from modeling.train": {
+      "count": 1,
+      "tickets": [
+        "engine-pass-check-eb69ace79bac.json"
+      ],
+      "sample_errors": [
+        "--model must be the fitted pipeline FILE from modeling.train (e.g. runs/models/<name>/model.joblib); got does_not_exist.pkl"
       ]
     }
   },

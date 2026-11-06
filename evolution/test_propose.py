@@ -11,7 +11,9 @@ from propose import (load_traces, main, mine_failures, mine_latency,  # noqa: E4
 from spec import validate_spec  # noqa: E402
 
 
-def write_trace(directory, name, exported_at, steps):
+def write_trace(directory, name, exported_at, steps, activity=None):
+    for item in steps:  # the ticket's own clock, which is what recency must use
+        item["started_at"] = activity or exported_at
     trace = {"schema_version": "2", "ticket_dir": "/x", "exported_at": exported_at,
              "steps": steps}
     with open(os.path.join(directory, name + ".json"), "w", encoding="utf-8") as handle:
@@ -50,6 +52,34 @@ class MiningTests(unittest.TestCase):
         keys = [item["cluster"] for item in mined]
         self.assertIn("ml.train::KeyError", keys)
         self.assertNotIn("rdkit.featurize::ValueError", keys)
+
+    def test_a_retry_loop_inside_one_recent_ticket_is_mined(self):
+        # One ticket burning several jobs on the same error is a loop, not noise:
+        # requiring a second ticket would hide the strongest signal in the corpus.
+        write_trace(self.tmp.name, "loop", "2026-11-03T00:00:00Z",
+                    [step("rdkit.featurize", 0.2, state="FAILED",
+                          stderr="/x/y.csv has no 'smiles' column; found ['canonical_smiles']\n") for _ in range(4)])
+        mined = mine_failures(load_traces(self.tmp.name), recent=5)
+        self.assertEqual([item["cluster"] for item in mined], ["rdkit.featurize::missing_column:smiles"])
+
+    def test_a_single_failure_is_not_a_proposal(self):
+        write_trace(self.tmp.name, "once", "2026-11-03T00:00:00Z",
+                    [step("rdkit.featurize", 0.2, state="FAILED", stderr="ValueError: one off\n")])
+        self.assertEqual(mine_failures(load_traces(self.tmp.name), recent=5), [])
+
+    def test_recency_uses_the_ticket_clock_not_the_export_time(self):
+        # A corpus rebuilt in one batch stamps every trace with the same
+        # exported_at; ordering by it would be filename order, not history.
+        same = "2026-11-06T00:00:00Z"
+        write_trace(self.tmp.name, "aaa_old", same,
+                    [step("rdkit.featurize", 1.0, state="FAILED", stderr="ValueError: ancient\n")],
+                    activity="2026-11-01T00:00:00Z")
+        for index in range(2):
+            write_trace(self.tmp.name, "zzz_new{}".format(index), same,
+                        [step("ml.train", 1.0, state="FAILED", stderr="KeyError: 'label'\n")],
+                        activity="2026-11-05T00:00:0{}Z".format(index))
+        mined = mine_failures(load_traces(self.tmp.name), recent=2)
+        self.assertEqual([item["cluster"] for item in mined], ["ml.train::KeyError"])
 
     def test_only_the_wall_clock_owner_is_proposed(self):
         heavy_workload(self.tmp.name)
@@ -100,6 +130,13 @@ class SpecTests(unittest.TestCase):
         opportunity = mine_latency(load_traces(self.tmp.name))[0]
         self.assertIn("screening.rank", template_hypothesis(opportunity))
         self.assertIn("75.0", template_hypothesis(opportunity))  # 150s over 2 calls
+
+    def test_two_failure_classes_on_one_tool_get_distinct_ids(self):
+        first = {"kind": "failure-recurrence", "tool_id": "rdkit.featurize", "cluster": "rdkit.featurize::ValueError",
+                 "evidence": {}, "change": {"type": "experiment", "key": "preflight:x", "value": "v"},
+                 "acceptance": {"equivalence": 1.0}, "risk": "r"}
+        second = dict(first, cluster="rdkit.featurize::KeyError")
+        self.assertNotEqual(to_spec(first, None)["candidate_id"], to_spec(second, None)["candidate_id"])
 
     def test_emit_is_idempotent(self):
         out = os.path.join(self.tmp.name, "candidates")

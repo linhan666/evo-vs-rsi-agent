@@ -1,0 +1,14 @@
+{
+  "target": "MOR",
+  "endpoint": "Ki",
+  "desc_set": "v1",
+  "model": "model.joblib",
+  "protected_output": "/home/linhan_cluster/evo_vs_rsi/protected/chembl37_ki/metrics_test_locked_agent_Ki_v1_engine-check-exact-27505612356f_MOR.json",
+  "metrics": {
+    "auroc": 0.9339,
+    "auprc": 0.9722,
+    "ef_at_1pct": 1.379,
+    "ef_at_5pct": 1.379
+  },
+  "note": "summary only; the raw locked metrics file is not readable from the ticket"
+}

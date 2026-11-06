@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import hashlib
 import json
 import os
 import re
@@ -42,18 +43,36 @@ THROUGHPUT_KNOBS = {
 }
 
 
+def _activity(trace: dict) -> str:
+    """When the ticket actually ran, not when its trace was exported.
+
+    `exported_at` is the export time: a corpus rebuilt in one batch gives every
+    trace the same stamp, and "the last N traces" then degenerates into filename
+    order. The newest step is what recency means.
+    """
+    stamps = [str(step.get("started_at")) for step in trace.get("steps", []) if step.get("started_at")]
+    return max(stamps) if stamps else str(trace.get("exported_at") or "")
+
+
 def load_traces(traces_dir: str) -> list[dict]:
     traces = []
     for path in sorted(glob.glob(os.path.join(traces_dir, "*.json"))):
         trace = json.loads(open(path, encoding="utf-8").read())
         trace["_name"] = os.path.basename(path)
         traces.append(trace)
-    traces.sort(key=lambda item: item.get("exported_at") or "")
+    traces.sort(key=_activity)
     return traces
 
 
 def mine_failures(traces: list[dict], recent: int) -> list[dict]:
-    """A failure class is worth a proposal when it still happens in recent traces."""
+    """A failure class is worth a proposal when it still happens in recent traces.
+
+    Recurrence counts two ways: the same class across two or more tickets, or the
+    same class twice inside the recent window. The second case is what a retry
+    loop looks like from the corpus — one ticket burning a dozen jobs on the same
+    error is the strongest signal there is, and requiring a second ticket would
+    hide it.
+    """
     recent_names = {trace["_name"] for trace in traces[-recent:]}
     seen: dict[str, dict] = {}
     for trace in traces:
@@ -74,7 +93,8 @@ def mine_failures(traces: list[dict], recent: int) -> list[dict]:
 
     opportunities = []
     for entry in seen.values():
-        if entry["recent"] < 1 or len(entry["tickets"]) < 2:
+        recurring = len(entry["tickets"]) >= 2 or entry["recent"] >= 2
+        if entry["recent"] < 1 or not recurring:
             continue
         opportunities.append({
             "kind": "failure-recurrence",
@@ -197,7 +217,10 @@ def llm_wording(opportunity: dict, model: str) -> dict | None:
 
 
 def to_spec(opportunity: dict, wording: dict | None) -> dict:
-    candidate_id = "auto-{0}-{1}".format(slug(opportunity["kind"]), slug(opportunity["tool_id"]))
+    suffix = ""
+    if opportunity.get("cluster"):  # several failure classes share a tool: keep them apart
+        suffix = "-" + hashlib.sha1(opportunity["cluster"].encode("utf-8")).hexdigest()[:6]
+    candidate_id = "auto-{0}-{1}{2}".format(slug(opportunity["kind"]), slug(opportunity["tool_id"]), suffix)
     return {
         "candidate_id": candidate_id,
         "version": "0.1.0-auto",
