@@ -19,6 +19,9 @@
 | `evaluation/locked.py` 的 `--desc-set` / `--endpoint` | 垫片支持特征代与端点（默认 v1 / Ki，行为兼容） |
 | `src/research/engine-pass.ts` + `orchestrator_report` 钩子 | **Engine pass**：Ticket 报 `ready` 后由 Harness 自动触发锁定评测（不解析 Agent 文案，复用同一垫片与限频） |
 | `evolution/propose.py` + `test_propose.py` | **P4-04（混合式）**：规则从语料挖候选机会并锁定 knob/验收，固定 LLM 只写 hypothesis/risk；产物过 `validate_spec` 才落盘 |
+| `evolution/gate.py` + `test_gate.py` | **P5-03 统一门禁**：等价/质量/成本/成功/安全五类裁决，输出 pass·manual·fail 与 blocking 列表 |
+| `evolution/versions.py` + `test_versions.py` | **P5-05 版本账本**：每次晋升绑定 git SHA + 门禁结论，`rollback` 打印可执行回滚，`check` 比对 HEAD |
+| `evolution/pareto.py` + `test_pareto.py` | **P5-04 Pareto**：lite/balanced/heavy 三档固定权重 + 非支配前沿，被门禁拦下的候选不参与排序 |
 
 ## 2. 语料与失败聚类基线
 
@@ -153,6 +156,18 @@
 
 **同日的一个反例（也是闭环的一部分）**：第一次尝试 `engine_pass_check_001` 时，Agent 未按数据集表头传 `id_column/smiles_column`，`rdkit.featurize` 连续失败 **12 次**（同一错误反复重试）。该工单已进语料，`failure_clusters` 立刻出现 `missing_column:smiles ×6`；提案器据此自动生成两个候选（`auto-failure-recurrence-rdkit-featurize-61c653` / `-f80739`），证据直接引用该 Ticket。**真实失败 → 语料 → 自动提案**这条链路当天就闭合了。
 
+### 7.2 P5-03 / P5-04 / P5-05 落地（同日 16:40）
+
+| 组件 | 做了什么 | 真实跑出的结果 |
+|---|---|---|
+| **P5-03 门禁** | 五类裁决（等价/质量/成本/成功/安全），每类 `pass·manual·fail·n/a`，总判决 `fail > manual > pass`；旧影子报告缺字段时按 step 计时**重算** cost，不因字段缺失误判 | candidate1 → **pass**（等价 1.0、时间比 0.47、加速 2.12×、金丝雀 ok）。缺金丝雀时它只会给 `manual`，不会静默放行 |
+| **P5-05 版本账本** | `record/list/current/rollback/check`；晋升记 git SHA + 门禁结论；只允许一个 `active`，新版本把旧的标 `superseded`；`rollback` 只标记并打印回滚指令，**不改代码** | 追记 `v1 = candidate1`，SHA `b71eb81…`，`check` 与 HEAD **match: true** |
+| **P5-04 Pareto** | 三档固定权重 + 非支配前沿；`gates_ok=false` 的候选既不排序也不上前沿 | 当前前沿**只有 1 个**（candidate1，加速 2.1×）；另两个被门禁挡住。报告里如实写明"前沿为一说明语料还没提供可选的取舍" |
+
+**为什么 Pareto 现在是空的**：需要一个候选在质量上有实测收益，另一个在成本上有优势，才谈得上取舍。目前 1 个已晋升（只省时间、不提质量）、1 个被实测否决、1 个尚未实现——不是机制问题，是样本问题。
+
+**候选合并（顺手修掉的重复）**：两个失败类候选（`-61c653`/`-f80739`）其实是同一个改动 `preflight:rdkit.featurize`，只是引用不同失败簇。提案器现在**按改动去重**：同一 `change` 只出一个候选，证据里的失败簇合并列出；候选 id 也从"簇哈希"改成"改动哈希"。合并后为 `auto-failure-recurrence-rdkit-featurize-27384f`（2 个簇、3 个工单），旧的重复 spec 已删除。另加一条：**已被否决的改动不会被换个 id 复活**（去重比对的是改动本身，不是文件名）。
+
 ## 8. 其他缺陷与教训
 
 | 缺陷 | 处理 / 教训 |
@@ -166,11 +181,11 @@
 
 ## 9. Known failures / not done
 
-- **P4-04 已实现（混合式）**：`evolution/propose.py` 用规则挖两类机会——①近 5 条 trace 内复发的失败类（旧的已修复簇会被 recency 过滤掉）；②占语料墙钟 ≥40% 且中位 ≥2s、且调用来自 ≥2 个工单的工具。**knob、验收阈值、风险红线由代码给定，LLM 只能写 hypothesis/risk 两句**，因此同一语料两次提案除措辞外一致；spec 落盘前必过 `validate_spec`，重复机会不再生成（幂等）。首个产出 `auto-latency-share-screening-rank` 已被实测否决（见 §7），随后 **当日真实失败自动生出两个失败类候选**（`auto-failure-recurrence-rdkit-featurize-61c653` / `-f80739`，待 Intake）。单测 12 个（`test_propose.py`），evolution 合计 28/28；语料 22 条 / 73 步。
+- **P4-04 已实现（混合式）**：`evolution/propose.py` 用规则挖两类机会——①近 5 条 trace 内复发的失败类（旧的已修复簇会被 recency 过滤掉）；②占语料墙钟 ≥40% 且中位 ≥2s、且调用来自 ≥2 个工单的工具。**knob、验收阈值、风险红线由代码给定，LLM 只能写 hypothesis/risk 两句**，因此同一语料两次提案除措辞外一致；spec 落盘前必过 `validate_spec`，重复机会不再生成（幂等）。首个产出 `auto-latency-share-screening-rank` 已被实测否决（见 §7），随后 **当日真实失败自动生出失败类候选**（`auto-failure-recurrence-rdkit-featurize-27384f`，合并后，待实现）。单测 15 个（`test_propose.py`），evolution 合计 53/53；语料 22 条 / 73 步。
 
 - **Engine pass 已验证**（`src/research/engine-pass.ts` + `orchestrator_report` 事务后钩子）：真实 Ticket `engine-check-exact-27505612356f` 在 Agent 未调用评测工具的前提下产生 `engine_receipt.json`（MOR/Ki/v1，AUROC 0.9339），见 §7.1；8 个单测 + runtime 91/91 + research 13/13。
-- **P5-03 未整合**：四类硬门禁（科学质量/成本/成功率/安全）仍散在各候选的 `acceptance` 里。
-- **P5-04 / P5-05 未做**：无 Pareto 集（balanced/lite/heavy），无 VersionManager（晋升/回滚=改默认值 + JSON 记录 + git SHA 兜底）。
+- **P5-03 / P5-04 / P5-05 已完成**（见 §7.2）：`gate.py` 五类裁决 + `versions.py` 版本账本（v1 已记账、SHA 校验通过）+ `pareto.py` 三档前沿；单测 10 / 8 / 5 个。
+- **在审候选 1 个**：`auto-failure-recurrence-rdkit-featurize-27384f`（pre-flight 列/文件类型校验，合并了 2 个失败簇、3 个工单），尚未实现，因此还没有影子报告可供门禁裁决。
 - **F-1…F-4 已完成**（见 §6）；`pnpm typecheck` / `build` / `tests/research.spec.ts` 13/13 通过。
 - **D-1 / D-2 已完成**（见 §8）；`evolution` 单测 24/24，语料按 schema v2 重导、聚类重新出具。
 - 语料 20 条仅达门槛；聚类尚无可操作结论。
@@ -182,4 +197,6 @@
 2. ~~D-1：trace 补 stderr 文本~~ ✅ 已完成（2026-11-06 03:20）；~~D-2 经验 payload~~ ✅ 已完成；
 3. ~~**Engine pass**：评测自动触发，闭环脱离人工调用~~ ✅ 已实现（2026-11-06 03:15），待真实 Ticket 确认；
 4. ~~**P4-04**：从 trace + 失败簇自动产候选~~ ✅ 已实现（2026-11-06 03:30，混合式），首个提案待 Intake；
-5. P5-03 统一硬门禁 → P5-04 Pareto → P5-05 VersionManager。
+5. ~~P5-03 统一硬门禁 → P5-04 Pareto → P5-05 VersionManager~~ ✅ 已完成（2026-11-06 16:40），见 §7.2；
+6. **实现 pre-flight 候选** `auto-failure-recurrence-rdkit-featurize-27384f` → 影子（等价 1.0 + 该类失败归零）→ 门禁 → 记账；
+7. 语料继续增长，等出现"质量换成本"的真实取舍后再读 Pareto 前沿。

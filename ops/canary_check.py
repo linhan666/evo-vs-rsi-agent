@@ -52,6 +52,7 @@ def snapshot() -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--init", action="store_true", help="create the canary file and record the baseline")
+    parser.add_argument("--json", action="store_true", help="machine-readable result for the promotion gate")
     args = parser.parse_args()
 
     if args.init:
@@ -75,10 +76,16 @@ def main() -> int:
         if actual != expected:
             drift.append(key)
     if drift:
+        if args.json:
+            print(json.dumps({"state": "error", "drift": drift}, indent=2))
+            return 1
         print("DRIFT DETECTED — these watched assets changed:")
         for key in drift:
             print(" ", key)
         return 1
+    if args.json:
+        print(json.dumps({"state": "ok", "drift": [], "watched": len(baseline)}, indent=2))
+        return 0
     print("all watched assets intact")
     return 0
 

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "profiles": {
+    "lite": [
+      {
+        "candidate_id": "candidate1-featurize-parallel",
+        "score": 1.0
+      }
+    ],
+    "balanced": [
+      {
+        "candidate_id": "candidate1-featurize-parallel",
+        "score": 1.0
+      }
+    ],
+    "heavy": [
+      {
+        "candidate_id": "candidate1-featurize-parallel",
+        "score": 1.0
+      }
+    ]
+  },
+  "frontier": [
+    "candidate1-featurize-parallel"
+  ],
+  "blocked_by_gate": [
+    "auto-latency-share-screening-rank",
+    "auto-failure-recurrence-rdkit-featurize-27384f"
+  ],
+  "note": "Weights are fixed on purpose: a learned router would be the Meta-Policy the blueprint forbids. A frontier of one means the corpus currently offers no trade-off to choose from."
+}

@@ -25,7 +25,7 @@
 | Phase 3 | P3-01…05 | 经验库、KOR/DRD2、三靶点矩阵、§12 迁移实验 | ✅ Gate 3 |
 | Phase 4 | P4-01/02/03/05/06 + P5-01/02/05/06 | trace 语料、Intake 校验、影子评估、晋升门禁、评测器垫片 | ✅ 核心完成（缺 P4-04） |
 | Phase 5 | P4-02 续 + P5-03（部分）+ P6 数据面预置 | 并发锁、失败聚类、IC50 独立通道、双端点分歧、descv2 裁决 | ✅ 本阶段交付（含 1 处结论更正，见报告 §6） |
-| 下一阶段 | P4-04 / P5-03 / P5-04 / P5-05 | 自动提候选、统一硬门禁、Pareto 集、VersionManager | ⬜ 未开始 |
+| 下一阶段 | P6 / P7 | 四组对照（Workflow / Fixed / Memory-only / RSI）、扩展工具 | ⬜ 未开始（P4-04 与 P5-03/04/05 已于 Phase 5 补齐） |
 | Phase 6/7 | P6 / P7 | 四组对照（Workflow / Fixed / Memory-only / RSI）、扩展工具 | ⬜ 未开始 |
 
 ## 关键事实（实测，非推测）
@@ -44,6 +44,7 @@
 | 筛选库 | ZINC250k 规范化去重 → 种子 17 抽样 **100,000**（`library_100k.smi`） |
 | Evolution 语料 / 经验库 | **20 traces** / **24 条经验记录**（model 7、screening 7、transfer 6、dataset 3、harness 1） |
 | 已晋升候选 | **candidate1**（featurize 分块并行，默认 `EVOVS_FEAT_JOBS=8`，回滚=改回 1） |
+| 版本账本 | `evolution/versions.json`：`v1 = candidate1` 绑 git SHA，`versions.py check` 与 HEAD 一致 |
 | 被拒绝候选 | candidate2（pooled 重校准，负迁移恶化至 −0.0614）；candidate3（descv2，Ki 三条 CI 全含 0；IC50 通道 Δ +0.0035/+0.0037/−0.0011，同为持平 → 保持 v1）；**auto-latency-share-screening-rank**（首个自动提案，实测更慢：10k 行 9.0s → 21.5s） |
 
 ## 快速开始

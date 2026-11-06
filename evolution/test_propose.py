@@ -49,7 +49,7 @@ class MiningTests(unittest.TestCase):
                         [step("ml.train", 1.0, state="FAILED", stderr="KeyError: 'label'\n")])
         traces = load_traces(self.tmp.name)
         mined = mine_failures(traces, recent=3)
-        keys = [item["cluster"] for item in mined]
+        keys = [cluster["cluster"] for item in mined for cluster in item["evidence"]["clusters"]]
         self.assertIn("ml.train::KeyError", keys)
         self.assertNotIn("rdkit.featurize::ValueError", keys)
 
@@ -60,7 +60,24 @@ class MiningTests(unittest.TestCase):
                     [step("rdkit.featurize", 0.2, state="FAILED",
                           stderr="/x/y.csv has no 'smiles' column; found ['canonical_smiles']\n") for _ in range(4)])
         mined = mine_failures(load_traces(self.tmp.name), recent=5)
-        self.assertEqual([item["cluster"] for item in mined], ["rdkit.featurize::missing_column:smiles"])
+        self.assertEqual(len(mined), 1)
+        self.assertEqual([item["cluster"] for item in mined[0]["evidence"]["clusters"]],
+                         ["rdkit.featurize::missing_column:smiles"])
+
+    def test_two_failure_classes_on_one_tool_are_one_proposal(self):
+        # Both are fixed by the same pre-flight check; two candidates would be the
+        # same work reviewed twice.
+        write_trace(self.tmp.name, "a", "2026-11-03T00:00:00Z",
+                    [step("rdkit.featurize", 0.2, state="FAILED", stderr="ValueError: boom\n") for _ in range(2)])
+        write_trace(self.tmp.name, "b", "2026-11-04T00:00:00Z",
+                    [step("rdkit.featurize", 0.2, state="FAILED", stderr="KeyError: 'smiles'\n") for _ in range(2)])
+        mined = mine_failures(load_traces(self.tmp.name), recent=5)
+        self.assertEqual(len(mined), 1)
+        clusters = {item["cluster"] for item in mined[0]["evidence"]["clusters"]}
+        self.assertEqual(clusters, {"rdkit.featurize::ValueError", "rdkit.featurize::KeyError"})
+        self.assertEqual(len(mined[0]["evidence"]["tickets"]), 2)
+        self.assertEqual(to_spec(mined[0], None)["candidate_id"],
+                         to_spec(mined[0], None)["candidate_id"])
 
     def test_a_single_failure_is_not_a_proposal(self):
         write_trace(self.tmp.name, "once", "2026-11-03T00:00:00Z",
@@ -79,7 +96,8 @@ class MiningTests(unittest.TestCase):
                         [step("ml.train", 1.0, state="FAILED", stderr="KeyError: 'label'\n")],
                         activity="2026-11-05T00:00:0{}Z".format(index))
         mined = mine_failures(load_traces(self.tmp.name), recent=2)
-        self.assertEqual([item["cluster"] for item in mined], ["ml.train::KeyError"])
+        self.assertEqual([cluster["cluster"] for item in mined for cluster in item["evidence"]["clusters"]],
+                         ["ml.train::KeyError"])
 
     def test_only_the_wall_clock_owner_is_proposed(self):
         heavy_workload(self.tmp.name)
@@ -131,12 +149,25 @@ class SpecTests(unittest.TestCase):
         self.assertIn("screening.rank", template_hypothesis(opportunity))
         self.assertIn("75.0", template_hypothesis(opportunity))  # 150s over 2 calls
 
-    def test_two_failure_classes_on_one_tool_get_distinct_ids(self):
-        first = {"kind": "failure-recurrence", "tool_id": "rdkit.featurize", "cluster": "rdkit.featurize::ValueError",
-                 "evidence": {}, "change": {"type": "experiment", "key": "preflight:x", "value": "v"},
-                 "acceptance": {"equivalence": 1.0}, "risk": "r"}
-        second = dict(first, cluster="rdkit.featurize::KeyError")
-        self.assertNotEqual(to_spec(first, None)["candidate_id"], to_spec(second, None)["candidate_id"])
+    def test_candidate_id_follows_the_change_not_the_evidence(self):
+        base = {"kind": "failure-recurrence", "tool_id": "rdkit.featurize",
+                "evidence": {}, "change": {"type": "experiment", "key": "preflight:x", "value": "v"},
+                "acceptance": {"equivalence": 1.0}, "risk": "r"}
+        richer = dict(base, evidence={"clusters": [{"cluster": "more"}, {"cluster": "and more"}]})
+        self.assertEqual(to_spec(base, None)["candidate_id"], to_spec(richer, None)["candidate_id"])
+        other_tool = dict(base, tool_id="ml.train")
+        self.assertNotEqual(to_spec(base, None)["candidate_id"], to_spec(other_tool, None)["candidate_id"])
+
+    def test_a_rejected_candidate_is_not_reborn_under_a_new_id(self):
+        out = os.path.join(self.tmp.name, "candidates")
+        os.makedirs(out)
+        rejected = to_spec(mine_latency(load_traces(self.tmp.name))[0], None)
+        rejected["status"] = "rejected"
+        with open(os.path.join(out, "some-older-name.json"), "w", encoding="utf-8") as handle:
+            json.dump(rejected, handle)
+        args = ["--traces-dir", self.tmp.name, "--out-dir", out, "--no-llm", "--emit"]
+        self.assertEqual(main(args), 0)
+        self.assertEqual(sorted(os.listdir(out)), ["some-older-name.json"])
 
     def test_emit_is_idempotent(self):
         out = os.path.join(self.tmp.name, "candidates")

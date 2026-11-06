@@ -1,0 +1,23 @@
+[
+  {
+    "candidate_id": "candidate1-featurize-parallel",
+    "quality": 0.0,
+    "cost": 2.1,
+    "gates_ok": true,
+    "note": "promoted; equivalence 1.0, featurize 2.1x, screening 3.3x; makes no quality claim"
+  },
+  {
+    "candidate_id": "auto-latency-share-screening-rank",
+    "quality": 0.0,
+    "cost": 0.42,
+    "gates_ok": false,
+    "note": "rejected by measurement: 9.0s baseline vs 21.5s with 4 workers (cost < 1)"
+  },
+  {
+    "candidate_id": "auto-failure-recurrence-rdkit-featurize-27384f",
+    "quality": 0.0,
+    "cost": 1.0,
+    "gates_ok": false,
+    "note": "no shadow yet: not implemented, so it has no measured quality or cost"
+  }
+]

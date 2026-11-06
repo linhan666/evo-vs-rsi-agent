@@ -92,18 +92,27 @@ def mine_failures(traces: list[dict], recent: int) -> list[dict]:
                 entry["samples"].append(evidence[:160])
 
     opportunities = []
+    # One proposal per tool: every failure class on that tool is fixed by the same
+    # pre-flight check, so two candidates would be the same work reviewed twice.
+    per_tool: dict[str, dict] = {}
     for entry in seen.values():
         recurring = len(entry["tickets"]) >= 2 or entry["recent"] >= 2
         if entry["recent"] < 1 or not recurring:
             continue
+        row = per_tool.setdefault(entry["tool_id"], {"clusters": [], "tickets": set(), "recent": 0})
+        row["clusters"].append({"cluster": entry["key"], "recent_hits": entry["recent"],
+                                "samples": entry["samples"]})
+        row["tickets"] |= entry["tickets"]
+        row["recent"] += entry["recent"]
+
+    for tool_id, row in per_tool.items():
         opportunities.append({
             "kind": "failure-recurrence",
-            "tool_id": entry["tool_id"],
-            "cluster": entry["key"],
-            "evidence": {"tickets": sorted(entry["tickets"]), "recent_hits": entry["recent"],
-                         "samples": entry["samples"]},
-            "change": {"type": "experiment", "key": "preflight:{0}".format(entry["tool_id"]),
+            "tool_id": tool_id,
+            "change": {"type": "experiment", "key": "preflight:{0}".format(tool_id),
                        "value": "validate the job inputs before launch (required columns, file kind) and fail fast with an actionable message"},
+            "evidence": {"tickets": sorted(row["tickets"]), "recent_hits": row["recent"],
+                         "clusters": row["clusters"]},
             "acceptance": {"equivalence": 1.0, "failures_in_replay": 0},
             "risk": "pre-flight checks add a small fixed cost to every job and may reject inputs the tool would have tolerated",
         })
@@ -173,9 +182,10 @@ def template_hypothesis(opportunity: dict) -> str:
         return ("{0} owns {1:.0%} of the corpus wall clock at a {2:.1f}s median, so making it cheaper "
                 "should shorten every screening ticket without changing a single artifact.").format(
             opportunity["tool_id"], opportunity["evidence"]["share"], opportunity["evidence"]["median_seconds"])
+    clusters = [item["cluster"] for item in opportunity["evidence"].get("clusters", [])[:2]]
     return ("{0} keeps failing the same way in recent tickets ({1}), so rejecting that input before launch "
             "should remove the retry loop without touching the success path.").format(
-        opportunity["tool_id"], opportunity["cluster"])
+        opportunity["tool_id"], ", ".join(clusters) or "one failure class")
 
 
 _LAST_LLM_ERROR = ""
@@ -217,10 +227,10 @@ def llm_wording(opportunity: dict, model: str) -> dict | None:
 
 
 def to_spec(opportunity: dict, wording: dict | None) -> dict:
-    suffix = ""
-    if opportunity.get("cluster"):  # several failure classes share a tool: keep them apart
-        suffix = "-" + hashlib.sha1(opportunity["cluster"].encode("utf-8")).hexdigest()[:6]
-    candidate_id = "auto-{0}-{1}{2}".format(slug(opportunity["kind"]), slug(opportunity["tool_id"]), suffix)
+    # Keyed on the change, not on the evidence: the same fix stays one candidate
+    # even as more failure classes (or more tickets) accumulate behind it.
+    digest = hashlib.sha1(opportunity["change"]["key"].encode("utf-8")).hexdigest()[:6]
+    candidate_id = "auto-{0}-{1}-{2}".format(slug(opportunity["kind"]), slug(opportunity["tool_id"]), digest)
     return {
         "candidate_id": candidate_id,
         "version": "0.1.0-auto",
@@ -230,9 +240,31 @@ def to_spec(opportunity: dict, wording: dict | None) -> dict:
         "acceptance": opportunity["acceptance"],
         "risk": (wording or {}).get("risk") or opportunity["risk"],
         "basis": {"generated_by": "evolution/propose.py", "kind": opportunity["kind"],
-                  "tool_id": opportunity["tool_id"], "evidence": opportunity["evidence"],
-                  **({"cluster": opportunity["cluster"]} if "cluster" in opportunity else {})},
+                  "tool_id": opportunity["tool_id"], "evidence": opportunity["evidence"]},
     }
+
+
+def change_identity(change: dict) -> tuple:
+    """What makes two proposals the same proposal: the change, not the filename."""
+    return (change.get("type"), change.get("key"),
+            change.get("value") if change.get("type") == "env" else "")
+
+
+def existing_changes(out_dir: str) -> dict:
+    """Every change already proposed, whatever its verdict.
+
+    A rejected candidate must not come back under a new id just because its
+    evidence grew; the operator decided against that change.
+    """
+    known: dict[tuple, str] = {}
+    for path in glob.glob(os.path.join(out_dir, "*.json")):
+        try:
+            spec = json.loads(open(path, encoding="utf-8").read())
+        except (json.JSONDecodeError, OSError):
+            continue
+        for change in spec.get("changes") or []:
+            known[change_identity(change)] = os.path.basename(path)
+    return known
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -254,7 +286,12 @@ def main(argv: list[str] | None = None) -> int:
     model = os.environ.get("EVOVS_MODEL") or "deepseek-flash"
 
     written, skipped = [], []
+    known = existing_changes(out_dir)
     for opportunity in opportunities:
+        identity = change_identity(opportunity["change"])
+        if identity in known:
+            skipped.append(known[identity])
+            continue
         spec = to_spec(opportunity, None if args.no_llm else llm_wording(opportunity, model))
         problems = validate_spec(spec)
         if problems:
@@ -262,7 +299,7 @@ def main(argv: list[str] | None = None) -> int:
             continue
         path = os.path.join(out_dir, spec["candidate_id"] + ".json")
         if os.path.exists(path):
-            skipped.append(spec["candidate_id"])  # one proposal per opportunity; re-runs are idempotent
+            skipped.append(spec["candidate_id"])
             continue
         if args.emit:
             os.makedirs(out_dir, exist_ok=True)
