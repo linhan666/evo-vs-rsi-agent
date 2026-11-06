@@ -110,6 +110,35 @@ const SCIENTIFIC_TOOLS_APPEND = {
   outputs: (args: z.infer<typeof RankInput>) => [args.output, args.top_output, args.report],
 } as ScientificToolDefinition
 
+const SplitInput = z.object({
+  input: DataPath.describe('CSV with id and smiles columns'),
+  output: RelativePath.describe('split manifest json consumed by ml.train via --split-manifest'),
+  strategy: z.enum(['random', 'scaffold']).describe('scaffold = Bemis-Murcko, the main generalisation check; random = optimistic diagnostic baseline'),
+  test_fraction: z.coerce.number().min(0.05).max(0.6).default(0.3),
+  val_fraction: z.coerce.number().min(0.0).max(0.4).default(0.1),
+  seed: z.coerce.number().int().default(17),
+  id_column: z.string().trim().min(1).default('id'),
+  smiles_column: z.string().trim().min(1).default('smiles'),
+}).strict()
+
+const SPLIT_TOOL = {
+  id: 'data.split',
+  version: '0.1.0',
+  description: 'Make a train/val/test split manifest with a declared strategy. Scaffold split (Bemis-Murcko) is the generalisation check; random split is optimistic and must not be the only result. The strategy is recorded in the manifest.',
+  capabilities: ['split', 'scaffold', 'validation'],
+  resources: ['cpu'],
+  sideEffects: ['write_artifacts'],
+  failureCodes: ['INPUT_NOT_FOUND', 'NOT_ENOUGH_RELIABLE_DATA'],
+  input: SplitInput,
+  argv: (args: z.infer<typeof SplitInput>, context) => [
+    context.python, '-m', 'evovs_science.data.split',
+    '--input', args.input, '--output', args.output, '--strategy', args.strategy,
+    '--test-fraction', String(args.test_fraction), '--val-fraction', String(args.val_fraction),
+    '--seed', String(args.seed), '--id-column', args.id_column, '--smiles-column', args.smiles_column,
+  ],
+  outputs: (args: z.infer<typeof SplitInput>) => [args.output],
+} as ScientificToolDefinition
+
 const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
   {
     id: 'rdkit.featurize',
@@ -129,6 +158,7 @@ const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
     ],
     outputs: (args: z.infer<typeof FeaturizeInput>) => [args.output, args.report],
   },
+  SPLIT_TOOL as ScientificToolDefinition,
   {
     id: 'ml.train',
     version: '0.1.0',

@@ -1,0 +1,6 @@
+{
+  "task_id": "custom_kor",
+  "sender": "operator",
+  "title": "Phase6C KOR customized modelling + 100k screen",
+  "text": "Goal: within the given budget, build the most reliable binding-activity predictor for human OPRK1 (KOR) and produce a ranking of the shared 100k library.\n\nConstraints:/n- labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprk1/ki/dataset.csv (read-only; id, SMILES, endpoint, value_nM, px, label)\n- unlabeled library: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\n- budget: one ticket, stay within the ticket workspace\n- must record real scientific evidence and resource consumption\n- must not invent negatives or touch the locked evaluator's labels\n\nYou may choose the molecular representation (fingerprints and/or descriptors), the model family, the validation strategy (random or scaffold split), the evaluation metrics, and any model fusion you find justified. Use the scientific tools; write a new script or adapter when the existing tools do not cover what you decided to do.\n\nDeliverable: report ready with (a) the modelling choices you made and why they fit THIS dataset, (b) validation metrics including AUROC, AUPRC and EF@1%, (c) the path to the top-100 ranking, (d) what it cost to produce."
+}
