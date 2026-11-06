@@ -1,0 +1,41 @@
+{
+  "candidate_id": "auto-manifest-layout-compat",
+  "version": "0.1.0",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "preflight:manifest-layout",
+      "value": "accept both split manifest layouts (rows: molecule->split and molecules: split->list) and normalise val to validation"
+    }
+  ],
+  "hypothesis": "A scaffold split written by data.split cannot reach ml.train because the reader only knows one layout; accepting both removes the failure class without changing any model.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "failures_in_replay": 0,
+    "failure_clusters": [
+      "ml.train :: splits/scaffold_20_15_s17.json lacks train/validation molecu"
+    ]
+  },
+  "risk": "Accepting a second layout could mask a malformed manifest; both layouts still have to contain a train group.",
+  "scope_note": "Mined from the round-1 customisation traces: 3 ml.train failures whose stderr is the layout complaint. The control arms keep the legacy reader (EVOVS_LEGACY_MANIFEST=1).",
+  "rollback": "drop the rows-layout branch in modeling/train.py read_split_ids",
+  "basis": {
+    "generated_by": "evolution/propose.py (rule) + operator wiring",
+    "kind": "failure-recurrence",
+    "tool_id": "ml.train",
+    "evidence": {
+      "recent_hits": 3,
+      "clusters": [
+        {
+          "cluster": "ml.train :: splits/scaffold_20_15_s17.json lacks train/validation molecu",
+          "recent_hits": 3,
+          "claimed": true,
+          "samples": [
+            "splits/scaffold_20_15_s17.json lacks train/validation molecule lists"
+          ]
+        }
+      ]
+    }
+  }
+}

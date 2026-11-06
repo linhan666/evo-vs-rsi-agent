@@ -1,0 +1,49 @@
+{
+  "candidate_id": "auto-failure-recurrence-screening-rank-dc1d1b",
+  "version": "0.1.0-auto",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "preflight:screening.rank",
+      "value": "validate the job inputs before launch (required columns, file kind) and fail fast with an actionable message"
+    }
+  ],
+  "hypothesis": "screening.rank keeps failing the same way in recent tickets (screening.rank::--model must be the fitted pipeline FILE from modeling.train, screening.rank::ValueError), so rejecting that input before launch should remove the retry loop without touching the success path.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "failures_in_replay": 0
+  },
+  "risk": "pre-flight checks add a small fixed cost to every job and may reject inputs the tool would have tolerated",
+  "basis": {
+    "generated_by": "evolution/propose.py",
+    "kind": "failure-recurrence",
+    "tool_id": "screening.rank",
+    "evidence": {
+      "tickets": [
+        "chembl-drd2-open-c1e9874980f3.json",
+        "chembl-drd2-rep2-ed06c7f504b0.json",
+        "engine-pass-check-eb69ace79bac.json"
+      ],
+      "recent_hits": 5,
+      "clusters": [
+        {
+          "cluster": "screening.rank::--model must be the fitted pipeline FILE from modeling.train",
+          "recent_hits": 1,
+          "samples": [
+            "--model must be the fitted pipeline FILE from modeling.train (e.g. runs/models/<name>/model.joblib); got does_not_exist.pkl",
+            "--model must be the fitted pipeline FILE from modeling.train (e.g. runs/models/<name>/model.joblib); got definitely_missing_model_xyz.joblib; fitted pipelines h"
+          ]
+        },
+        {
+          "cluster": "screening.rank::ValueError",
+          "recent_hits": 4,
+          "samples": [
+            "ValueError: X has 2055 features, but StandardScaler is expecting 2091 features as input.",
+            "ValueError: X has 2055 features, but StandardScaler is expecting 2091 features as input."
+          ]
+        }
+      ]
+    }
+  }
+}

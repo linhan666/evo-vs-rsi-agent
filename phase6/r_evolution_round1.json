@@ -1,0 +1,32 @@
+{
+  "round": 1,
+  "stages": [
+    {
+      "stage": "sync_traces",
+      "exit": 0,
+      "out": "e\"]}\n{\"steps\": 1, \"tools\": [\"experience.retrieve\"]}\n{\"steps\": 1, \"tools\": [\"rdkit.featurize\"]}\n{\"steps\": 2, \"tools\": [\"rdkit.featurize\", \"sklearn.train\"]}\n{\"steps\": 1, \"tools\": [\"rdkit.featurize\"]}\n{\"steps\": 2, \"tools\": [\"rdkit.featurize\", \"sklearn.train\"]}\nexported=63 skipped(no scientific jobs)=13"
+    },
+    {
+      "stage": "propose",
+      "exit": 0,
+      "out": "{\"traces\": 64, \"opportunities\": 4, \"written\": [\"auto-failure-recurrence-screening-rank-dc1d1b\"], \"already_present\": [\"manual-preflight-ml-train-columns.json\", \"auto-failure-recurrence-rdkit-featurize-27384f.json\", \"auto-latency-share-screening-rank.json\"], \"emitted\": true}"
+    },
+    {
+      "stage": "awaiting-shadow",
+      "candidate": "auto-failure-recurrence-screening-rank-dc1d1b"
+    },
+    {
+      "stage": "awaiting-shadow",
+      "candidate": "candidate3-descriptor-expansion"
+    },
+    {
+      "stage": "awaiting-shadow",
+      "candidate": "candidate4-ic50-channel"
+    },
+    {
+      "stage": "awaiting-shadow",
+      "candidate": "manual-path-resolution"
+    }
+  ],
+  "promoted": []
+}

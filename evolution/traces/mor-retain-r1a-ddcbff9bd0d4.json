@@ -1,0 +1,356 @@
+{
+  "schema_version": "2",
+  "group": "rsi",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/mor-retain-r1a-ddcbff9bd0d4",
+  "exported_at": "2026-11-06T20:51:23+00:00",
+  "steps": [
+    {
+      "job_id": "91c865050f09",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T15:57:40.956Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output",
+        "runs/mor_ki_features.npz",
+        "--report",
+        "runs/mor_ki_features.report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "molecule_chembl_id",
+        "--smiles-column",
+        "canonical_smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.94,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/mor_ki_features.npz",
+          "recorded_sha256": "8c2ccc239e0a33e34b270f320074770776f53d44c9fd9ad72d2b52f174bcec84",
+          "digest": "npz:21636ae089128f573231c3d16ab9e67ca60e965457e28d6fe5b5508a2a900340"
+        },
+        {
+          "path": "runs/mor_ki_features.report.json",
+          "recorded_sha256": "31ef07be76e5448a554683b4a53767b36a0a84692faa82eb487adee18565fa9d",
+          "digest": "json:9ade37cd0850552e2e3040c52929f5b4c50d42306a4f87388f561e8f81e6c05c"
+        }
+      ]
+    },
+    {
+      "job_id": "4455ed3e4cbb",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T15:58:11.437Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "runs/mor_ki_features.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output-dir",
+        "runs/mor_ki_xgb",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl37_ki_pX7_6",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/split_manifest.json"
+      ],
+      "wall_seconds": 6,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/mor_ki_xgb/metrics.json",
+          "recorded_sha256": "11733e0c6594ef6a309bba49d4476b0250c7fb94aff72ee378c54b4a305103a4",
+          "digest": "json:663f712a98ec136fb3cf6a30019e9b7686161369926c9fca93e3b9878f0023fb"
+        },
+        {
+          "path": "runs/mor_ki_xgb/predictions.csv",
+          "recorded_sha256": "6bbc81a3fdb09551eb4852dc912ea13ea78248f4ef434113787dcf1ad132767f",
+          "digest": "sha256:6bbc81a3fdb09551eb4852dc912ea13ea78248f4ef434113787dcf1ad132767f"
+        },
+        {
+          "path": "runs/mor_ki_xgb/model.joblib",
+          "recorded_sha256": "64a0af149563a940328544bc235b90803346eede762f3bcb3c88a1146a024cc4",
+          "digest": "sha256:64a0af149563a940328544bc235b90803346eede762f3bcb3c88a1146a024cc4"
+        },
+        {
+          "path": "runs/mor_ki_xgb/artifact_manifest.json",
+          "recorded_sha256": "c77fedf2f36ce57f3a784087c5de4525993de6ee2800d5a6859ea2f87464b896",
+          "digest": "json:cfbf35553acfd4b5cb5c3d340f1852dd8b748b14e7741d63aa54646e47779de3"
+        }
+      ]
+    },
+    {
+      "job_id": "492ea42410c1",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T15:58:25.342Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "runs/mor_ki_xgb/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "runs/MOR_ranking.csv",
+        "--top-output",
+        "runs/MOR_topK.csv",
+        "--report",
+        "runs/MOR_screening.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048"
+      ],
+      "wall_seconds": 20.35,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/MOR_ranking.csv",
+          "recorded_sha256": "6da19387238280a46b4edbd7fd702b646f6595f1424af3d68267ffdef50ebcb4",
+          "digest": "sha256:6da19387238280a46b4edbd7fd702b646f6595f1424af3d68267ffdef50ebcb4"
+        },
+        {
+          "path": "runs/MOR_topK.csv",
+          "recorded_sha256": "b3b732e14f378c550fa1714e9b4d6a854ab23c3a224f57acdffbb11339576647",
+          "digest": "sha256:b3b732e14f378c550fa1714e9b4d6a854ab23c3a224f57acdffbb11339576647"
+        },
+        {
+          "path": "runs/MOR_screening.json",
+          "recorded_sha256": "176cc60e7caa0373ab3bae3f6e92e9b07745597735564ed971c8e8322b3c91c8",
+          "digest": "json:d2625fb6747c37449e8a945a71f0a95bae752a840717556c846dfaad43f154b8"
+        }
+      ]
+    },
+    {
+      "job_id": "e9451870d63e",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T15:58:52.144Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "experience/store.json",
+        "--out",
+        "runs/experience_model.json",
+        "--target",
+        "MOR",
+        "--kind",
+        "model"
+      ],
+      "wall_seconds": 0.07,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/experience_model.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "0a9708740a61",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T15:58:57.485Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "experience/store.json",
+        "--out",
+        "runs/experience_dataset.json",
+        "--target",
+        "MOR",
+        "--kind",
+        "dataset"
+      ],
+      "wall_seconds": 0.07,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/experience_dataset.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "6b592418b526",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T15:58:57.570Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "experience/store.json",
+        "--out",
+        "runs/experience_screening.json",
+        "--target",
+        "MOR",
+        "--kind",
+        "screening"
+      ],
+      "wall_seconds": 0.08,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/experience_screening.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "3a6a579b6dfc",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T15:58:57.674Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "experience/store.json",
+        "--out",
+        "runs/experience_harness.json",
+        "--target",
+        "MOR",
+        "--kind",
+        "harness"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/experience_harness.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "291af2867c4c",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T15:58:57.778Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "experience/store.json",
+        "--out",
+        "runs/experience_transfer.json",
+        "--target",
+        "MOR",
+        "--kind",
+        "transfer"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/experience_transfer.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "bb0cd037a859",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T15:59:04.351Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "MOR",
+        "--endpoint",
+        "Ki",
+        "--model",
+        "runs/mor_ki_xgb/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "runs/MOR_locked_receipt.json",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 3.97,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/MOR_locked_receipt.json",
+          "recorded_sha256": "eccde2d576143eeec3c6f00b058ef02f84346d4976175a7091996f3229e878ce",
+          "digest": "json:1dd735dc015096aee073b80d9bab7e18203f1a4b5ab584f699c4ded75107bd50"
+        }
+      ]
+    }
+  ]
+}

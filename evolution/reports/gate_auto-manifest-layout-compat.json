@@ -1,0 +1,44 @@
+{
+  "schema_version": "1",
+  "candidate_id": "auto-manifest-layout-compat",
+  "gates": [
+    {
+      "gate": "equivalence",
+      "status": "fail",
+      "detail": "equivalence rate 0.9608 (mismatches: ['models/scaffold_logreg/predictions.csv: digest differs', 'models/scaffold_logreg/model.joblib: digest differs'])"
+    },
+    {
+      "gate": "cost",
+      "status": "n/a",
+      "detail": "the candidate makes no cost claim"
+    },
+    {
+      "gate": "success",
+      "status": "fail",
+      "detail": "incomplete artifacts: ml.train"
+    },
+    {
+      "gate": "failure",
+      "status": "fail",
+      "detail": "no replayed step matched ['ml.train :: splits/scaffold_20_15_s17.json lacks train/validation molecu']; the claim cannot be checked"
+    },
+    {
+      "gate": "quality",
+      "status": "n/a",
+      "detail": "the candidate makes no quality claim"
+    },
+    {
+      "gate": "safety",
+      "status": "pass",
+      "detail": "canary baseline intact"
+    }
+  ],
+  "verdict": "fail",
+  "blocking": [
+    "equivalence",
+    "success",
+    "failure"
+  ],
+  "needs_human_number": [],
+  "note": "A pass here is a prerequisite for promotion, never a promotion. The operator still applies the change and runs freshness, rebuild and canary."
+}

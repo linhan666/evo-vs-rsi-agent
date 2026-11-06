@@ -2,7 +2,7 @@
   "schema_version": "2",
   "group": "rsi",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/kor-m-rep2-74d9c6cfe680",
-  "exported_at": "2026-11-06T15:34:07+00:00",
+  "exported_at": "2026-11-06T20:51:15+00:00",
   "steps": [
     {
       "job_id": "0bcfb077c66f",
