@@ -58,6 +58,19 @@
       "topk": false
     },
     {
+      "ticket": "chembl-drd2-ctl-a-8024719ec023",
+      "target": "DRD2",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": null,
+      "jobs": 0,
+      "jobs_failed": 0,
+      "jobs_reused": 0,
+      "wall_seconds": 0,
+      "topk": false
+    },
+    {
       "ticket": "chembl-drd2-ic50-a9a66c0e48d0",
       "target": "DRD2",
       "auroc": 0.88,
@@ -162,6 +175,19 @@
       "topk": true
     },
     {
+      "ticket": "chembl-drd2-rep1b-193bc3dffaa2",
+      "target": "DRD2",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "scaffold",
+      "jobs": 37,
+      "jobs_failed": 1,
+      "jobs_reused": 0,
+      "wall_seconds": 139.0,
+      "topk": false
+    },
+    {
       "ticket": "chembl-drd2-rep2-ed06c7f504b0",
       "target": "DRD2",
       "auroc": 0.9214,
@@ -173,6 +199,19 @@
       "jobs_reused": 0,
       "wall_seconds": 31.0,
       "topk": true
+    },
+    {
+      "ticket": "chembl-drd2-rep2b-76f65e33d497",
+      "target": "DRD2",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": null,
+      "jobs": 21,
+      "jobs_failed": 2,
+      "jobs_reused": 0,
+      "wall_seconds": 108.6,
+      "topk": false
     },
     {
       "ticket": "chembl-drd2-rep3-82b4182a756d",
@@ -357,6 +396,19 @@
       "topk": true
     },
     {
+      "ticket": "kor-control-a-ab8e409204f1",
+      "target": "KOR",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": null,
+      "jobs": 11,
+      "jobs_failed": 3,
+      "jobs_reused": 0,
+      "wall_seconds": 31.5,
+      "topk": false
+    },
+    {
       "ticket": "kor-custom-model-f23c435ee86d",
       "target": "KOR",
       "auroc": null,
@@ -407,6 +459,32 @@
       "jobs_reused": 0,
       "wall_seconds": 20.6,
       "topk": true
+    },
+    {
+      "ticket": "kor-open-rep1-055e171fe377",
+      "target": "KOR",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "scaffold",
+      "jobs": 43,
+      "jobs_failed": 2,
+      "jobs_reused": 0,
+      "wall_seconds": 162.6,
+      "topk": false
+    },
+    {
+      "ticket": "kor-open-rep2-8c8a83108406",
+      "target": "KOR",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": null,
+      "jobs": 28,
+      "jobs_failed": 2,
+      "jobs_reused": 0,
+      "wall_seconds": 153.3,
+      "topk": false
     },
     {
       "ticket": "kor-rsi-rep1-f39d28e7244b",
@@ -539,6 +617,19 @@
       "topk": true
     },
     {
+      "ticket": "mor-control-a-4ad838f4f515",
+      "target": "MOR",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "scaffold",
+      "jobs": 5,
+      "jobs_failed": 2,
+      "jobs_reused": 0,
+      "wall_seconds": 15.6,
+      "topk": false
+    },
+    {
       "ticket": "mor-custom-model-88c03ba048e1",
       "target": "MOR",
       "auroc": null,
@@ -628,6 +719,32 @@
       "jobs_reused": 0,
       "wall_seconds": 26.1,
       "topk": true
+    },
+    {
+      "ticket": "mor-open-rep1-c109d4d0dbf6",
+      "target": "MOR",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": "scaffold",
+      "jobs": 27,
+      "jobs_failed": 1,
+      "jobs_reused": 0,
+      "wall_seconds": 105.5,
+      "topk": false
+    },
+    {
+      "ticket": "mor-open-rep2-7f56b8c81618",
+      "target": "MOR",
+      "auroc": null,
+      "auprc": null,
+      "ef_at_1pct": null,
+      "split_strategy": null,
+      "jobs": 22,
+      "jobs_failed": 1,
+      "jobs_reused": 0,
+      "wall_seconds": 94.6,
+      "topk": false
     },
     {
       "ticket": "mor-retain-r1a-ddcbff9bd0d4",
@@ -956,7 +1073,7 @@
     }
   ],
   "summary": {
-    "tickets": 73,
+    "tickets": 82,
     "science": {
       "auroc_mean": 0.9012,
       "auprc_mean": 0.9412,
@@ -964,14 +1081,14 @@
       "split_strategies": [
         "scaffold"
       ],
-      "topk_rate": 0.452
+      "topk_rate": 0.402
     },
     "code": {
-      "jobs_total": 551,
-      "jobs_failed": 96,
+      "jobs_total": 745,
+      "jobs_failed": 110,
       "jobs_reused": 0,
-      "failure_rate": 0.174,
-      "wall_mean": 27.5
+      "failure_rate": 0.148,
+      "wall_mean": 34.3
     }
   }
 }
