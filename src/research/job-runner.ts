@@ -64,7 +64,12 @@ interface IndexEntry { job_id: string; state: JobState; tool_id: string; created
 /** Live children, so `cancel` and status reads can tell a running job from an abandoned one. */
 const running = new Map<string, ChildProcess>()
 
-const DEFAULT_RESOURCES: JobResources = { max_cpu_cores: 2, max_gpu_count: 0, max_wall_seconds: 600, max_memory_gb: 8 }
+// max_memory_gb is an ADDRESS SPACE cap (prlimit --as), not RSS. sklearn and
+// xgboost map far more virtual memory than they touch — thread stacks, BLAS
+// arenas, mmap'd arrays — so 8GB of address space made pthread_create fail long
+// before the box ran out of RAM. 32GB of virtual space is generous without being
+// a licence to run away; the box has 2TB.
+const DEFAULT_RESOURCES: JobResources = { max_cpu_cores: 2, max_gpu_count: 0, max_wall_seconds: 600, max_memory_gb: 32 }
 const PRLIMIT = '/usr/bin/prlimit'
 const CLOCK_TICKS = 100
 
