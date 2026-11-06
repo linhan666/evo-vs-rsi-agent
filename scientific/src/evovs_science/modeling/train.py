@@ -96,14 +96,24 @@ def read_split_ids(manifest_path: str) -> dict[str, set[str]]:
     with open(manifest_path, encoding="utf-8") as handle:
         manifest = json.load(handle)
 
+    # EVOVS_LEGACY_MANIFEST=1 keeps the pre-fix reader: it only understands the
+    # `molecules` layout. Phase 6B runs the control groups with this on, so a
+    # scaffold split from data.split reaches the trainer broken — which is the
+    # latent defect the R group is expected to find and promote away.
+    legacy = os.environ.get("EVOVS_LEGACY_MANIFEST") == "1"
+
     rows = manifest.get("rows")
-    if rows:  # molecule -> split
+    if rows and not legacy:  # molecule -> split
         grouped: dict[str, set[str]] = {}
         for molecule, split in rows.items():
             grouped.setdefault(split, set()).add(str(molecule))
     else:  # split -> molecules
         grouped = {name: {str(item) for item in members}
                    for name, members in (manifest.get("molecules") or {}).items()}
+        if legacy and not grouped:
+            raise SystemExit(
+                f"{manifest_path}: this harness version only reads the 'molecules' layout; "
+                f"upgrade to accept data.split's 'rows' layout")
 
     if "val" in grouped and "validation" not in grouped:
         grouped["validation"] = grouped.pop("val")
