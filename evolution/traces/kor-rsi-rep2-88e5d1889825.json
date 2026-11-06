@@ -1,0 +1,196 @@
+{
+  "schema_version": "2",
+  "group": "rsi",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/kor-rsi-rep2-88e5d1889825",
+  "exported_at": "2026-11-06T14:27:12+00:00",
+  "steps": [
+    {
+      "job_id": "e38a1f1e410d",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T14:22:35.425Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprk1/ki/dataset.csv",
+        "--output",
+        "runs/features.npz",
+        "--report",
+        "runs/features_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "molecule_chembl_id",
+        "--smiles-column",
+        "canonical_smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.8,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/features.npz",
+          "recorded_sha256": "090b9f7e4199212d3fecaaf04f6dbd6c46a7ee85588910344d64a05fc74644bc",
+          "digest": "npz:ff2ff88f0b879746250ba674de2a5ef875cfb8aab2ae61201134d4122bcc562c"
+        },
+        {
+          "path": "runs/features_report.json",
+          "recorded_sha256": "d8ec4b8bf0def6ed6eda228376113e1592960d126722d8ab24e91a41d20aab45",
+          "digest": "json:904a576bda26208475d4597f0c9372bfcd891df2f134e0e937aa21ceadf57148"
+        }
+      ]
+    },
+    {
+      "job_id": "e7b5ab8a0f34",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T14:22:44.533Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "runs/features.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprk1/ki/dataset.csv",
+        "--output-dir",
+        "runs/models/xgboost",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl37_ki_pX7_6",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprk1/ki/split_manifest.json"
+      ],
+      "wall_seconds": 7.18,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/models/xgboost/metrics.json",
+          "recorded_sha256": "bfc65353ebf58c8a9da9401a94337eae503ac73326a51d771f3132e89bbbf250",
+          "digest": "json:577630ae07d685eb9ac587012367bdff9d571cd2fcc4545c9b0fc2ade61214a6"
+        },
+        {
+          "path": "runs/models/xgboost/predictions.csv",
+          "recorded_sha256": "3699840f121f27c5f61b55cda1e3d4519f7071a4003a1f970d79c2b42969e8c6",
+          "digest": "sha256:3699840f121f27c5f61b55cda1e3d4519f7071a4003a1f970d79c2b42969e8c6"
+        },
+        {
+          "path": "runs/models/xgboost/model.joblib",
+          "recorded_sha256": "c2732424dfef43ac37d37768a8d50e3c5cd4fe575ed4b241dbf372c49090ea2c",
+          "digest": "sha256:c2732424dfef43ac37d37768a8d50e3c5cd4fe575ed4b241dbf372c49090ea2c"
+        },
+        {
+          "path": "runs/models/xgboost/artifact_manifest.json",
+          "recorded_sha256": "e5c641b4de2f5a38bd147c39f726999e28caa4af89d0f73d1c6c5b8e5f7a61d0",
+          "digest": "json:1e8785de205a564cf5101b66328e5934a6fef03bb3dc3aff55bbed3ed2e84496"
+        }
+      ]
+    },
+    {
+      "job_id": "2f80df51848e",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T14:22:56.544Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "runs/models/xgboost/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "runs/KOR_all.csv",
+        "--top-output",
+        "runs/KOR_topK.csv",
+        "--report",
+        "runs/KOR_screening_report.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048"
+      ],
+      "wall_seconds": 16.31,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/KOR_all.csv",
+          "recorded_sha256": "801f6aa28c3f643b4f8a3a9a6a657a6d7c8133c9e96673c1d958ad37cc46a676",
+          "digest": "sha256:801f6aa28c3f643b4f8a3a9a6a657a6d7c8133c9e96673c1d958ad37cc46a676"
+        },
+        {
+          "path": "runs/KOR_topK.csv",
+          "recorded_sha256": "df6f04b77893819a5e968348f78e0d2df137799e4ad776974a225f6564d9ead0",
+          "digest": "sha256:df6f04b77893819a5e968348f78e0d2df137799e4ad776974a225f6564d9ead0"
+        },
+        {
+          "path": "runs/KOR_screening_report.json",
+          "recorded_sha256": "f97e461af9639bff472da8607a338cf265d1cdb1f2dcedb614f781e0ad3e25f1",
+          "digest": "json:2292fa6483af9b27f79a6ef8e510eb723c7af16f194046cb5fcff8406ba429f7"
+        }
+      ]
+    },
+    {
+      "job_id": "5d3cb26272c2",
+      "tool_id": "rdkit.featurize",
+      "state": "FAILED",
+      "started_at": "2026-11-06T14:23:28.051Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "runs/__no_such_file__.csv",
+        "--output",
+        "runs/__probe__.npz",
+        "--report",
+        "runs/__probe__.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "5",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.2,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "no such input file: runs/__no_such_file__.csv (data root: unset; tried: ['runs/__no_such_file__.csv']); no file with that name under the data root",
+      "stdout_tail": "",
+      "artifacts": []
+    }
+  ]
+}
