@@ -1,0 +1,317 @@
+{
+  "schema_version": "1",
+  "sandbox": "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/runs/shadow_feat",
+  "steps": [
+    {
+      "tool_id": "experience.retrieve",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 0.09,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.08,
+      "exit_code": 0,
+      "artifacts_total": 1,
+      "artifacts_equal": 1,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.09,
+      "speedup": 1.125
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 0.55,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.64,
+      "exit_code": 0,
+      "artifacts_total": 2,
+      "artifacts_equal": 2,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.55,
+      "speedup": 0.859
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 7.48,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 7.1,
+      "exit_code": 0,
+      "artifacts_total": 2,
+      "artifacts_equal": 2,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 7.48,
+      "speedup": 1.054
+    },
+    {
+      "tool_id": "data.split",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 2.19,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 1.49,
+      "exit_code": 0,
+      "artifacts_total": 1,
+      "artifacts_equal": 1,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 2.19,
+      "speedup": 1.47
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 3.19,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 3.39,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 1,
+      "mismatches": [
+        "train_probe/predictions.csv: digest differs",
+        "train_probe/model.joblib: digest differs"
+      ],
+      "stderr_tail": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint",
+        "  opt_res = optimize.minimize("
+      ],
+      "effective_baseline_wall_seconds": 3.19,
+      "speedup": 0.941
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 2.03,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 2.79,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 1,
+      "mismatches": [
+        "model_logreg_r2/predictions.csv: digest differs",
+        "model_logreg_r2/model.joblib: digest differs"
+      ],
+      "stderr_tail": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint",
+        "  opt_res = optimize.minimize("
+      ],
+      "effective_baseline_wall_seconds": 2.03,
+      "speedup": 0.728
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 4.97,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 7.8,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 4.97,
+      "speedup": 0.637
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 6.08,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 7.31,
+      "exit_code": 0,
+      "artifacts_total": 2,
+      "artifacts_equal": 2,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 6.08,
+      "speedup": 0.832
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 3.75,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 5.23,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 3.75,
+      "speedup": 0.717
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 25.12,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 31.54,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 2,
+      "mismatches": [
+        "model_cat_r2/model.joblib: digest differs"
+      ],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 25.12,
+      "speedup": 0.796
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 6.46,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 10.53,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 6.46,
+      "speedup": 0.613
+    },
+    {
+      "tool_id": "ml.fuse",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 0.1,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.08,
+      "exit_code": 0,
+      "artifacts_total": 2,
+      "artifacts_equal": 1,
+      "mismatches": [
+        "fused_logreg_xgb_mean.csv: digest differs"
+      ],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.1,
+      "speedup": 1.25
+    },
+    {
+      "tool_id": "screening.rank",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 14.57,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 15.08,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "FEATURE_SHAPE_MISMATCH: screening built 2055 features (radius=2, n_bits=2048, desc_set=v1) but the fitted model expects 2091. Pass the same --radius/--n-bits/--desc-set that modeling.train was given."
+      ],
+      "effective_baseline_wall_seconds": 14.57,
+      "speedup": 0.966
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 0.93,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 1.0,
+      "exit_code": 0,
+      "artifacts_total": 2,
+      "artifacts_equal": 2,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.93,
+      "speedup": 0.93
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 6.06,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 8.1,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 6.06,
+      "speedup": 0.748
+    },
+    {
+      "tool_id": "screening.rank",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 18.57,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 15.98,
+      "exit_code": 0,
+      "artifacts_total": 3,
+      "artifacts_equal": 3,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 18.57,
+      "speedup": 1.162
+    },
+    {
+      "tool_id": "evaluation.locked",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 2.85,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 4.52,
+      "exit_code": 0,
+      "artifacts_total": 1,
+      "artifacts_equal": 1,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 2.85,
+      "speedup": 0.631
+    },
+    {
+      "tool_id": "screening.rank",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 13.13,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 17.22,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "FEATURE_SHAPE_MISMATCH: screening built 2055 features (radius=2, n_bits=2048, desc_set=v1) but the fitted model expects 2091. Pass the same --radius/--n-bits/--desc-set that modeling.train was given."
+      ],
+      "effective_baseline_wall_seconds": 13.13,
+      "speedup": 0.762
+    }
+  ],
+  "equivalence_rate": 0.8378,
+  "artifacts_total": 37,
+  "artifacts_equal": 31,
+  "derived_skipped": 7,
+  "failures_replayed": 2,
+  "failures_remaining": 2,
+  "failures_by_class": {
+    "screening.rank::ValueError": {
+      "replayed": 2,
+      "remaining": 2
+    }
+  },
+  "recorded_by_class": {
+    "screening.rank::ValueError": 2
+  },
+  "candidate_id": "auto-feature-shape-preflight",
+  "hypothesis": "screening.rank called featurize without desc_set, so it always used v1 while the trainer may have used v2; predicting anyway produced garbage rankings. A preflight that names the disagreeing widths turns silent corruption into an actionable failure.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "equivalence_mode": "non-regression",
+    "allowed_mismatches": [
+      ".csv",
+      ".json",
+      ".joblib"
+    ],
+    "failures_in_replay": 0,
+    "failure_clusters": [
+      "screening.rank :: ValueError: X has N features, but StandardScaler is expecting M"
+    ],
+    "expected_failures": [
+      "FEATURE_SHAPE_MISMATCH"
+    ]
+  },
+  "baseline_source": "recorded in the trace",
+  "verdict": {
+    "equivalence_ok": false,
+    "failures_ok": false,
+    "pass": false
+  }
+}

@@ -2,7 +2,7 @@
   "schema_version": "2",
   "group": "rsi",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-kor-ic50-29846ff1a792",
-  "exported_at": "2026-11-06T20:51:09+00:00",
+  "exported_at": "2026-11-06T22:37:49+00:00",
   "steps": [
     {
       "job_id": "9521b2b14f5c",

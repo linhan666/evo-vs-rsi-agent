@@ -29,6 +29,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--top-k", type=int, default=100)
     parser.add_argument("--radius", type=int, default=2, help="must match the model's training featurization")
     parser.add_argument("--n-bits", type=int, default=2048)
+    parser.add_argument("--desc-set", default="v1",
+                        help="descriptor block; MUST match the model's training featurization")
     parser.add_argument("--id-column", default="id")
     parser.add_argument("--smiles-column", default="smiles")
     args = parser.parse_args(argv)
@@ -46,12 +48,25 @@ def main(argv: list[str] | None = None) -> int:
                          + (f"; fitted pipelines here: {here[:3]}" if here else ""))
     library_path = resolve_input_path(args.library)  # the manifest hashes the real file
     rows = read_smiles(library_path, None, args.id_column, args.smiles_column)
-    ids, matrix, descriptors, invalid = featurize(rows, radius=args.radius, n_bits=args.n_bits)
+    ids, matrix, descriptors, invalid = featurize(
+        rows, radius=args.radius, n_bits=args.n_bits, desc_set=args.desc_set)
     if not ids:
         raise SystemExit("no library molecule could be featurized")
 
     features = np.hstack([matrix.astype(np.float32), descriptors]).astype(np.float32)
     model = joblib.load(args.model)
+
+    # Preflight: a feature-count mismatch here means the screening featurization
+    # does not agree with the one the model was trained on. Predicting anyway
+    # would silently produce garbage, so stop with the numbers that disagree.
+    expected = getattr(model, "n_features_in_", None)
+    if expected is not None and int(expected) != int(features.shape[1]):
+        raise SystemExit(
+            f"FEATURE_SHAPE_MISMATCH: screening built {features.shape[1]} features "
+            f"(radius={args.radius}, n_bits={args.n_bits}, desc_set={args.desc_set}) "
+            f"but the fitted model expects {expected}. Pass the same "
+            f"--radius/--n-bits/--desc-set that modeling.train was given.")
+
     scores = model.predict_proba(features)[:, 1]
 
     order = np.argsort(-scores)

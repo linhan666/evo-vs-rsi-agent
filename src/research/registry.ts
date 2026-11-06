@@ -106,6 +106,7 @@ const SCIENTIFIC_TOOLS_APPEND = {
     '--model', args.model, '--library', args.library, '--output', args.output,
     '--top-output', args.top_output, '--report', args.report,
     '--top-k', String(args.top_k), '--radius', String(args.radius), '--n-bits', String(args.n_bits),
+    '--desc-set', args.desc_set,
   ],
   outputs: (args: z.infer<typeof RankInput>) => [args.output, args.top_output, args.report],
 } as ScientificToolDefinition

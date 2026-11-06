@@ -1,0 +1,861 @@
+{
+  "schema_version": "2",
+  "group": "rsi",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/mor-oom-check-9703152ccf27",
+  "exported_at": "2026-11-06T22:38:07+00:00",
+  "steps": [
+    {
+      "job_id": "046c531c8066",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:30:25.757Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/store.json",
+        "--out",
+        "experience_mor_dataset.json",
+        "--target",
+        "MOR",
+        "--kind",
+        "dataset"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience_mor_dataset.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "1601ef7f5417",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:30:49.437Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output",
+        "probe_features.npz",
+        "--report",
+        "probe_features_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "5",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 0.55,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "probe_features.npz",
+          "recorded_sha256": "7fd1c64543986d4c08d7b5646c43367aad1dffc438073f051bee2c840e05d9c7",
+          "digest": "npz:48f902c0ca83c6f9c1cad5846a34dd02f89a06b930f3070e109bf6822ac4ca79"
+        },
+        {
+          "path": "probe_features_report.json",
+          "recorded_sha256": "696a6f7589af8dfc3891c76ee2354f039c625ef6662fade117a3b33b9ec3c53e",
+          "digest": "json:1f9cb49968af8ee0129ce6fba61b6027cac111ab7d03053af9fb41f3d296e324"
+        }
+      ]
+    },
+    {
+      "job_id": "8c6585740d05",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:30:55.799Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output",
+        "features_morgan_r2_2048.npz",
+        "--report",
+        "features_morgan_r2_2048_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 7.48,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features_morgan_r2_2048.npz",
+          "recorded_sha256": "cb5b54ba785ab2655f0f076c688cd6539efb91c694c4a5c2963936952bf29ad4",
+          "digest": "npz:a88a2980bb6db9a3ac930b4909046b5451251cbafa98eea9e09ef48cbe0d453d"
+        },
+        {
+          "path": "features_morgan_r2_2048_report.json",
+          "recorded_sha256": "f523e7a4380d1fa3bdf077fb95700c14ce3d7afd0b4b433d694355c787d3402f",
+          "digest": "json:8f3a4a3baecbbaea0b6aeb8c58b377f7be8db36f676eb77615916546d67efdb1"
+        }
+      ]
+    },
+    {
+      "job_id": "9fd3880cbc9e",
+      "tool_id": "data.split",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:31:08.245Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.data.split",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output",
+        "split_scaffold.json",
+        "--strategy",
+        "scaffold",
+        "--test-fraction",
+        "0.3",
+        "--val-fraction",
+        "0.1",
+        "--seed",
+        "17",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles"
+      ],
+      "wall_seconds": 2.19,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "split_scaffold.json",
+          "recorded_sha256": "7bd300bcf6e40285abf72a2a1dcbfd154e6e53338c0d09d76ab16f96d573417e",
+          "digest": "json:69d08aa0b10042caf17c59f0a882b58befecd0ff28b497c652975bf8e6674c3c"
+        }
+      ]
+    },
+    {
+      "job_id": "1d88a34db59b",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:31:16.579Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features_morgan_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output-dir",
+        "train_probe",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.25",
+        "--label-source",
+        "chembl_oprm1_ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label"
+      ],
+      "wall_seconds": 3.19,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "train_probe/metrics.json",
+          "recorded_sha256": "b520a6214b6705d00c4943a4d196527c77bf017393e4fb4695603311934fc8e3",
+          "digest": "json:c873b6eb78bbdd251f28c295e044b96df3b2d05de409c57bec766d350163d9af"
+        },
+        {
+          "path": "train_probe/predictions.csv",
+          "recorded_sha256": "21cecf626d3923219263b5c19aee0f622c15afe6081fe19ad6cbaa385f4da5cf",
+          "digest": "sha256:21cecf626d3923219263b5c19aee0f622c15afe6081fe19ad6cbaa385f4da5cf"
+        },
+        {
+          "path": "train_probe/model.joblib",
+          "recorded_sha256": "08104062f7154bdc3ac29d064ad77af2674effb4e9466d8d73a87d80f96a28f7",
+          "digest": "sha256:08104062f7154bdc3ac29d064ad77af2674effb4e9466d8d73a87d80f96a28f7"
+        },
+        {
+          "path": "train_probe/artifact_manifest.json",
+          "recorded_sha256": "dbaa45452da24ae4400adda308f0e7d6246c05e3e00a0d85d675975da5e31255",
+          "digest": "json:5a6be5ca1b6c9a598970af80c6a7d1cfa5aa171d041ed7f670a3652c50239918"
+        }
+      ]
+    },
+    {
+      "job_id": "3fd66100e8d4",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:31:49.389Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features_morgan_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output-dir",
+        "model_logreg_r2",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.25",
+        "--label-source",
+        "chembl_oprm1_ki_label",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "split_scaffold.json"
+      ],
+      "wall_seconds": 2.03,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "model_logreg_r2/metrics.json",
+          "recorded_sha256": "149a6a4345617a84f5731ecaa4ad599a259e2f6913982dc5d379ce0eea0e2c23",
+          "digest": "json:2c31474a3c87c75fbfd3d0904dc0aad6ed94ea72cb637e576105ec4b4eb729d3"
+        },
+        {
+          "path": "model_logreg_r2/predictions.csv",
+          "recorded_sha256": "494b5d18ab8e15b94183e7717b644ab4cf3c0a51d25e0462b0100a7a3d17c910",
+          "digest": "sha256:494b5d18ab8e15b94183e7717b644ab4cf3c0a51d25e0462b0100a7a3d17c910"
+        },
+        {
+          "path": "model_logreg_r2/model.joblib",
+          "recorded_sha256": "6375173c87b5071a30c05da258b4ac1e90ae0e3f254cba189bbb7b08e6a278d0",
+          "digest": "sha256:6375173c87b5071a30c05da258b4ac1e90ae0e3f254cba189bbb7b08e6a278d0"
+        },
+        {
+          "path": "model_logreg_r2/artifact_manifest.json",
+          "recorded_sha256": "925d500082faaa2f929b044411c063759c97c1aa98e3c0896476dc8c35835365",
+          "digest": "json:bd05a457c1bcd52fdad56ca058fab681fe6be5586ae96fba12282e275e30bf08"
+        }
+      ]
+    },
+    {
+      "job_id": "3d8cd348b795",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:31:51.439Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features_morgan_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output-dir",
+        "model_xgb_r2",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.25",
+        "--label-source",
+        "chembl_oprm1_ki_label",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "split_scaffold.json"
+      ],
+      "wall_seconds": 4.97,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "model_xgb_r2/metrics.json",
+          "recorded_sha256": "022afb9358a63c4ec946c01209ac76142950400422e42e4fb75d30bef13c7f3e",
+          "digest": "json:86d9be1c2e38d267e465a21b19264540122e9f19ac30244026e87773ae140835"
+        },
+        {
+          "path": "model_xgb_r2/predictions.csv",
+          "recorded_sha256": "bcb1b16cd6844c3f7baa90ebfcf6b8726b89abc4a9f90a6010410d0e7751b28a",
+          "digest": "sha256:bcb1b16cd6844c3f7baa90ebfcf6b8726b89abc4a9f90a6010410d0e7751b28a"
+        },
+        {
+          "path": "model_xgb_r2/model.joblib",
+          "recorded_sha256": "a76d7795fcd23bf7b31586aab8c6f0236cba3eb2dee43e342f86bce125b6cfb5",
+          "digest": "sha256:a76d7795fcd23bf7b31586aab8c6f0236cba3eb2dee43e342f86bce125b6cfb5"
+        },
+        {
+          "path": "model_xgb_r2/artifact_manifest.json",
+          "recorded_sha256": "4be9819e8873818a52f31cbc43ada80baf9ac7aedd91ea08dbfbc051787c7390",
+          "digest": "json:f62123b8c09b30015acf43fba3a77aca5147d2c3608486629a5139bdba16f3a2"
+        }
+      ]
+    },
+    {
+      "job_id": "b7f90181380a",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:31:56.434Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output",
+        "features_morgan_r3_4096.npz",
+        "--report",
+        "features_morgan_r3_4096_report.json",
+        "--radius",
+        "3",
+        "--n-bits",
+        "4096",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 6.08,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features_morgan_r3_4096.npz",
+          "recorded_sha256": "3840f5ab0793e3146d29959b52060569f84104f952102dfc981b5361148e89ee",
+          "digest": "npz:50eacf6918901395e2332bdad49fcc69e28bf37c4208de51918a7c250cef6fc5"
+        },
+        {
+          "path": "features_morgan_r3_4096_report.json",
+          "recorded_sha256": "dba1ffe98664ec2d8b7ae3dccab86c2c0ba2f27f9d37a1096f0b1b319d5c5c40",
+          "digest": "json:46954046c7d5cebaa63cfe77de3ac7395aa6fa75cc2fa3d106051255a5d94acc"
+        }
+      ]
+    },
+    {
+      "job_id": "b5e22670ca8c",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:32:08.005Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features_morgan_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output-dir",
+        "model_rf_r2",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.25",
+        "--label-source",
+        "chembl_oprm1_ki_label",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "split_scaffold.json"
+      ],
+      "wall_seconds": 3.75,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "model_rf_r2/metrics.json",
+          "recorded_sha256": "40d206ad926e901e198d83569e7859a69d6af9c19cda5ebc3d1dd32ae6658e0f",
+          "digest": "json:56b9193c75f6a8e5c0b5ac6c1ee15f80e8e7377d37bc77446009fe094c911aa1"
+        },
+        {
+          "path": "model_rf_r2/predictions.csv",
+          "recorded_sha256": "d7a8ab4d7135a0ea82dd623abd8559e4657fdfc216d08f6db8fc28ee8c7d05aa",
+          "digest": "sha256:d7a8ab4d7135a0ea82dd623abd8559e4657fdfc216d08f6db8fc28ee8c7d05aa"
+        },
+        {
+          "path": "model_rf_r2/model.joblib",
+          "recorded_sha256": "f3c1312028c222a9926e3c684d048457c5c7a5ac95f76c8aa357c0f19ada0b65",
+          "digest": "sha256:f3c1312028c222a9926e3c684d048457c5c7a5ac95f76c8aa357c0f19ada0b65"
+        },
+        {
+          "path": "model_rf_r2/artifact_manifest.json",
+          "recorded_sha256": "7aae6023c6600ff44eecc486102686132a6e503a40e6167feb9269eea25feade",
+          "digest": "json:7e24c8dd50ac301b32738474782307b6874dda148301ab3c9372efbc400d3745"
+        }
+      ]
+    },
+    {
+      "job_id": "d4911dcc9924",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:32:11.779Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features_morgan_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output-dir",
+        "model_cat_r2",
+        "--model",
+        "catboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.25",
+        "--label-source",
+        "chembl_oprm1_ki_label",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "split_scaffold.json"
+      ],
+      "wall_seconds": 25.12,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "model_cat_r2/metrics.json",
+          "recorded_sha256": "7df0827762c494138c9ee8f005a951f73d0823388e372dc6b2a6dea41e77a3ec",
+          "digest": "json:3df344972538bf40d2c5c648c65b46cd423e38a4876e83189a300cd97317aeaa"
+        },
+        {
+          "path": "model_cat_r2/predictions.csv",
+          "recorded_sha256": "bac27a250f6e8c67ad00d7cc6fbc8479acce4b904a545f76f77a4db252fa88bc",
+          "digest": "sha256:bac27a250f6e8c67ad00d7cc6fbc8479acce4b904a545f76f77a4db252fa88bc"
+        },
+        {
+          "path": "model_cat_r2/model.joblib",
+          "recorded_sha256": "bf48dacbca72512f14a413768ba9642fc908a25928772e1fe26768e36a83bfbf",
+          "digest": "sha256:bf48dacbca72512f14a413768ba9642fc908a25928772e1fe26768e36a83bfbf"
+        },
+        {
+          "path": "model_cat_r2/artifact_manifest.json",
+          "recorded_sha256": "783996a0eb6a9d4842f4633891d70c1f750db438f0e5d1c23720a1040f2db029",
+          "digest": "json:bcfe50e789157d41c53b82df4a54bde5ba9eea75f40c1bd0d6a893000f4efdbd"
+        }
+      ]
+    },
+    {
+      "job_id": "445cf036aea3",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:32:36.916Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features_morgan_r3_4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output-dir",
+        "model_xgb_r3",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.25",
+        "--label-source",
+        "chembl_oprm1_ki_label",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "split_scaffold.json"
+      ],
+      "wall_seconds": 6.46,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "model_xgb_r3/metrics.json",
+          "recorded_sha256": "4547346c291582f8f594008389aa5cd6e47460629a687dfc97763aa77531e98e",
+          "digest": "json:da49d24f65373d8f57f72e8a5d595de0cb50bad3e64fcd0d4ce8dfb14524d521"
+        },
+        {
+          "path": "model_xgb_r3/predictions.csv",
+          "recorded_sha256": "07c7910e10c192144f0c6547d43dd426313a094160864ace51128fd1b3f0aa10",
+          "digest": "sha256:07c7910e10c192144f0c6547d43dd426313a094160864ace51128fd1b3f0aa10"
+        },
+        {
+          "path": "model_xgb_r3/model.joblib",
+          "recorded_sha256": "81e97a9ce63d224a38252275516091e16766816c4a9a8f969ebbc984e34d0ba9",
+          "digest": "sha256:81e97a9ce63d224a38252275516091e16766816c4a9a8f969ebbc984e34d0ba9"
+        },
+        {
+          "path": "model_xgb_r3/artifact_manifest.json",
+          "recorded_sha256": "2f55ad072b4c8a83d762538cc688d46409eda661758407818e4ff670c7941c01",
+          "digest": "json:51c1bb89d2b380ac6f695e0cab1046db2c3649b25b9b233e80321d9f7a394b84"
+        }
+      ]
+    },
+    {
+      "job_id": "21c992367f1e",
+      "tool_id": "ml.fuse",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:32:58.841Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.fusion",
+        "--a",
+        "model_logreg_r2/predictions.csv",
+        "--b",
+        "model_xgb_r2/predictions.csv",
+        "--output",
+        "fused_logreg_xgb_mean.csv",
+        "--report",
+        "fused_logreg_xgb_mean_report.json",
+        "--method",
+        "mean",
+        "--weight-a",
+        "0.4969",
+        "--a-uprc",
+        "0.962",
+        "--b-uprc",
+        "0.9739"
+      ],
+      "wall_seconds": 0.1,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "fused_logreg_xgb_mean.csv",
+          "recorded_sha256": "af3527b5cf5302da46401418acce3024eedb1e8edd7026aac8f60b007410c490",
+          "digest": "sha256:af3527b5cf5302da46401418acce3024eedb1e8edd7026aac8f60b007410c490"
+        },
+        {
+          "path": "fused_logreg_xgb_mean_report.json",
+          "recorded_sha256": "af33732716ad474b8dfb4c7b9a6a16f1c59f13915f41db11f487e4aefa192bf4",
+          "digest": "json:c84147f368da3227a09827182ba6fb07ab55eeae71ae6cce773c23ddda3108ca"
+        }
+      ]
+    },
+    {
+      "job_id": "9ffa430541b6",
+      "tool_id": "screening.rank",
+      "state": "FAILED",
+      "started_at": "2026-11-06T22:32:58.991Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "model_xgb_r2/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "ranking_xgb_r2_100k.csv",
+        "--top-output",
+        "top100_xgb_r2.csv",
+        "--report",
+        "ranking_xgb_r2_100k_report.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048"
+      ],
+      "wall_seconds": 14.57,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "vovs_science/screening/predict.py\", line 55, in main\n    scores = model.predict_proba(features)[:, 1]\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/pipeline.py\", line 720, in predict_proba\n    Xt = transform.transform(Xt)\n         ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/_set_output.py\", line 316, in wrapped\n    data_to_wrap = f(self, X, *args, **kwargs)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/preprocessing/_data.py\", line 1045, in transform\n    X = self._validate_data(\n        ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/base.py\", line 654, in _validate_data\n    self._check_n_features(X, reset=reset)\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/base.py\", line 443, in _check_n_features\n    raise ValueError(\nValueError: X has 2055 features, but StandardScaler is expecting 2091 features as input.",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "ebf79919ccca",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:33:28.904Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output",
+        "features_morgan_r2_2048_v1.npz",
+        "--report",
+        "features_morgan_r2_2048_v1_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.93,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features_morgan_r2_2048_v1.npz",
+          "recorded_sha256": "8c2ccc239e0a33e34b270f320074770776f53d44c9fd9ad72d2b52f174bcec84",
+          "digest": "npz:21636ae089128f573231c3d16ab9e67ca60e965457e28d6fe5b5508a2a900340"
+        },
+        {
+          "path": "features_morgan_r2_2048_v1_report.json",
+          "recorded_sha256": "f6bc49a060507d12ffc6fdcc3a8387b66d34b3916fea5f8d2a4e05382a0a9a7b",
+          "digest": "json:8f3a4a3baecbbaea0b6aeb8c58b377f7be8db36f676eb77615916546d67efdb1"
+        }
+      ]
+    },
+    {
+      "job_id": "f1c9f301aa61",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:33:32.622Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features_morgan_r2_2048_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv",
+        "--output-dir",
+        "model_xgb_r2_v1",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.25",
+        "--label-source",
+        "chembl_oprm1_ki_label",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "split_scaffold.json"
+      ],
+      "wall_seconds": 6.06,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "model_xgb_r2_v1/metrics.json",
+          "recorded_sha256": "d13cafb5220be44aabf3cfa26adf9446625d04dd97aadb45d22b101509c12fe9",
+          "digest": "json:1e4c72ae3bb6a925b5cb4e93b9d24b2f667734d8b0a22e7fe87c132f057b7577"
+        },
+        {
+          "path": "model_xgb_r2_v1/predictions.csv",
+          "recorded_sha256": "b06560b396d39fc224398f92b8e6222ba727ba9cad58929133208ee65fd0b9b4",
+          "digest": "sha256:b06560b396d39fc224398f92b8e6222ba727ba9cad58929133208ee65fd0b9b4"
+        },
+        {
+          "path": "model_xgb_r2_v1/model.joblib",
+          "recorded_sha256": "9442e0b5e486383c7563851fb9b3be6a28b0ad86fc5f07ad98c95be2ea4f66b0",
+          "digest": "sha256:9442e0b5e486383c7563851fb9b3be6a28b0ad86fc5f07ad98c95be2ea4f66b0"
+        },
+        {
+          "path": "model_xgb_r2_v1/artifact_manifest.json",
+          "recorded_sha256": "daec9c294ac907c89b914665c1137984652d38c3714bbb5489deaec4cf936b86",
+          "digest": "json:089a8dd3bdf9f48646d7b2fe62b11199fe576757936930eb02d11dff715f05d8"
+        }
+      ]
+    },
+    {
+      "job_id": "2490c150e930",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:33:40.591Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "model_xgb_r2_v1/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "ranking_xgb_r2_v1_100k.csv",
+        "--top-output",
+        "top100_xgb_r2_v1.csv",
+        "--report",
+        "ranking_xgb_r2_v1_100k_report.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048"
+      ],
+      "wall_seconds": 18.57,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "ranking_xgb_r2_v1_100k.csv",
+          "recorded_sha256": "46a5d8a1af96f17aa856d1232589409bdad59b7f42e4c8a6c241319732619865",
+          "digest": "sha256:46a5d8a1af96f17aa856d1232589409bdad59b7f42e4c8a6c241319732619865"
+        },
+        {
+          "path": "top100_xgb_r2_v1.csv",
+          "recorded_sha256": "276e658190a0455faaf5493c812149bc304c9e320cf4ed0537c1c6094adca65b",
+          "digest": "sha256:276e658190a0455faaf5493c812149bc304c9e320cf4ed0537c1c6094adca65b"
+        },
+        {
+          "path": "ranking_xgb_r2_v1_100k_report.json",
+          "recorded_sha256": "6c6753d79cd69ac74500bb4950ecc4c5e12840de0c80b94bd68963a71999b082",
+          "digest": "json:bc32cbe86cad5b2795d13d3a623b2853eae37427f299677597320688f32979c1"
+        }
+      ]
+    },
+    {
+      "job_id": "63816e4a1dd9",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-06T22:34:05.617Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "MOR",
+        "--endpoint",
+        "Ki",
+        "--model",
+        "model_xgb_r2_v1/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "locked_receipt_mor_ki_xgb_r2_v1.json",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 2.85,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "locked_receipt_mor_ki_xgb_r2_v1.json",
+          "recorded_sha256": "efb30578a057c2bec629eb59b266ec1c1e4e2e932d437b528a5cdcf6187d6712",
+          "digest": "json:a87339813bd90df8cf70c94742bbaf7c77488997caa5d982cad4ead6800820a8"
+        }
+      ]
+    },
+    {
+      "job_id": "44942bed072a",
+      "tool_id": "screening.rank",
+      "state": "FAILED",
+      "started_at": "2026-11-06T22:35:00.960Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "model_xgb_r2/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "ranking_xgb_r2_v2_retry.csv",
+        "--top-output",
+        "top100_xgb_r2_v2_retry.csv",
+        "--report",
+        "ranking_xgb_r2_v2_retry_report.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048"
+      ],
+      "wall_seconds": 13.13,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "vovs_science/screening/predict.py\", line 55, in main\n    scores = model.predict_proba(features)[:, 1]\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/pipeline.py\", line 720, in predict_proba\n    Xt = transform.transform(Xt)\n         ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/_set_output.py\", line 316, in wrapped\n    data_to_wrap = f(self, X, *args, **kwargs)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/preprocessing/_data.py\", line 1045, in transform\n    X = self._validate_data(\n        ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/base.py\", line 654, in _validate_data\n    self._check_n_features(X, reset=reset)\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/base.py\", line 443, in _check_n_features\n    raise ValueError(\nValueError: X has 2055 features, but StandardScaler is expecting 2091 features as input.",
+      "stdout_tail": "",
+      "artifacts": []
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "candidate_id": "auto-feature-shape-preflight",
+  "version": "0.1.0",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "preflight:screening.feature-shape",
+      "value": "compare the featurized matrix width against model.n_features_in_ before predict_proba, and carry --desc-set through screening.rank so the two sides can agree"
+    }
+  ],
+  "hypothesis": "screening.rank called featurize without desc_set, so it always used v1 while the trainer may have used v2; predicting anyway produced garbage rankings. A preflight that names the disagreeing widths turns silent corruption into an actionable failure.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "equivalence_mode": "non-regression",
+    "allowed_mismatches": [
+      ".csv",
+      ".json",
+      ".joblib"
+    ],
+    "failures_in_replay": 0,
+    "failure_clusters": [
+      "screening.rank :: ValueError: X has N features, but StandardScaler is expecting M"
+    ],
+    "expected_failures": [
+      "FEATURE_SHAPE_MISMATCH"
+    ]
+  },
+  "risk": "The preflight refuses runs that used to proceed; a model with no n_features_in_ attribute is still allowed through.",
+  "scope_note": "Mined from the OOM-fixed customisation traces: screening.rank failures whose stderr is a feature-count ValueError.",
+  "rollback": "drop the width check in screening/predict.py and the --desc-set argument",
+  "basis": {
+    "generated_by": "operator from failure_clusters",
+    "kind": "failure-recurrence",
+    "tool_id": "screening.rank",
+    "evidence": {
+      "recent_hits": 2,
+      "clusters": [
+        {
+          "cluster": "screening.rank :: ValueError: X has 2055 features, but StandardScaler is expecting 2091",
+          "recent_hits": 1,
+          "claimed": true,
+          "samples": [
+            "ValueError: X has 2055 features, but StandardScaler is expecting 2091 features as input."
+          ]
+        },
+        {
+          "cluster": "screening.rank :: ValueError: X has 4103 features, but StandardScaler is expecting 4139",
+          "recent_hits": 1,
+          "claimed": true,
+          "samples": [
+            "ValueError: X has 4103 features, but StandardScaler is expecting 4139 features as input."
+          ]
+        }
+      ]
+    }
+  }
+}

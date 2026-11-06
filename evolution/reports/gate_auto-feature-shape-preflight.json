@@ -1,0 +1,42 @@
+{
+  "schema_version": "1",
+  "candidate_id": "auto-feature-shape-preflight",
+  "gates": [
+    {
+      "gate": "equivalence",
+      "status": "pass",
+      "detail": "non-regression: 3 declared change(s), none outside ['.csv', '.json', '.joblib']"
+    },
+    {
+      "gate": "cost",
+      "status": "n/a",
+      "detail": "the candidate makes no cost claim"
+    },
+    {
+      "gate": "success",
+      "status": "fail",
+      "detail": "non-zero exit: screening.rank"
+    },
+    {
+      "gate": "failure",
+      "status": "pass",
+      "detail": "non-regression: the claimed class no longer occurs, which is what the fix was for"
+    },
+    {
+      "gate": "quality",
+      "status": "n/a",
+      "detail": "the candidate makes no quality claim"
+    },
+    {
+      "gate": "safety",
+      "status": "pass",
+      "detail": "canary baseline intact"
+    }
+  ],
+  "verdict": "fail",
+  "blocking": [
+    "success"
+  ],
+  "needs_human_number": [],
+  "note": "A pass here is a prerequisite for promotion, never a promotion. The operator still applies the change and runs freshness, rebuild and canary."
+}

@@ -129,7 +129,18 @@ def success_gate(report: dict, spec: dict | None = None) -> dict:
              if step.get("recorded_state", "SUCCEEDED") == "SUCCEEDED"] or all_steps
     if not steps:
         return _gate("success", FAIL, "the shadow report has no steps")
-    failed = [step for step in steps if step.get("exit_code") not in (0, None)]
+    # A preflight fix turns silent corruption into a loud refusal: the step is
+    # SUPPOSED to exit non-zero when the inputs disagree. acceptance.expected_failures
+    # names those stderr patterns so they count as the intended behaviour.
+    expected = acceptance.get("expected_failures", [])
+    failed = []
+    for step in steps:
+        if step.get("exit_code") in (0, None):
+            continue
+        blob = " ".join([str(step.get("error") or ""), " ".join(step.get("stderr_tail") or [])])
+        if any(pattern in blob for pattern in expected):
+            continue
+        failed.append(step)
     missing = []
     for step in steps:
         if step.get("artifacts_equal", 0) >= step.get("artifacts_total", 0):
