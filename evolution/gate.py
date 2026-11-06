@@ -94,7 +94,15 @@ def cost_gate(spec: dict, report: dict) -> dict:
 
 
 def success_gate(report: dict) -> dict:
-    steps = report.get("steps", [])
+    """Every step that succeeded when recorded must still succeed.
+
+    A replayed failure that still fails is not a success-gate problem — that is the
+    failure gate's business, and judging it here would block every remediation
+    candidate by construction.
+    """
+    all_steps = report.get("steps", [])
+    steps = [step for step in all_steps
+             if step.get("recorded_state", "SUCCEEDED") == "SUCCEEDED"] or all_steps
     if not steps:
         return _gate("success", FAIL, "the shadow report has no steps")
     failed = [step for step in steps if step.get("exit_code") not in (0, None)]
@@ -106,7 +114,7 @@ def success_gate(report: dict) -> dict:
         if missing:
             detail.append("incomplete artifacts: " + ", ".join(sorted(set(missing))))
         return _gate("success", FAIL, "; ".join(detail))
-    return _gate("success", PASS, f"{len(steps)} replay steps, all exit 0 with their artifacts")
+    return _gate("success", PASS, f"{len(steps)} previously successful steps still exit 0 with their artifacts")
 
 
 def quality_gate(spec: dict, metrics: dict | None) -> dict:
@@ -127,6 +135,43 @@ def quality_gate(spec: dict, metrics: dict | None) -> dict:
     return _gate("quality", PASS, "metric thresholds met")
 
 
+def failure_gate(spec: dict, report: dict) -> dict:
+    """Did the failure this candidate targets actually stop happening?
+
+    A candidate fixes a class, not "failures" in general: the same ticket can mix a
+    resolvable column name with a path that never existed. When the spec names its
+    classes, only those are judged — and a class with no replayed step is a failed
+    claim, not a free pass.
+    """
+    acceptance = spec.get("acceptance", {})
+    target = acceptance.get("failures_in_replay")
+    if target is None:
+        return _gate("failure", NOT_APPLICABLE, "the candidate makes no failure claim")
+
+    claimed = acceptance.get("failure_clusters") or []
+    by_class = report.get("failures_by_class") or {}
+    if claimed:
+        missing = [name for name in claimed if name not in by_class]
+        if missing:
+            return _gate("failure", FAIL, "no replayed step matched {0}; the claim cannot be checked".format(missing))
+        replayed = sum(int(by_class[name].get("replayed", 0)) for name in claimed)
+        remaining = sum(int(by_class[name].get("remaining", 0)) for name in claimed)
+        scope = "claimed classes"
+    else:
+        replayed = report.get("failures_replayed")
+        remaining = report.get("failures_remaining")
+        scope = "all replayed failures"
+        if replayed is None:
+            return _gate("failure", FAIL, "the report replayed no failed steps; run shadow.py with --include-failed")
+
+    if replayed == 0:
+        return _gate("failure", FAIL, "no failed step was replayed, so the claim cannot be checked")
+    if remaining is None:
+        return _gate("failure", FAIL, "the report has no failures_remaining")
+    detail = "{0} of {1} remain (allowed {2}; {3})".format(remaining, replayed, target, scope)
+    return _gate("failure", PASS if remaining <= int(target) else FAIL, detail)
+
+
 def safety_gate(canary: dict | None) -> dict:
     if canary is None:
         return _gate("safety", MANUAL, "no canary report supplied; run ops/canary_check.py and pass --canary")
@@ -138,7 +183,7 @@ def safety_gate(canary: dict | None) -> dict:
 
 def evaluate(spec: dict, report: dict, *, metrics: dict | None = None, canary: dict | None = None) -> dict:
     gates = [equivalence_gate(spec, report), cost_gate(spec, report), success_gate(report),
-             quality_gate(spec, metrics), safety_gate(canary)]
+             failure_gate(spec, report), quality_gate(spec, metrics), safety_gate(canary)]
     blocking = [gate["gate"] for gate in gates if gate["status"] == FAIL]
     pending = [gate["gate"] for gate in gates if gate["status"] == MANUAL]
     verdict = FAIL if blocking else (MANUAL if pending else PASS)

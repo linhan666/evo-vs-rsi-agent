@@ -43,8 +43,8 @@
 | 锁定测试 AUROC（IC50 独立通道） | MOR **0.9188** / KOR **0.8954** / DRD2 **0.9157**（test n=99/159/63） |
 | 筛选库 | ZINC250k 规范化去重 → 种子 17 抽样 **100,000**（`library_100k.smi`） |
 | Evolution 语料 / 经验库 | **20 traces** / **24 条经验记录**（model 7、screening 7、transfer 6、dataset 3、harness 1） |
-| 已晋升候选 | **candidate1**（featurize 分块并行，默认 `EVOVS_FEAT_JOBS=8`，回滚=改回 1） |
-| 版本账本 | `evolution/versions.json`：`v1 = candidate1` 绑 git SHA，`versions.py check` 与 HEAD 一致 |
+| 已晋升候选 | **v2**：`rdkit.featurize` 列名别名解析 + 输入早失败（回滚=还原精确匹配）；**v1**：featurize 分块并行 `EVOVS_FEAT_JOBS=8`（回滚=改回 1） |
+| 版本账本 | `evolution/versions.json`：v2 active、v1 superseded，均绑 git SHA；`versions.py check` 用祖先判定 |
 | 被拒绝候选 | candidate2（pooled 重校准，负迁移恶化至 −0.0614）；candidate3（descv2，Ki 三条 CI 全含 0；IC50 通道 Δ +0.0035/+0.0037/−0.0011，同为持平 → 保持 v1）；**auto-latency-share-screening-rank**（首个自动提案，实测更慢：10k 行 9.0s → 21.5s） |
 
 ## 快速开始

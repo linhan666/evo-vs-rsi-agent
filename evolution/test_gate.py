@@ -31,7 +31,22 @@ class GateTests(unittest.TestCase):
         self.assertEqual(result["verdict"], "pass")
         self.assertEqual({gate["gate"]: gate["status"] for gate in result["gates"]},
                          {"equivalence": "pass", "cost": "pass", "success": "pass",
-                          "quality": "n/a", "safety": "pass"})
+                          "failure": "n/a", "quality": "n/a", "safety": "pass"})
+
+    def test_a_failure_claim_needs_replayed_failures(self):
+        claim = spec(equivalence=1.0, failures_in_replay=0)
+        self.assertEqual(evaluate(claim, CLEAN_REPORT, canary=CANARY_OK)["verdict"], "fail")
+        report = dict(CLEAN_REPORT, failures_replayed=4, failures_remaining=0)
+        self.assertEqual(evaluate(claim, report, canary=CANARY_OK)["verdict"], "pass")
+        still = dict(CLEAN_REPORT, failures_replayed=4, failures_remaining=2)
+        result = evaluate(claim, still, canary=CANARY_OK)
+        self.assertEqual(result["verdict"], "fail")
+        self.assertIn("failure", result["blocking"])
+
+    def test_a_report_that_replayed_nothing_cannot_claim_success(self):
+        claim = spec(equivalence=1.0, failures_in_replay=0)
+        result = evaluate(claim, dict(CLEAN_REPORT, failures_replayed=0, failures_remaining=0), canary=CANARY_OK)
+        self.assertEqual(result["verdict"], "fail")
 
     def test_a_missed_speedup_blocks_even_when_everything_else_is_clean(self):
         report = dict(CLEAN_REPORT, best_speedup=1.05)
@@ -80,6 +95,38 @@ class GateTests(unittest.TestCase):
                              "artifacts_total": 2, "artifacts_equal": 2, "mismatches": []}]}
         result = evaluate(SPEED_SPEC, report, canary=CANARY_OK)
         self.assertEqual(result["verdict"], "pass")
+
+    def test_a_failure_claim_is_judged_per_claimed_class(self):
+        claim = spec(equivalence=1.0, failures_in_replay=0)
+        claim["acceptance"]["failure_clusters"] = ["rdkit.featurize::missing_column:smiles"]
+        report = dict(CLEAN_REPORT, failures_replayed=3, failures_remaining=2,
+                      failures_by_class={
+                          "rdkit.featurize::missing_column:smiles": {"replayed": 2, "remaining": 0},
+                          "rdkit.featurize::FileNotFoundError": {"replayed": 1, "remaining": 2}})
+        self.assertEqual(evaluate(claim, report, canary=CANARY_OK)["verdict"], "pass")
+
+    def test_a_claimed_class_that_was_never_replayed_fails(self):
+        claim = spec(equivalence=1.0, failures_in_replay=0)
+        claim["acceptance"]["failure_clusters"] = ["rdkit.featurize::KeyError"]
+        report = dict(CLEAN_REPORT, failures_replayed=2, failures_remaining=0,
+                      failures_by_class={"rdkit.featurize::ValueError": {"replayed": 2, "remaining": 0}})
+        result = evaluate(claim, report, canary=CANARY_OK)
+        self.assertEqual(result["verdict"], "fail")
+        self.assertIn("failure", result["blocking"])
+
+    def test_a_replayed_failure_does_not_trip_the_success_gate(self):
+        # Remediation candidates deliberately replay steps that used to fail; those
+        # are the failure gate's business, not evidence that the success path broke.
+        claim = spec(equivalence=1.0, failures_in_replay=0)
+        claim["acceptance"]["failure_clusters"] = ["rdkit.featurize::missing_column:smiles"]
+        report = dict(CLEAN_REPORT,
+                      steps=[{"tool_id": "rdkit.featurize", "recorded_state": "SUCCEEDED", "exit_code": 0,
+                              "artifacts_total": 2, "artifacts_equal": 2, "mismatches": []},
+                             {"tool_id": "rdkit.featurize", "recorded_state": "FAILED", "exit_code": 1,
+                              "artifacts_total": 0, "artifacts_equal": 0, "mismatches": []}],
+                      failures_replayed=1, failures_remaining=0,
+                      failures_by_class={"rdkit.featurize::missing_column:smiles": {"replayed": 1, "remaining": 0}})
+        self.assertEqual(evaluate(claim, report, canary=CANARY_OK)["verdict"], "pass")
 
     def test_a_missing_canary_blocks_a_silent_pass(self):
         result = evaluate(SPEED_SPEC, CLEAN_REPORT)

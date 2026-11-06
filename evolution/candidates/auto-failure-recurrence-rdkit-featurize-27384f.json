@@ -1,20 +1,25 @@
 {
   "candidate_id": "auto-failure-recurrence-rdkit-featurize-27384f",
-  "version": "0.1.0-auto",
-  "status": "proposal",
+  "version": "0.1.1-auto",
+  "status": "promoted",
   "changes": [
     {
       "type": "experiment",
       "key": "preflight:rdkit.featurize",
-      "value": "validate the job inputs before launch (required columns, file kind) and fail fast with an actionable message"
+      "value": "resolve a requested column through a known alias (smiles -> canonical_smiles, id -> molecule_chembl_id) before reading, and fail the input check early with the columns that do exist"
     }
   ],
-  "hypothesis": "Adding preflight validation of required columns and file kind before launch will fail fast with actionable messages for the recurring missing-column and missing-file failures while preserving featurization equivalence.",
+  "hypothesis": "Resolving a requested column through a known alias before reading will stop the recurring missing-column failures, while an exact column name keeps the existing path byte-identical.",
   "acceptance": {
     "equivalence": 1.0,
-    "failures_in_replay": 0
+    "failures_in_replay": 0,
+    "failure_clusters": [
+      "rdkit.featurize::missing_column:smiles"
+    ]
   },
-  "risk": "The new validation could reject job inputs that previously proceeded through fallback or alternate parsing behavior, so the equivalence and replay-failure acceptance criteria must confirm no regression.",
+  "risk": "An alias could shadow a column the caller meant literally; the report records every substitution under columns_resolved, so the mapping is never silent.",
+  "scope_note": "The evidence has two clusters. This change claims only rdkit.featurize::missing_column:smiles. The FileNotFoundError cluster is a wrong path (including paths relative to the wrong directory) and no input validation can make it succeed; it stays unfixed and must be handled by a different change.",
+  "rollback": "restore the exact-match-only column lookup in scientific/src/evovs_science/chemistry/featurize.py (drop resolve_columns and the columns_resolved report field)",
   "basis": {
     "generated_by": "evolution/propose.py",
     "kind": "failure-recurrence",
@@ -30,6 +35,7 @@
         {
           "cluster": "rdkit.featurize::missing_column:smiles",
           "recent_hits": 4,
+          "claimed": true,
           "samples": [
             "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv has no 'smiles' column; found ['molecule_chembl_id', 'canonical_smiles', 'stan",
             "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv has no 'smiles' column; found ['molecule_chembl_id', 'canonical_smiles', 'stan"
@@ -38,6 +44,7 @@
         {
           "cluster": "rdkit.featurize::FileNotFoundError",
           "recent_hits": 7,
+          "claimed": false,
           "samples": [
             "FileNotFoundError: [Errno 2] No such file or directory: '/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/nope.csv'",
             "FileNotFoundError: [Errno 2] No such file or directory: '.artifacts/chembl/oprm1/ki/dataset.csv'"
@@ -45,5 +52,42 @@
         }
       ]
     }
+  },
+  "verdict": {
+    "decided_at": "2026-11-06T17:20:00+08:00",
+    "decision": "PROMOTED — alias resolution fixes the claimed class with the success path untouched",
+    "shadow": {
+      "report": "evolution/reports/shadow_preflight.json",
+      "trace": "evolution/traces/engine-pass-check-eb69ace79bac.json",
+      "equivalence_rate": 1.0,
+      "claimed_class": {
+        "cluster": "rdkit.featurize::missing_column:smiles",
+        "replayed": 4,
+        "remaining": 0
+      },
+      "unclaimed_and_still_failing": {
+        "rdkit.featurize::FileNotFoundError": {
+          "replayed": 7,
+          "remaining": 7
+        },
+        "ml.train::FileNotFoundError": {
+          "replayed": 1,
+          "remaining": 1
+        },
+        "screening.rank::--model must be the fitted pipeline FILE from modeling.train": {
+          "replayed": 1,
+          "remaining": 1
+        }
+      }
+    },
+    "gate": {
+      "report": "evolution/reports/gate_preflight.json",
+      "verdict": "pass",
+      "blocking": []
+    },
+    "notes": [
+      "A wrong path cannot be fixed by validation; those 7+1+1 steps are out of scope and remain on the books.",
+      "The original acceptance said failures_in_replay 0 over all classes, which no input validation could satisfy; it is now scoped to the class the change addresses."
+    ]
   }
 }

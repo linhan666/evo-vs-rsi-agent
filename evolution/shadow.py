@@ -14,6 +14,7 @@ import subprocess
 import time
 
 from artifacts import artifact_digest
+from failure_clusters import error_class
 from spec import validate_spec
 
 
@@ -39,14 +40,18 @@ DERIVED_BASENAMES = {"artifact_manifest.json"}  # index of the other artifacts; 
 
 
 def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delta: dict[str, str],
-             timeout: int, replay_baseline: bool = False) -> dict:
+             timeout: int, replay_baseline: bool = False, include_failed: bool = False) -> dict:
     results = []
     os.makedirs(sandbox, exist_ok=True)
     derived_skipped = 0
+    failures_replayed = 0
+    failures_remaining = 0
+    failures_by_class: dict[str, dict] = {}
     for step in trace["steps"]:
         if steps_filter and step["tool_id"] not in steps_filter:
             continue
-        if step["state"] != "SUCCEEDED":
+        failed_before = step["state"] != "SUCCEEDED"
+        if failed_before and not include_failed:
             continue
         # A trace records the wall time of a run that may predate the current code
         # (and any promotion in between). For latency claims the baseline must be
@@ -70,8 +75,20 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
                 equal += 1
             else:
                 mismatches.append(f"{artifact['path']}: digest differs")
+        if failed_before:
+            failures_replayed += 1
+            # Classify both sides: what failed then, and what still fails now.
+            recorded_class = "{0}::{1}".format(step["tool_id"], error_class(
+                step.get("error", ""), step.get("stderr_tail", ""), step.get("exit_code"),
+                step.get("stdout_tail", "")))
+            row = failures_by_class.setdefault(recorded_class, {"replayed": 0, "remaining": 0})
+            row["replayed"] += 1
+            if run["exit_code"] != 0:
+                failures_remaining += 1
+                row["remaining"] += 1
         results.append({
             "tool_id": step["tool_id"],
+            "recorded_state": step["state"],
             "baseline_wall_seconds": step["wall_seconds"],
             "replayed_baseline_wall_seconds": replayed["wall_seconds"] if replayed else None,
             "candidate_wall_seconds": run["wall_seconds"],
@@ -91,6 +108,9 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
         "artifacts_total": total,
         "artifacts_equal": equal,
         "derived_skipped": derived_skipped,
+        "failures_replayed": failures_replayed,
+        "failures_remaining": failures_remaining,
+        "failures_by_class": failures_by_class,
     }
 
 
@@ -103,6 +123,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--baseline-replay", action="store_true",
                         help="re-run each step with the baseline environment too, so latency is measured on this code")
+    parser.add_argument("--include-failed", action="store_true",
+                        help="also replay steps that failed when recorded, and count how many still fail")
     parser.add_argument("--output", required=True)
     args = parser.parse_args(argv)
 
@@ -115,29 +137,46 @@ def main(argv: list[str] | None = None) -> int:
                  if change.get("type") == "env"}
     steps = args.steps.split(",") if args.steps else None
 
-    report = evaluate(trace, args.sandbox, steps, env_delta, args.timeout, args.baseline_replay)
+    report = evaluate(trace, args.sandbox, steps, env_delta, args.timeout, args.baseline_replay,
+                      args.include_failed)
     report["candidate_id"] = spec.get("candidate_id")
     report["hypothesis"] = spec.get("hypothesis")
     report["acceptance"] = spec.get("acceptance")
     report["baseline_source"] = "replayed" if args.baseline_replay else "recorded in the trace"
-    featurize_steps = [item for item in report["steps"] if item["tool_id"] in ("rdkit.featurize", "screening.rank")]
     for item in report["steps"]:
         baseline = item.get("replayed_baseline_wall_seconds") or item["baseline_wall_seconds"]
         item["effective_baseline_wall_seconds"] = baseline
         item["speedup"] = round(baseline / item["candidate_wall_seconds"], 3) if item["candidate_wall_seconds"] else None
-    if featurize_steps:
+
+    acceptance = spec.get("acceptance", {})
+    verdict = {"equivalence_ok": report["equivalence_rate"] == 1.0}
+
+    # Cost claims only make sense over steps that succeeded when recorded: a step
+    # that used to fail has a meaningless "baseline" wall time.
+    timed = [item for item in report["steps"]
+             if item["recorded_state"] == "SUCCEEDED" and item["tool_id"] in ("rdkit.featurize", "screening.rank")]
+    if timed and (acceptance.get("max_time_ratio") is not None or acceptance.get("min_speedup") is not None):
         ratio = max((item["candidate_wall_seconds"] / item["effective_baseline_wall_seconds"]
-                     for item in featurize_steps if item["effective_baseline_wall_seconds"]), default=None)
-        speedup = max((item["speedup"] or 0) for item in featurize_steps)
+                     for item in timed if item["effective_baseline_wall_seconds"]), default=None)
+        speedup = max((item["speedup"] or 0) for item in timed)
         report["featurize_time_ratio_max"] = ratio
         report["best_speedup"] = speedup
-        acceptance = spec.get("acceptance", {})
-        report["verdict"] = {
-            "equivalence_ok": report["equivalence_rate"] == 1.0,
-            "time_ratio_ok": (ratio is None) or (ratio <= acceptance.get("max_time_ratio", 1.2)),
-            "speedup_ok": speedup >= acceptance.get("min_speedup", 0.0) if acceptance.get("min_speedup") else True,
-        }
-        report["verdict"]["pass"] = all(report["verdict"].values())
+        verdict["time_ratio_ok"] = (ratio is None) or (ratio <= acceptance.get("max_time_ratio", 1.2))
+        verdict["speedup_ok"] = (not acceptance.get("min_speedup")) or speedup >= acceptance["min_speedup"]
+
+    if acceptance.get("failures_in_replay") is not None:
+        claimed = acceptance.get("failure_clusters") or []
+        by_class = report.get("failures_by_class") or {}
+        if claimed:
+            replayed = sum(int(by_class.get(name, {}).get("replayed", 0)) for name in claimed)
+            remaining = sum(int(by_class.get(name, {}).get("remaining", 0)) for name in claimed)
+        else:
+            replayed, remaining = report.get("failures_replayed"), report.get("failures_remaining")
+        verdict["failures_ok"] = bool(replayed) and remaining is not None \
+            and remaining <= int(acceptance["failures_in_replay"])
+
+    report["verdict"] = verdict
+    report["verdict"]["pass"] = all(verdict.values())
 
     os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as handle:

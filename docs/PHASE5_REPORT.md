@@ -22,6 +22,8 @@
 | `evolution/gate.py` + `test_gate.py` | **P5-03 统一门禁**：等价/质量/成本/成功/安全五类裁决，输出 pass·manual·fail 与 blocking 列表 |
 | `evolution/versions.py` + `test_versions.py` | **P5-05 版本账本**：每次晋升绑定 git SHA + 门禁结论，`rollback` 打印可执行回滚，`check` 比对 HEAD |
 | `evolution/pareto.py` + `test_pareto.py` | **P5-04 Pareto**：lite/balanced/heavy 三档固定权重 + 非支配前沿，被门禁拦下的候选不参与排序 |
+| `chemistry/featurize.py` 的 `resolve_columns` / `check_input_file` | **v2 候选**：列名别名解析 + 输入的早失败；仅在发生替换时报告 `columns_resolved`，成功路径字节不变 |
+| `evolution/shadow.py --include-failed` | 重放**失败步**并按失败类计数，让"某类失败归零"成为可测量命题 |
 
 ## 2. 语料与失败聚类基线
 
@@ -168,6 +170,30 @@
 
 **候选合并（顺手修掉的重复）**：两个失败类候选（`-61c653`/`-f80739`）其实是同一个改动 `preflight:rdkit.featurize`，只是引用不同失败簇。提案器现在**按改动去重**：同一 `change` 只出一个候选，证据里的失败簇合并列出；候选 id 也从"簇哈希"改成"改动哈希"。合并后为 `auto-failure-recurrence-rdkit-featurize-27384f`（2 个簇、3 个工单），旧的重复 spec 已删除。另加一条：**已被否决的改动不会被换个 id 复活**（去重比对的是改动本身，不是文件名）。
 
+### 7.3 第二条真实晋升：列名别名解析（v2，2026-11-06 17:20）
+
+**实现**（`chemistry/featurize.py`）：`resolve_columns()` 先按原样匹配，再查已知别名（`smiles→canonical_smiles`、`id→molecule_chembl_id/chembl_id`），仍不匹配则带着"实际存在的列"立刻失败；`check_input_file()` 在开工前拦掉不存在/是目录的输入。**发生替换时**才在报告里写 `columns_resolved`——普通路径的报告字节不变，这正是等价性能保持 1.0 的原因。
+
+**影子（`--include-failed` 新能力）**：在 `engine-pass-check-eb69ace79bac` 上重放**含失败步**的 16 步，按类统计：
+
+| 失败类 | 重放 | 仍失败 |
+|---|---|---|
+| `rdkit.featurize::missing_column:smiles`（本候选声称） | 4 | **0** |
+| `rdkit.featurize::FileNotFoundError` | 7 | 7 |
+| `ml.train::FileNotFoundError` | 1 | 1 |
+| `screening.rank::--model must be a file` | 1 | 1 |
+
+**等价率 1.0**（原本成功的步产物摘要逐位一致）。
+
+**两处验收口径修正（必须记账，不能事后放宽）**
+
+1. 原验收 `failures_in_replay: 0` 是**全局**的，而任何输入校验都不可能让"路径写错"的步骤成功——这条验收从一开始就不可满足。现改为 `failure_clusters: ["rdkit.featurize::missing_column:smiles"]`，**只判它声称的类**；证据里另一簇显式标 `claimed: false`。
+2. 门禁的 `success` 类原先要求"所有步 exit 0"，对修复型候选必然误杀；现只判**原本成功**的步，失败的步交给新增的 `failure` 门禁。
+
+**结论**：门禁 `pass`（等价 / 成本 n/a / 成功 / 失败类 4→0 / 质量 n/a / 安全）→ `versions record` 记为 **v2**，v1 转 `superseded`；`check` 显示 `applied: true`。
+
+**诚实边界**：另有 **9 个失败步仍未修**（7 个路径不存在、1 个 `ml.train` 自己的列名要求、1 个模型路径写错），它们不属于这个改动，留在账上。
+
 ## 8. 其他缺陷与教训
 
 | 缺陷 | 处理 / 教训 |
@@ -185,7 +211,8 @@
 
 - **Engine pass 已验证**（`src/research/engine-pass.ts` + `orchestrator_report` 事务后钩子）：真实 Ticket `engine-check-exact-27505612356f` 在 Agent 未调用评测工具的前提下产生 `engine_receipt.json`（MOR/Ki/v1，AUROC 0.9339），见 §7.1；8 个单测 + runtime 91/91 + research 13/13。
 - **P5-03 / P5-04 / P5-05 已完成**（见 §7.2）：`gate.py` 五类裁决 + `versions.py` 版本账本（v1 已记账、SHA 校验通过）+ `pareto.py` 三档前沿；单测 10 / 8 / 5 个。
-- **在审候选 1 个**：`auto-failure-recurrence-rdkit-featurize-27384f`（pre-flight 列/文件类型校验，合并了 2 个失败簇、3 个工单），尚未实现，因此还没有影子报告可供门禁裁决。
+- **在审候选 0 个**：`auto-failure-recurrence-rdkit-featurize-27384f` 已晋升为 **v2**（见 §7.3），v1 转 `superseded`。
+- **未修的失败类（留在账上）**：7 个路径不存在的 `rdkit.featurize`、1 个 `ml.train` 列名要求、1 个模型路径写错——都不是输入校验能解决的，需要各自的改动。
 - **F-1…F-4 已完成**（见 §6）；`pnpm typecheck` / `build` / `tests/research.spec.ts` 13/13 通过。
 - **D-1 / D-2 已完成**（见 §8）；`evolution` 单测 24/24，语料按 schema v2 重导、聚类重新出具。
 - 语料 20 条仅达门槛；聚类尚无可操作结论。
@@ -198,5 +225,6 @@
 3. ~~**Engine pass**：评测自动触发，闭环脱离人工调用~~ ✅ 已实现（2026-11-06 03:15），待真实 Ticket 确认；
 4. ~~**P4-04**：从 trace + 失败簇自动产候选~~ ✅ 已实现（2026-11-06 03:30，混合式），首个提案待 Intake；
 5. ~~P5-03 统一硬门禁 → P5-04 Pareto → P5-05 VersionManager~~ ✅ 已完成（2026-11-06 16:40），见 §7.2；
-6. **实现 pre-flight 候选** `auto-failure-recurrence-rdkit-featurize-27384f` → 影子（等价 1.0 + 该类失败归零）→ 门禁 → 记账；
-7. 语料继续增长，等出现"质量换成本"的真实取舍后再读 Pareto 前沿。
+6. ~~**实现 pre-flight 候选** … → 影子 → 门禁 → 记账~~ ✅ 已完成（v2，见 §7.3）；
+7. 语料继续增长，等出现"质量换成本"的真实取舍后再读 Pareto 前沿；
+8. 下一个候选：把 `ml.train` 的 `id/label` 列名也接入同一套解析（同一失败类，换了个工具）。

@@ -51,21 +51,71 @@ DESCRIPTOR_EXTRA_V2 = (
 DESCRIPTOR_SETS = {"v1": (), "v2": DESCRIPTOR_EXTRA_V2}
 
 
+# Pre-flight column resolution (candidate auto-failure-recurrence-rdkit-featurize-27384f).
+# The failure it fixes is a real one from the corpus: a ticket asked for `smiles`
+# against a ChEMBL export that names the column `canonical_smiles`, and retried the
+# same wrong request twelve times. Resolving a known alias keeps the success path
+# untouched (exact names win) while making the obvious intent work; anything that
+# still cannot be resolved fails immediately with the columns that do exist.
+COLUMN_ALIASES = {
+    "id": ("id", "molecule_chembl_id", "chembl_id", "compound_id"),
+    "smiles": ("smiles", "canonical_smiles", "smiles_std", "structure"),
+}
+
+
+def check_input_file(path: str) -> None:
+    """Fail before any work starts, with a message that says what to fix."""
+    if not os.path.exists(path):
+        raise SystemExit(f"no such input file: {path} (data root: {os.environ.get('EVOVS_DATA_ROOT', 'unset')})")
+    if os.path.isdir(path):
+        raise SystemExit(f"{path} is a directory; give the .csv/.smi file itself")
+
+
+def resolve_columns(path: str, id_column: str = "id", smiles_column: str = "smiles") -> dict:
+    """Header-only resolution: exact name first, then a known alias.
+
+    Returns {"id": actual|None, "smiles": actual, "resolved": {requested: actual}}.
+    `resolved` is empty when every requested name existed, so callers can report
+    that a substitution happened instead of doing it silently.
+    """
+    if not path.endswith(".csv"):
+        return {"id": None, "smiles": None, "resolved": {}}
+    check_input_file(path)
+    with open(path, newline="", encoding="utf-8-sig") as handle:
+        header = next(csv.reader(handle), [])
+    fields = {name.lower(): name for name in header}
+    out: dict = {"id": None, "smiles": None, "resolved": {}}
+    for role, requested in (("id", id_column), ("smiles", smiles_column)):
+        if requested.lower() in fields:
+            out[role] = fields[requested.lower()]
+            continue
+        alias = next((name for name in COLUMN_ALIASES[role] if name in fields), None)
+        if alias is None:
+            if role == "id":  # an absent id column is tolerated: rows get rowN
+                continue
+            raise SystemExit(
+                f"{path} has no {requested!r} column and no known alias "
+                f"({', '.join(COLUMN_ALIASES[role])}); found {header}")
+        out[role] = fields[alias]
+        out["resolved"][requested] = fields[alias]
+    return out
+
+
 def read_smiles(path: str, limit: int | None = None, id_column: str = "id", smiles_column: str = "smiles") -> list[tuple[str, str]]:
     """Read `(id, smiles)` pairs from a `.csv` or a `.smi` file; column names are configurable."""
     rows: list[tuple[str, str]] = []
     if path.endswith(".csv"):
+        check_input_file(path)
+        columns = resolve_columns(path, id_column, smiles_column)
         with open(path, newline="", encoding="utf-8-sig") as handle:
             reader = csv.DictReader(handle)
-            fields = {name.lower(): name for name in (reader.fieldnames or [])}
-            if smiles_column.lower() not in fields:
-                raise SystemExit(f"{path} has no {smiles_column!r} column; found {reader.fieldnames}")
-            id_field = fields.get(id_column.lower())
             for index, row in enumerate(reader):
                 if limit is not None and index >= limit:
                     break
-                rows.append((row.get(id_field, f"row{index}") if id_field else f"row{index}", row[fields[smiles_column.lower()]]))
+                rows.append((row.get(columns["id"], f"row{index}") if columns["id"] else f"row{index}",
+                             row[columns["smiles"]]))
     else:
+        check_input_file(path)
         with open(path, encoding="utf-8") as handle:
             for index, line in enumerate(handle):
                 if limit is not None and index >= limit:
@@ -156,6 +206,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     rows = read_smiles(args.input, args.limit or None, args.id_column, args.smiles_column)
+    columns = resolve_columns(args.input, args.id_column, args.smiles_column)
     ids, matrix, descriptors, invalid = featurize(rows, radius=args.radius, n_bits=args.n_bits,
                                                   desc_set=args.desc_set)
 
@@ -176,6 +227,10 @@ def main(argv: list[str] | None = None) -> int:
         "descriptor_names": DESCRIPTOR_NAMES,
         "rdkit_version": rdkit.__version__,
     }
+    # Only present when a requested column did not exist and a known alias stood in.
+    # Absent on the ordinary path, so existing reports stay byte-identical.
+    if columns.get("resolved"):
+        report["columns_resolved"] = columns["resolved"]
     with open(args.report, "w", encoding="utf-8") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2)
         handle.write("\n")
