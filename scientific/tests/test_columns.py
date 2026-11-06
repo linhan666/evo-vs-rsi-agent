@@ -61,6 +61,31 @@ class ColumnResolutionTests(unittest.TestCase):
             check_input_file(self.tmp.name)
         self.assertIn("is a directory", str(caught.exception))
 
+    def test_a_relative_path_resolves_against_the_data_root(self):
+        # Five steps in one ticket failed on `.artifacts/…` because the job runs from
+        # the ticket directory, not the repo root.
+        from evovs_science.chemistry.featurize import resolve_input_path
+        root = os.path.join(self.tmp.name, "root")
+        target = os.path.join(root, "chembl", "oprm1", "ki", "dataset.csv")
+        os.makedirs(os.path.dirname(target))
+        open(target, "w").write("id,smiles\n")
+        os.environ["EVOVS_DATA_ROOT"] = root
+        self.addCleanup(os.environ.pop, "EVOVS_DATA_ROOT", None)
+        self.assertEqual(resolve_input_path("chembl/oprm1/ki/dataset.csv"), target)
+        self.assertEqual(resolve_input_path(".artifacts/chembl/oprm1/ki/dataset.csv".replace(".artifacts/", "")),
+                         target)
+
+    def test_a_missing_file_names_the_closest_matches(self):
+        from evovs_science.chemistry.featurize import resolve_input_path
+        root = os.path.join(self.tmp.name, "root2")
+        os.makedirs(os.path.join(root, "chembl"))
+        open(os.path.join(root, "chembl", "dataset.csv"), "w").write("id,smiles\n")
+        os.environ["EVOVS_DATA_ROOT"] = root
+        self.addCleanup(os.environ.pop, "EVOVS_DATA_ROOT", None)
+        with self.assertRaises(SystemExit) as caught:
+            resolve_input_path("chembl/datasett.csv")
+        self.assertIn("closest matches", str(caught.exception))
+
 
 if __name__ == "__main__":
     unittest.main()

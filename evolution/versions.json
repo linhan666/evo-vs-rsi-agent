@@ -44,7 +44,7 @@
       "candidate_id": "manual-preflight-ml-train-columns",
       "recorded_at": "2026-11-06T10:10:04+00:00",
       "git_sha": "f99bb719178cd8427affc06e452505a2457cca65",
-      "status": "active",
+      "status": "superseded",
       "change": {
         "type": "experiment",
         "key": "preflight:ml.train",
@@ -57,6 +57,25 @@
       },
       "rollback": "restore the exact-match-only column check in scientific/src/evovs_science/modeling/train.py (drop the resolve_columns call and the columns_resolved field)",
       "note": "ml.train label columns resolve through shared aliases; claimed class 1/1 fixed"
+    },
+    {
+      "version": "v4",
+      "candidate_id": "manual-path-resolution",
+      "recorded_at": "2026-11-06T10:47:13+00:00",
+      "git_sha": "9ff97622178d88fb7ab26078a23ef8ab4919b46b",
+      "status": "active",
+      "change": {
+        "type": "experiment",
+        "key": "preflight:input-paths",
+        "value": "resolve relative input paths against EVOVS_DATA_ROOT and the repo root, and name the closest matches when a file truly does not exist"
+      },
+      "gate": {
+        "verdict": "pass",
+        "blocking": [],
+        "needs_human_number": []
+      },
+      "rollback": "drop resolve_input_path from chemistry/featurize.py, screening/predict.py and modeling/train.py and pass the caller's path straight to open()",
+      "note": "relative input paths resolve against the data root; 5 of 7 FileNotFoundError fixed, 2 are files that do not exist"
     }
   ]
 }

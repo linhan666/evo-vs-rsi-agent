@@ -65,12 +65,63 @@ COLUMN_ALIASES = {
 }
 
 
+def _data_root() -> str:
+    return os.environ.get("EVOVS_DATA_ROOT", "")
+
+
+def _nearest(path: str, root: str) -> list[str]:
+    """Up to three files whose name looks like `path`, to make a typo actionable."""
+    base = os.path.basename(path)
+    stem, suffix = os.path.splitext(base)
+    found: list[str] = []
+    for dirpath, _dirs, files in os.walk(root):
+        for name in files:
+            if name == base or (stem and stem in name) or (suffix and name.endswith(suffix) and stem[:4] and stem[:4] in name):
+                found.append(os.path.join(dirpath, name))
+                if len(found) >= 3:
+                    return found
+        if dirpath.count(os.sep) - root.count(os.sep) >= 3:
+            continue
+    return found
+
+
+def resolve_input_path(path: str) -> str:
+    """Return an existing file, trying the data root and the repo root for relative names.
+
+    The failure this fixes is real: five steps in one ticket wrote `scientific/.artifacts/…`
+    or `.artifacts/…` and failed, because those are repo-relative while the job runs
+    from the ticket directory. A relative name that resolves under EVOVS_DATA_ROOT is
+    the same file the caller meant; anything else still fails, now with the closest
+    matches that do exist.
+    """
+    if os.path.isfile(path):
+        return path
+    root = _data_root()
+    tried = [path]
+    normalized = path
+    for marker in ("scientific/.artifacts/", ".artifacts/"):
+        if marker in normalized:
+            normalized = normalized.split(marker, 1)[1]
+            break
+    candidates = []
+    if root:
+        candidates += [os.path.join(root, normalized), os.path.join(root, path.lstrip("./")),
+                       os.path.join(os.path.dirname(os.path.dirname(root)), path)]
+    for candidate in candidates:
+        if os.path.isfile(candidate):
+            return candidate
+        tried.append(candidate)
+    near = _nearest(path, root) if root else []
+    hint = "; closest matches: " + ", ".join(near) if near else "; no file with that name under the data root"
+    raise SystemExit(
+        f"no such input file: {path} (data root: {root or 'unset'}; tried: {tried}){hint}")
+
+
 def check_input_file(path: str) -> None:
     """Fail before any work starts, with a message that says what to fix."""
-    if not os.path.exists(path):
-        raise SystemExit(f"no such input file: {path} (data root: {os.environ.get('EVOVS_DATA_ROOT', 'unset')})")
     if os.path.isdir(path):
         raise SystemExit(f"{path} is a directory; give the .csv/.smi file itself")
+    resolve_input_path(path)
 
 
 def resolve_columns(path: str, columns: dict) -> dict:
@@ -86,6 +137,7 @@ def resolve_columns(path: str, columns: dict) -> dict:
     out: dict = {"resolved": {}}
     if not path.endswith(".csv"):
         return out
+    path = resolve_input_path(path)
     with open(path, newline="", encoding="utf-8-sig") as handle:
         header = next(csv.reader(handle), [])
     fields = {name.lower(): name for name in header}
@@ -110,6 +162,7 @@ def read_smiles(path: str, limit: int | None = None, id_column: str = "id", smil
     rows: list[tuple[str, str]] = []
     if path.endswith(".csv"):
         check_input_file(path)
+        path = resolve_input_path(path)
         columns = resolve_columns(path, {"id": id_column, "smiles": smiles_column})
         with open(path, newline="", encoding="utf-8-sig") as handle:
             reader = csv.DictReader(handle)
@@ -120,7 +173,7 @@ def read_smiles(path: str, limit: int | None = None, id_column: str = "id", smil
                              row[columns["smiles"]]))
     else:
         check_input_file(path)
-        with open(path, encoding="utf-8") as handle:
+        with open(resolve_input_path(path), encoding="utf-8") as handle:
             for index, line in enumerate(handle):
                 if limit is not None and index >= limit:
                     break
@@ -209,8 +262,9 @@ def main(argv: list[str] | None = None) -> int:
                         help="descriptor set (candidate3); overrides EVOVS_DESC_SET")
     args = parser.parse_args(argv)
 
-    rows = read_smiles(args.input, args.limit or None, args.id_column, args.smiles_column)
-    columns = resolve_columns(args.input, {"id": args.id_column, "smiles": args.smiles_column})
+    input_path = resolve_input_path(args.input)  # resolve once; the manifest must hash the real file
+    rows = read_smiles(input_path, args.limit or None, args.id_column, args.smiles_column)
+    columns = resolve_columns(input_path, {"id": args.id_column, "smiles": args.smiles_column})
     ids, matrix, descriptors, invalid = featurize(rows, radius=args.radius, n_bits=args.n_bits,
                                                   desc_set=args.desc_set)
 
@@ -246,7 +300,7 @@ def main(argv: list[str] | None = None) -> int:
             {"path": args.report, "content_type": "application/json", "description": "featurization report"},
         ],
         generator="evovs_science.chemistry.featurize",
-        inputs=[describe_input(args.input)],
+        inputs=[describe_input(input_path)],
         parameters={"radius": args.radius, "n_bits": args.n_bits},
         extra={"rows_valid": len(ids), "rows_invalid": len(invalid)},
     )

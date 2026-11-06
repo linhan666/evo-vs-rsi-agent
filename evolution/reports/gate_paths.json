@@ -1,0 +1,40 @@
+{
+  "schema_version": "1",
+  "candidate_id": "manual-path-resolution",
+  "gates": [
+    {
+      "gate": "equivalence",
+      "status": "pass",
+      "detail": "every comparable artifact matched"
+    },
+    {
+      "gate": "cost",
+      "status": "n/a",
+      "detail": "the candidate makes no cost claim"
+    },
+    {
+      "gate": "success",
+      "status": "pass",
+      "detail": "3 previously successful steps still exit 0 with their artifacts"
+    },
+    {
+      "gate": "failure",
+      "status": "pass",
+      "detail": "2 of 7 remain (allowed 2; claimed classes)"
+    },
+    {
+      "gate": "quality",
+      "status": "n/a",
+      "detail": "the candidate makes no quality claim"
+    },
+    {
+      "gate": "safety",
+      "status": "pass",
+      "detail": "canary baseline intact"
+    }
+  ],
+  "verdict": "pass",
+  "blocking": [],
+  "needs_human_number": [],
+  "note": "A pass here is a prerequisite for promotion, never a promotion. The operator still applies the change and runs freshness, rebuild and canary."
+}

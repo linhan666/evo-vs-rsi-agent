@@ -23,6 +23,7 @@ from sklearn.metrics import accuracy_score, average_precision_score, f1_score, r
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
+from ..chemistry.featurize import resolve_input_path
 from ..manifest import describe_input, utc_now, write_manifest
 
 MODELS = ("logreg", "rf", "xgboost", "catboost")
@@ -145,7 +146,8 @@ def main(argv: list[str] | None = None) -> int:
     matrix, descriptors = data["X"], data["D"]
 
     resolved: dict = {}
-    labels, sample_weights = read_labels(args.labels, args.label_id_column, args.label_column, resolved)
+    labels_path = resolve_input_path(args.labels)  # the manifest hashes the real file
+    labels, sample_weights = read_labels(labels_path, args.label_id_column, args.label_column, resolved)
     keep = [index for index, molecule_id in enumerate(ids) if molecule_id in labels]
     if len(keep) < 4:
         print(json.dumps({"error": "NOT_ENOUGH_RELIABLE_DATA", "joined": len(keep)}))
@@ -207,7 +209,7 @@ def main(argv: list[str] | None = None) -> int:
                 {"path": model_path, "content_type": "application/octet-stream", "description": "pooled pipeline"},
             ],
             generator="evovs_science.modeling.train",
-            inputs=[describe_input(args.features), describe_input(args.labels)],
+            inputs=[describe_input(args.features), describe_input(labels_path)],
             parameters={"model": args.model, "seed": args.seed, "split_strategy": split_strategy},
             extra={"label_source": args.label_source},
         )
@@ -269,7 +271,7 @@ def main(argv: list[str] | None = None) -> int:
             {"path": model_path, "content_type": "application/octet-stream", "description": "fitted pipeline"},
         ],
         generator="evovs_science.modeling.train",
-        inputs=[describe_input(args.features), describe_input(args.labels)],
+        inputs=[describe_input(args.features), describe_input(labels_path)],
         parameters={"model": args.model, "seed": args.seed, "split_strategy": split_strategy},
         extra={"label_source": args.label_source, "metrics": metrics["metrics"]},
     )

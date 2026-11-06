@@ -1,0 +1,45 @@
+{
+  "candidate_id": "manual-path-resolution",
+  "version": "0.1.0",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "preflight:input-paths",
+      "value": "resolve relative input paths against EVOVS_DATA_ROOT and the repo root, and name the closest matches when a file truly does not exist"
+    }
+  ],
+  "hypothesis": "Resolving a relative input path against the data root turns the five repo-relative failures into successes, while a file that exists nowhere still fails with the closest matches listed.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "failures_in_replay": 2,
+    "failure_clusters": [
+      "rdkit.featurize::FileNotFoundError"
+    ]
+  },
+  "risk": "Resolving a path the caller did not intend could read the wrong file; the resolution only fires when the literal path is missing.",
+  "scope_note": "Two remaining failures are nope.csv, which does not exist under any root; no resolution rule can make them succeed, hence the allowance of 2.",
+  "rollback": "drop resolve_input_path from chemistry/featurize.py, screening/predict.py and modeling/train.py and pass the caller's path straight to open()",
+  "basis": {
+    "generated_by": "operator",
+    "kind": "failure-recurrence",
+    "tool_id": "rdkit.featurize",
+    "evidence": {
+      "tickets": [
+        "engine-pass-check-eb69ace79bac.json"
+      ],
+      "recent_hits": 7,
+      "clusters": [
+        {
+          "cluster": "rdkit.featurize::FileNotFoundError",
+          "recent_hits": 7,
+          "claimed": true,
+          "samples": [
+            "FileNotFoundError: No such file or directory: '.artifacts/chembl/oprm1/ki/dataset.csv'",
+            "FileNotFoundError: No such file or directory: 'scientific/.artifacts/chembl/oprm1/ki/dataset.csv'"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -27,6 +27,27 @@ EXCEPTIONS = (
 # replayed elsewhere, and a key containing /home/<user> is not a class).
 ABSOLUTE_PATH = re.compile(r"(?:/[\w.\-]+){2,}")
 
+OUTPUT_FLAGS = ("--output", "--report", "--top-output", "--output-dir")
+INPUT_FLAGS = ("--input", "--labels", "--features", "--model", "--library")
+
+
+def flag_values(argv, flags):
+    values = set()
+    argv = argv or []
+    for index, part in enumerate(argv):
+        if part in flags and index + 1 < len(argv):
+            values.add(argv[index + 1])
+    return values
+
+
+def cascade_of(step: dict, produced: dict[str, str]) -> str | None:
+    """The earlier failed job whose output this step tried to read, if any."""
+    for item in flag_values(step.get("argv"), INPUT_FLAGS):
+        source = produced.get(item)
+        if source and source.endswith("(FAILED)"):
+            return source
+    return None
+
 
 def last_meaningful_line(text: str) -> str:
     for line in reversed((text or "").splitlines()):
@@ -75,23 +96,33 @@ def main(argv: list[str] | None = None) -> int:
     for path in sorted(glob.glob(os.path.join(traces_dir, "*.json"))):
         trace = json.loads(open(path, encoding="utf-8").read())
         tickets += 1
+        produced: dict[str, str] = {}  # declared output -> "job (state)"; used for cascade detection
         for step in trace.get("steps", []):
             total_steps += 1
             if step.get("state") == "SUCCEEDED":
+                for out in flag_values(step.get("argv"), OUTPUT_FLAGS):
+                    produced[out] = "{0} (SUCCEEDED)".format(step.get("job_id"))
                 continue
             failed_steps += 1
             key = "{0} :: {1}".format(
                 step["tool_id"],
                 error_class(step.get("error", ""), step.get("stderr_tail", ""),
                             step.get("exit_code"), step.get("stdout_tail", "")))
+            # A step that reads what an earlier failed step was supposed to write did
+            # not fail on its own; naming the cascade keeps the class honest.
+            cascade = cascade_of(step, produced)
+            if cascade is None:
+                for out in flag_values(step.get("argv"), OUTPUT_FLAGS):
+                    produced[out] = "{0} (FAILED)".format(step.get("job_id"))
             clusters[key].append({"ticket": os.path.basename(path), "job_id": step.get("job_id"),
-                                  "evidence": step_evidence(step)[:200]})
+                                  "evidence": step_evidence(step)[:200], "cascade_from": cascade})
 
     report = {
         "schema_version": "2",
         "created_at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(timespec="seconds"),
         "corpus": {"traces": tickets, "steps": total_steps, "failed": failed_steps},
         "clusters": {key: {"count": len(items), "tickets": sorted({item["ticket"] for item in items}),
+                           "cascades": sum(1 for item in items if item.get("cascade_from")),
                            "sample_errors": [item["evidence"] for item in items[:3]]}
                      for key, items in sorted(clusters.items(), key=lambda kv: -len(kv[1]))},
         "note": "Pattern surfacing only. Classes come from the structured error or the stderr tail.",

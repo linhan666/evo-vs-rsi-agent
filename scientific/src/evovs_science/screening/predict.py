@@ -15,7 +15,7 @@ import time
 
 import numpy as np
 
-from ..chemistry.featurize import featurize, read_smiles
+from ..chemistry.featurize import featurize, read_smiles, resolve_input_path
 from ..manifest import describe_input, sha256_file, utc_now, write_manifest
 
 
@@ -37,8 +37,15 @@ def main(argv: list[str] | None = None) -> int:
 
     started = time.time()
     if not os.path.isfile(args.model):
-        raise SystemExit(f"--model must be the fitted pipeline FILE from modeling.train (e.g. runs/models/<name>/model.joblib); got {args.model}")
-    rows = read_smiles(args.library, None, args.id_column, args.smiles_column)
+        # The corpus failure: an agent passed `does_not_exist.pkl`. Say which fitted
+        # pipelines do exist instead of only refusing the one that does not.
+        import glob
+        here = glob.glob(os.path.join(os.getcwd(), "runs", "models", "*", "model.joblib"))
+        raise SystemExit(f"--model must be the fitted pipeline FILE from modeling.train "
+                         f"(e.g. runs/models/<name>/model.joblib); got {args.model}"
+                         + (f"; fitted pipelines here: {here[:3]}" if here else ""))
+    library_path = resolve_input_path(args.library)  # the manifest hashes the real file
+    rows = read_smiles(library_path, None, args.id_column, args.smiles_column)
     ids, matrix, descriptors, invalid = featurize(rows, radius=args.radius, n_bits=args.n_bits)
     if not ids:
         raise SystemExit("no library molecule could be featurized")
@@ -81,7 +88,7 @@ def main(argv: list[str] | None = None) -> int:
         "duplicates_note": "the library is scored as provided; deduplication is the caller's preprocessing step",
         "parameters": {"radius": args.radius, "n_bits": args.n_bits, "top_k": top_k},
         "model_sha256": sha256_file(args.model),
-        "library_sha256": sha256_file(args.library),
+        "library_sha256": sha256_file(library_path),
         "elapsed_seconds": round(time.time() - started, 1),
         "predictions_are": "model scores on an unlabeled library; no hit rate or enrichment is defined here",
         "top_score_range": [min(top_scores), max(top_scores)] if top_scores else None,
@@ -98,7 +105,7 @@ def main(argv: list[str] | None = None) -> int:
             {"path": args.report, "content_type": "application/json", "description": "screening report"},
         ],
         generator="evovs_science.screening.predict",
-        inputs=[describe_input(args.library)],
+        inputs=[describe_input(library_path)],
         parameters={"radius": args.radius, "n_bits": args.n_bits, "top_k": top_k},
         extra={"model_sha256": report["model_sha256"]},
     )

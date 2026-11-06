@@ -100,5 +100,18 @@ class ErrorClassTests(unittest.TestCase):
         self.assertEqual(last_meaningful_line("a\n\nb\n\n"), "b")
 
 
+class CascadeTests(unittest.TestCase):
+    def test_a_step_that_reads_a_failed_steps_output_is_marked_as_a_cascade(self):
+        from failure_clusters import cascade_of
+        produced = {"runs/features.npz": "be3ace350c75 (FAILED)"}
+        step = {"argv": ["python", "-m", "m", "--features", "runs/features.npz", "--output", "runs/m"]}
+        self.assertEqual(cascade_of(step, produced), "be3ace350c75 (FAILED)")
+
+    def test_an_independent_failure_is_not_a_cascade(self):
+        from failure_clusters import cascade_of
+        step = {"argv": ["python", "-m", "m", "--input", "nope.csv"]}
+        self.assertIsNone(cascade_of(step, {"runs/features.npz": "j1 (FAILED)"}))
+
+
 if __name__ == "__main__":
     unittest.main()
