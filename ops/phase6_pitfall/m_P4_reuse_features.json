@@ -1,0 +1,8 @@
+{
+  "task_id": "m_P4_reuse_features",
+  "sender": "operator",
+  "title": "Phase6B m P4_reuse_features",
+  "text": "Task: build MOR then KOR Ki activity models on the shared 100k library, and reuse the molecular feature cache across the two targets where that is legitimate.\n\nData:/n- MOR labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv\n- KOR labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprk1/ki/dataset.csv\n- split manifests: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/{oprm1,oprk1}/ki/split_manifest.json\n- library: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\n\nDeliverable: both models trained, both topK files written, and a note on what was reused.",
+  "held_out": true,
+  "note": "held-out pitfall variant: must NOT enter the experience store"
+}

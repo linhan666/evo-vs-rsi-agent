@@ -1,0 +1,8 @@
+{
+  "task_id": "m_P6_retention_mor",
+  "sender": "operator",
+  "title": "Phase6B m P6_retention_mor",
+  "text": "Task: build a human MOR (OPRM1) Ki activity model and rank the shared 100k library.\n\nData:/n- labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv (columns: molecule_chembl_id, canonical_smiles, standard_type, value_nM, px, label)\n- split manifest: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/split_manifest.json\n- library: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\n\nSteps: rdkit.featurize -> ml.train (xgboost, label source chembl37_ki_pX7_6) -> screening.rank top 100 to runs/MOR_topK.csv.\nDeliverable: report ready with the validation AUROC.",
+  "held_out": true,
+  "note": "held-out pitfall variant: must NOT enter the experience store"
+}

@@ -1,0 +1,8 @@
+{
+  "task_id": "a_P2_relative_path",
+  "sender": "operator",
+  "title": "Phase6B a P2_relative_path",
+  "text": "Task: build a KOR Ki activity model.\n\nData:/n- labels: scientific/.artifacts/chembl/oprk1/ki/dataset.csv\n- split manifest: scientific/.artifacts/chembl/oprk1/ki/split_manifest.json\n\nSteps: rdkit.featurize -> ml.train (xgboost, label source chembl37_ki_pX7_6).\nDeliverable: report ready with the validation AUROC.",
+  "held_out": true,
+  "note": "held-out pitfall variant: must NOT enter the experience store"
+}

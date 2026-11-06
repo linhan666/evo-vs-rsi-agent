@@ -1,0 +1,8 @@
+{
+  "task_id": "m_P1_column_alias",
+  "sender": "operator",
+  "title": "Phase6B m P1_column_alias",
+  "text": "Task: build a MOR Ki activity model and screen the 100k library.\n\nData:/n- labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv\n- split manifest: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/split_manifest.json\n- library: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\n\nNote: read the dataset and use its id and SMILES columns.\n\nSteps: rdkit.featurize -> ml.train (xgboost, label source chembl37_ki_pX7_6) -> screening.rank top 100 to runs/MOR_topK.csv.\nDeliverable: report ready with the validation AUROC and the path to MOR_topK.csv.",
+  "held_out": true,
+  "note": "held-out pitfall variant: must NOT enter the experience store"
+}

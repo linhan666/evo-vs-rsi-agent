@@ -1,0 +1,8 @@
+{
+  "task_id": "m_P5_two_models_one_run",
+  "sender": "operator",
+  "title": "Phase6B m P5_two_models_one_run",
+  "text": "Task: from the MOR Ki dataset train TWO models and keep both deliverables:/n  runs/models/mor_ki (label source chembl37_ki_pX7_6) and\n  runs/models/mor_ic50 (label source chembl37_ic50_pX7_6, use the IC50-labelled rows).\nThey must not overwrite each other.\n\nData:/n- labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv\n- split manifest: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/split_manifest.json\n\nDeliverable: report ready listing both AUROCs and both model paths.",
+  "held_out": true,
+  "note": "held-out pitfall variant: must NOT enter the experience store"
+}

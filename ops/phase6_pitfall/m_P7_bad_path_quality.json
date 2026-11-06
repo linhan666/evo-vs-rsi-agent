@@ -1,0 +1,8 @@
+{
+  "task_id": "m_P7_bad_path_quality",
+  "sender": "operator",
+  "title": "Phase6B m P7_bad_path_quality",
+  "text": "Task: featurize this file: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/nope.csv\n\nThe file may not exist. If it does not, report a clear, actionable error and stop — do not retry the same call more than once and do not invent a substitute file.",
+  "held_out": true,
+  "note": "held-out pitfall variant: must NOT enter the experience store"
+}

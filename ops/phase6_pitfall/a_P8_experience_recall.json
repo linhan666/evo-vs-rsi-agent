@@ -1,0 +1,8 @@
+{
+  "task_id": "a_P8_experience_recall",
+  "sender": "operator",
+  "title": "Phase6B a P8_experience_recall",
+  "text": "Task: before doing anything else, use experience.retrieve to find what the harness has learned about rdkit.featurize input handling, then build a MOR Ki model and screen the library.\n\nData:/n- labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/dataset.csv\n- split manifest: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/split_manifest.json\n- library: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\n\nDeliverable: report ready, and quote the experience record you used.",
+  "held_out": true,
+  "note": "held-out pitfall variant: must NOT enter the experience store"
+}

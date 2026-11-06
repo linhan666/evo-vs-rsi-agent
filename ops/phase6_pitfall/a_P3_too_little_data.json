@@ -1,0 +1,8 @@
+{
+  "task_id": "a_P3_too_little_data",
+  "sender": "operator",
+  "title": "Phase6B a P3_too_little_data",
+  "text": "Task: build a DRD2 Ki activity model from this small table and screen the library.\n\nData:/n- labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/drd2/ki/dataset_small.csv (only 40 rows)\n- library: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\n\nSteps: rdkit.featurize -> ml.train -> screening.rank top 100 to runs/DRD2_topK.csv.\nIf the data cannot support a reliable model, say so clearly instead of training anyway.",
+  "held_out": true,
+  "note": "held-out pitfall variant: must NOT enter the experience store"
+}
