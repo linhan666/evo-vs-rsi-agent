@@ -23,7 +23,7 @@
         "v1"
       ],
       "exit_code": 0,
-      "wall_seconds": 1.22,
+      "wall_seconds": 1.14,
       "stderr_tail": []
     },
     {
@@ -53,7 +53,7 @@
         "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/drd2/ki/split_manifest.json"
       ],
       "exit_code": 0,
-      "wall_seconds": 11.76,
+      "wall_seconds": 5.92,
       "stderr_tail": []
     },
     {
@@ -75,11 +75,11 @@
         "100"
       ],
       "exit_code": 0,
-      "wall_seconds": 15.93,
+      "wall_seconds": 19.54,
       "stderr_tail": []
     }
   ],
-  "wall_seconds": 28.91,
+  "wall_seconds": 26.6,
   "topk": "/home/linhan_cluster/evo_vs_rsi/.artifacts/workflow/drd2_rep1/runs/DRD2_topK.csv",
   "auroc": 0.9214,
   "success": true
