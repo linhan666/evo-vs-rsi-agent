@@ -25,7 +25,7 @@
       "candidate_id": "auto-failure-recurrence-rdkit-featurize-27384f",
       "recorded_at": "2026-11-06T09:11:14+00:00",
       "git_sha": "d690d11bbafc089a0195a7858b16e4cae17fe5d3",
-      "status": "active",
+      "status": "superseded",
       "change": {
         "type": "experiment",
         "key": "preflight:rdkit.featurize",
@@ -38,6 +38,25 @@
       },
       "rollback": "restore the exact-match-only column lookup in scientific/src/evovs_science/chemistry/featurize.py (drop resolve_columns and the columns_resolved report field)",
       "note": "column alias resolution + early input check; claimed class 4/4 fixed, success path byte-identical"
+    },
+    {
+      "version": "v3",
+      "candidate_id": "manual-preflight-ml-train-columns",
+      "recorded_at": "2026-11-06T10:10:04+00:00",
+      "git_sha": "f99bb719178cd8427affc06e452505a2457cca65",
+      "status": "active",
+      "change": {
+        "type": "experiment",
+        "key": "preflight:ml.train",
+        "value": "resolve the label table's id and label columns through the shared alias table before fitting, and record any substitution in metrics.json"
+      },
+      "gate": {
+        "verdict": "pass",
+        "blocking": [],
+        "needs_human_number": []
+      },
+      "rollback": "restore the exact-match-only column check in scientific/src/evovs_science/modeling/train.py (drop the resolve_columns call and the columns_resolved field)",
+      "note": "ml.train label columns resolve through shared aliases; claimed class 1/1 fixed"
     }
   ]
 }

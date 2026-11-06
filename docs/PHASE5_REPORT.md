@@ -211,7 +211,7 @@
 
 - **Engine pass 已验证**（`src/research/engine-pass.ts` + `orchestrator_report` 事务后钩子）：真实 Ticket `engine-check-exact-27505612356f` 在 Agent 未调用评测工具的前提下产生 `engine_receipt.json`（MOR/Ki/v1，AUROC 0.9339），见 §7.1；8 个单测 + runtime 91/91 + research 13/13。
 - **P5-03 / P5-04 / P5-05 已完成**（见 §7.2）：`gate.py` 五类裁决 + `versions.py` 版本账本（v1 已记账、SHA 校验通过）+ `pareto.py` 三档前沿；单测 10 / 8 / 5 个。
-- **在审候选 0 个**：`auto-failure-recurrence-rdkit-featurize-27384f` 已晋升为 **v2**（见 §7.3），v1 转 `superseded`。
+- **在审候选 0 个**：v2（`rdkit.featurize` 列名别名）与 **v3**（`ml.train` 标签列别名，2026-11-06 18:10 晋升）都已记账；v1/v2 转 `superseded`，v3 `active`。
 - **未修的失败类（留在账上）**：7 个路径不存在的 `rdkit.featurize`、1 个 `ml.train` 列名要求、1 个模型路径写错——都不是输入校验能解决的，需要各自的改动。
 - **F-1…F-4 已完成**（见 §6）；`pnpm typecheck` / `build` / `tests/research.spec.ts` 13/13 通过。
 - **D-1 / D-2 已完成**（见 §8）；`evolution` 单测 24/24，语料按 schema v2 重导、聚类重新出具。

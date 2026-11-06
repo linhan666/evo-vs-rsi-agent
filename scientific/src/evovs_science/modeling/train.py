@@ -52,20 +52,33 @@ def build_model(kind: str, seed: int):
     raise SystemExit(f"unknown model kind: {kind}")
 
 
-def read_labels(path: str, id_column: str = "id", label_column: str = "label") -> tuple[dict[str, int], dict[str, float]]:
+def read_labels(path: str, id_column: str = "id", label_column: str = "label",
+                resolution: dict | None = None) -> tuple[dict[str, int], dict[str, float]]:
+    """Read (id -> label) weights from a table.
+
+    Column names go through the shared alias resolution (molecule_chembl_id stands
+    in for id, and so on): the failure this fixes is a ticket that retried `id`
+    against a ChEMBL export twelve times. `resolution` receives any substitution
+    that happened, so a caller can report it instead of doing it silently.
+    """
+    from ..chemistry.featurize import resolve_columns
+
+    columns = resolve_columns(path, {"id": id_column, "label": label_column})
+    if resolution is not None:
+        resolution.update(columns.get("resolved", {}))
+    if "id" not in columns or "label" not in columns:
+        raise SystemExit(f"{path} needs an id and a label column; resolved {columns}")
     labels: dict[str, int] = {}
     weights: dict[str, float] = {}
     with open(path, newline="", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
         fields = {name.lower(): name for name in (reader.fieldnames or [])}
-        if id_column.lower() not in fields or label_column.lower() not in fields:
-            raise SystemExit(f"{path} needs {id_column!r} and {label_column!r} columns; found {reader.fieldnames}")
         weight_field = fields.get("weight")
         for row in reader:
-            raw = row[fields[label_column.lower()]]
+            raw = row[columns["label"]]
             if raw == "":
                 continue  # grey-zone rows are present but deliberately unlabeled
-            molecule = str(row[fields[id_column.lower()]])
+            molecule = str(row[columns["id"]])
             labels[molecule] = int(float(raw))
             if weight_field:
                 weights[molecule] = float(row[weight_field])
@@ -131,7 +144,8 @@ def main(argv: list[str] | None = None) -> int:
     ids = [str(item) for item in data["ids"]]
     matrix, descriptors = data["X"], data["D"]
 
-    labels, sample_weights = read_labels(args.labels, args.label_id_column, args.label_column)
+    resolved: dict = {}
+    labels, sample_weights = read_labels(args.labels, args.label_id_column, args.label_column, resolved)
     keep = [index for index, molecule_id in enumerate(ids) if molecule_id in labels]
     if len(keep) < 4:
         print(json.dumps({"error": "NOT_ENOUGH_RELIABLE_DATA", "joined": len(keep)}))
@@ -178,6 +192,8 @@ def main(argv: list[str] | None = None) -> int:
             "versions": {"sklearn": __import__("sklearn").__version__, "numpy": np.__version__},
         }
         os.makedirs(args.output_dir, exist_ok=True)
+        if resolved:  # only when a requested column stood in for another
+            metrics["columns_resolved"] = resolved
         metrics_path = os.path.join(args.output_dir, "metrics.json")
         with open(metrics_path, "w", encoding="utf-8") as handle:
             json.dump(metrics, handle, ensure_ascii=False, indent=2)
@@ -226,6 +242,8 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     os.makedirs(args.output_dir, exist_ok=True)
+    if resolved:  # only when a requested column stood in for another
+        metrics["columns_resolved"] = resolved
     metrics_path = os.path.join(args.output_dir, "metrics.json")
     with open(metrics_path, "w", encoding="utf-8") as handle:
         json.dump(metrics, handle, ensure_ascii=False, indent=2)

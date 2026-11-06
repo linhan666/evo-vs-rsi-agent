@@ -88,6 +88,10 @@ class ErrorClassTests(unittest.TestCase):
                 "found ['molecule_chembl_id', 'canonical_smiles']")
         self.assertEqual(error_class("", tail, 1), "missing_column:smiles")
 
+    def test_train_style_column_complaint_is_the_same_family(self):
+        tail = "/x/dataset.csv needs 'id' and 'label' columns; found ['molecule_chembl_id', 'label']"
+        self.assertEqual(error_class("", tail, 1), "missing_columns")
+
     def test_unclassified_message_does_not_leak_absolute_paths(self):
         tail = "/home/u/proj/data/x.csv looks empty"
         self.assertEqual(error_class("", tail, 1), "<path> looks empty")

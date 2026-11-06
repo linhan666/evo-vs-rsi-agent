@@ -51,15 +51,17 @@ DESCRIPTOR_EXTRA_V2 = (
 DESCRIPTOR_SETS = {"v1": (), "v2": DESCRIPTOR_EXTRA_V2}
 
 
-# Pre-flight column resolution (candidate auto-failure-recurrence-rdkit-featurize-27384f).
-# The failure it fixes is a real one from the corpus: a ticket asked for `smiles`
-# against a ChEMBL export that names the column `canonical_smiles`, and retried the
-# same wrong request twelve times. Resolving a known alias keeps the success path
-# untouched (exact names win) while making the obvious intent work; anything that
-# still cannot be resolved fails immediately with the columns that do exist.
+# Pre-flight column resolution (candidates auto-failure-recurrence-rdkit-featurize-27384f
+# and its sibling for ml.train). The failure it fixes is a real one from the corpus: a
+# ticket asked for `smiles` against a ChEMBL export that names the column
+# `canonical_smiles`, and retried the same wrong request twelve times. Resolving a known
+# alias keeps the success path untouched (exact names win) while making the obvious
+# intent work; anything that still cannot be resolved fails immediately with the
+# columns that do exist. Shared by every tool that reads a table.
 COLUMN_ALIASES = {
     "id": ("id", "molecule_chembl_id", "chembl_id", "compound_id"),
     "smiles": ("smiles", "canonical_smiles", "smiles_std", "structure"),
+    "label": ("label", "activity", "value", "px", "target"),
 }
 
 
@@ -71,31 +73,33 @@ def check_input_file(path: str) -> None:
         raise SystemExit(f"{path} is a directory; give the .csv/.smi file itself")
 
 
-def resolve_columns(path: str, id_column: str = "id", smiles_column: str = "smiles") -> dict:
+def resolve_columns(path: str, columns: dict) -> dict:
     """Header-only resolution: exact name first, then a known alias.
 
-    Returns {"id": actual|None, "smiles": actual, "resolved": {requested: actual}}.
-    `resolved` is empty when every requested name existed, so callers can report
-    that a substitution happened instead of doing it silently.
+    `columns` maps role -> requested name ({'id': 'id', 'smiles': 'smiles'}).
+    Returns {role: actual, ..., "resolved": {requested: actual}}. `resolved` is empty
+    when every requested name existed, so callers can report that a substitution
+    happened instead of doing it silently. A missing `id` is tolerated (rows get
+    rowN); a missing `smiles` or `label` is fatal, because there is nothing to use.
     """
-    if not path.endswith(".csv"):
-        return {"id": None, "smiles": None, "resolved": {}}
     check_input_file(path)
+    out: dict = {"resolved": {}}
+    if not path.endswith(".csv"):
+        return out
     with open(path, newline="", encoding="utf-8-sig") as handle:
         header = next(csv.reader(handle), [])
     fields = {name.lower(): name for name in header}
-    out: dict = {"id": None, "smiles": None, "resolved": {}}
-    for role, requested in (("id", id_column), ("smiles", smiles_column)):
+    for role, requested in columns.items():
         if requested.lower() in fields:
             out[role] = fields[requested.lower()]
             continue
-        alias = next((name for name in COLUMN_ALIASES[role] if name in fields), None)
+        alias = next((name for name in COLUMN_ALIASES.get(role, ()) if name in fields), None)
         if alias is None:
-            if role == "id":  # an absent id column is tolerated: rows get rowN
+            if role == "id":
                 continue
             raise SystemExit(
                 f"{path} has no {requested!r} column and no known alias "
-                f"({', '.join(COLUMN_ALIASES[role])}); found {header}")
+                f"({', '.join(COLUMN_ALIASES.get(role, ()))}); found {header}")
         out[role] = fields[alias]
         out["resolved"][requested] = fields[alias]
     return out
@@ -106,7 +110,7 @@ def read_smiles(path: str, limit: int | None = None, id_column: str = "id", smil
     rows: list[tuple[str, str]] = []
     if path.endswith(".csv"):
         check_input_file(path)
-        columns = resolve_columns(path, id_column, smiles_column)
+        columns = resolve_columns(path, {"id": id_column, "smiles": smiles_column})
         with open(path, newline="", encoding="utf-8-sig") as handle:
             reader = csv.DictReader(handle)
             for index, row in enumerate(reader):
@@ -206,7 +210,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     rows = read_smiles(args.input, args.limit or None, args.id_column, args.smiles_column)
-    columns = resolve_columns(args.input, args.id_column, args.smiles_column)
+    columns = resolve_columns(args.input, {"id": args.id_column, "smiles": args.smiles_column})
     ids, matrix, descriptors, invalid = featurize(rows, radius=args.radius, n_bits=args.n_bits,
                                                   desc_set=args.desc_set)
 

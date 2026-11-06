@@ -1,0 +1,285 @@
+{
+  "schema_version": "1",
+  "sandbox": "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/runs/shadow_mltrain",
+  "steps": [
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.35,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 1.26,
+      "exit_code": 0,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.35,
+      "speedup": 0.278
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.14,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 1.12,
+      "exit_code": 0,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.14,
+      "speedup": 0.125
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.15,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.25,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "no such input file: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/oprm1/ki/nope.csv (data root: unset)"
+      ],
+      "effective_baseline_wall_seconds": 0.15,
+      "speedup": 0.6
+    },
+    {
+      "tool_id": "ml.train",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 4.03,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 9.48,
+      "exit_code": 0,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 4.03,
+      "speedup": 0.425
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.2,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.28,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "no such input file: .artifacts/chembl/oprm1/ki/dataset.csv (data root: unset)"
+      ],
+      "effective_baseline_wall_seconds": 0.2,
+      "speedup": 0.714
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.17,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.3,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "no such input file: nope.csv (data root: unset)"
+      ],
+      "effective_baseline_wall_seconds": 0.17,
+      "speedup": 0.567
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.19,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.29,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "no such input file: .artifacts/chembl/oprm1/ki/dataset.csv (data root: unset)"
+      ],
+      "effective_baseline_wall_seconds": 0.19,
+      "speedup": 0.655
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.14,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.24,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "no such input file: .artifacts/chembl/oprm1/ki/dataset.csv (data root: unset)"
+      ],
+      "effective_baseline_wall_seconds": 0.14,
+      "speedup": 0.583
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.21,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.3,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "no such input file: .artifacts/chembl/oprm1/ki/dataset.csv (data root: unset)"
+      ],
+      "effective_baseline_wall_seconds": 0.21,
+      "speedup": 0.7
+    },
+    {
+      "tool_id": "experience.retrieve",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 0.11,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.08,
+      "exit_code": 0,
+      "artifacts_total": 1,
+      "artifacts_equal": 1,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.11,
+      "speedup": 1.375
+    },
+    {
+      "tool_id": "experience.retrieve",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 0.07,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.06,
+      "exit_code": 0,
+      "artifacts_total": 1,
+      "artifacts_equal": 1,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.07,
+      "speedup": 1.167
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.22,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.25,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "no such input file: scientific/.artifacts/chembl/oprm1/ki/dataset.csv (data root: unset)"
+      ],
+      "effective_baseline_wall_seconds": 0.22,
+      "speedup": 0.88
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.34,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 1.0,
+      "exit_code": 0,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.34,
+      "speedup": 0.34
+    },
+    {
+      "tool_id": "screening.rank",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.31,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.44,
+      "exit_code": 1,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [
+        "--model must be the fitted pipeline FILE from modeling.train (e.g. runs/models/<name>/model.joblib); got does_not_exist.pkl"
+      ],
+      "effective_baseline_wall_seconds": 0.31,
+      "speedup": 0.705
+    },
+    {
+      "tool_id": "experience.retrieve",
+      "recorded_state": "SUCCEEDED",
+      "baseline_wall_seconds": 0.13,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.08,
+      "exit_code": 0,
+      "artifacts_total": 1,
+      "artifacts_equal": 1,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.13,
+      "speedup": 1.625
+    },
+    {
+      "tool_id": "rdkit.featurize",
+      "recorded_state": "FAILED",
+      "baseline_wall_seconds": 0.23,
+      "replayed_baseline_wall_seconds": null,
+      "candidate_wall_seconds": 0.58,
+      "exit_code": 0,
+      "artifacts_total": 0,
+      "artifacts_equal": 0,
+      "mismatches": [],
+      "stderr_tail": [],
+      "effective_baseline_wall_seconds": 0.23,
+      "speedup": 0.397
+    }
+  ],
+  "equivalence_rate": 1.0,
+  "artifacts_total": 3,
+  "artifacts_equal": 3,
+  "derived_skipped": 0,
+  "failures_replayed": 13,
+  "failures_remaining": 8,
+  "failures_by_class": {
+    "rdkit.featurize::missing_column:smiles": {
+      "replayed": 4,
+      "remaining": 0
+    },
+    "rdkit.featurize::FileNotFoundError": {
+      "replayed": 7,
+      "remaining": 7
+    },
+    "ml.train::FileNotFoundError": {
+      "replayed": 1,
+      "remaining": 0
+    },
+    "screening.rank::--model must be the fitted pipeline FILE from modeling.train": {
+      "replayed": 1,
+      "remaining": 1
+    }
+  },
+  "candidate_id": "manual-preflight-ml-train-columns",
+  "hypothesis": "Teaching ml.train the same column aliases as featurize will stop the 'needs id and label columns' retry loop, while an exact column name keeps the fitted pipeline and its metrics byte-identical.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "failures_in_replay": 0,
+    "failure_clusters": [
+      "ml.train::FileNotFoundError"
+    ]
+  },
+  "baseline_source": "recorded in the trace",
+  "verdict": {
+    "equivalence_ok": true,
+    "failures_ok": true,
+    "pass": true
+  }
+}

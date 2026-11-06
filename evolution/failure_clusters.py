@@ -45,6 +45,8 @@ def error_class(error: str, stderr_tail: str, exit_code, stdout_tail: str = "") 
     missing = re.search(r"has no '([^']+)' column", text)
     if missing:
         return f"missing_column:{missing.group(1)}"
+    if re.search(r"needs .+ columns", text):
+        return "missing_columns"
     if "unrecognized arguments" in text or "unknown option" in text:
         return "bad_arguments"
     return ABSOLUTE_PATH.sub("<path>", text)[:60]

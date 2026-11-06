@@ -1,0 +1,66 @@
+{
+  "candidate_id": "manual-preflight-ml-train-columns",
+  "version": "0.1.0",
+  "status": "promoted",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "preflight:ml.train",
+      "value": "resolve the label table's id and label columns through the shared alias table before fitting, and record any substitution in metrics.json"
+    }
+  ],
+  "hypothesis": "Teaching ml.train the same column aliases as featurize will stop the 'needs id and label columns' retry loop, while an exact column name keeps the fitted pipeline and its metrics byte-identical.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "failures_in_replay": 0,
+    "failure_clusters": [
+      "ml.train::FileNotFoundError"
+    ]
+  },
+  "risk": "An alias could stand in for a column the caller meant literally; metrics.json records every substitution under columns_resolved, so the mapping is never silent.",
+  "scope_note": "Operator-authored (the proposer requires two recent hits; this class has one). Same failure family as candidate 27384f, different tool. Class-name caveat: the trace's recorded class is ml.train::FileNotFoundError (a cascade of the failed featurize), while the tool's own message in jobs/stderr.log is the column complaint; both are satisfied by this change plus v2. Wrong-path and wrong-model-file failures stay out of scope.",
+  "rollback": "restore the exact-match-only column check in scientific/src/evovs_science/modeling/train.py (drop the resolve_columns call and the columns_resolved field)",
+  "basis": {
+    "generated_by": "operator (pattern from auto-failure-recurrence-rdkit-featurize-27384f)",
+    "kind": "failure-recurrence",
+    "tool_id": "ml.train",
+    "evidence": {
+      "tickets": [
+        "engine-pass-check-eb69ace79bac.json"
+      ],
+      "recent_hits": 1,
+      "clusters": [
+        {
+          "cluster": "ml.train::FileNotFoundError",
+          "recent_hits": 1,
+          "claimed": true,
+          "samples": [
+            "ml.train failed because the preceding featurize step never produced runs/features.npz; its own complaint in jobs/stderr.log was: dataset.csv needs 'id' and 'label' columns; found ['molecule_chembl_id', 'canonical_smiles', ...]",
+            "recorded stderr_tail ends in FileNotFoundError: No such file or directory: 'runs/features.npz', which is what error_class reports as the class name"
+          ]
+        }
+      ]
+    }
+  },
+  "verdict": {
+    "decided_at": "2026-11-06T18:10:00+08:00",
+    "decision": "PROMOTED — ml.train resolves label columns through the shared aliases",
+    "shadow": {
+      "report": "evolution/reports/shadow_mltrain.json",
+      "equivalence_rate": 1.0,
+      "claimed_class": {
+        "cluster": "ml.train::FileNotFoundError",
+        "replayed": 1,
+        "remaining": 0
+      }
+    },
+    "gate": {
+      "report": "evolution/reports/gate_mltrain.json",
+      "verdict": "pass"
+    },
+    "notes": [
+      "Class-name caveat recorded in scope_note.",
+      "featurize::FileNotFoundError (7) and screening's bad model path (1) remain unfixed."
+    ]
+  }
+}
