@@ -1,0 +1,88 @@
+{
+  "schema_version": "1",
+  "design": "4 groups x 3 targets (MOR/KOR/DRD2) x 3 repeats, same 100k library",
+  "groups": {
+    "W_workflow": {
+      "tickets": 9,
+      "success_rate": 1.0,
+      "auroc": [
+        0.8765,
+        0.9021,
+        0.9214
+      ],
+      "wall_seconds_mean": 28.7,
+      "failed_steps_mean": 0.0,
+      "failed_steps_total": 0,
+      "failure_classes": [],
+      "llm": {
+        "calls": 0,
+        "cost_cny": 0.0,
+        "note": "no LLM"
+      }
+    },
+    "A_fixed": {
+      "tickets": 13,
+      "success_rate": 0.846,
+      "auroc": [
+        0.8765,
+        0.88,
+        0.9021,
+        0.9214
+      ],
+      "wall_seconds_mean": 23.0,
+      "failed_steps_mean": 0.08,
+      "failed_steps_total": 1,
+      "failure_classes": [],
+      "llm": {
+        "calls": 169,
+        "cost_cny": 0.6028,
+        "prompt_tokens": 6252258,
+        "completion_tokens": 75910
+      }
+    },
+    "M_memory": {
+      "tickets": 10,
+      "success_rate": 0.8,
+      "auroc": [
+        0.8765,
+        0.8974,
+        0.9021,
+        0.9214,
+        0.9341
+      ],
+      "wall_seconds_mean": 23.4,
+      "failed_steps_mean": 0.1,
+      "failed_steps_total": 1,
+      "failure_classes": [],
+      "llm": {
+        "calls": 161,
+        "cost_cny": 0.5785,
+        "prompt_tokens": 6326064,
+        "completion_tokens": 74462
+      }
+    },
+    "R_rsi": {
+      "tickets": 6,
+      "success_rate": 1.0,
+      "auroc": [
+        0.8765,
+        0.9021
+      ],
+      "wall_seconds_mean": 25.7,
+      "failed_steps_mean": 0.17,
+      "failed_steps_total": 1,
+      "failure_classes": [
+        "experience.retrieve::",
+        "ml.train::",
+        "rdkit.featurize::",
+        "screening.rank::"
+      ],
+      "llm": {
+        "calls": 14,
+        "cost_cny": -0.3627,
+        "prompt_tokens": 418924,
+        "completion_tokens": 1475
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@
   "schema_version": "2",
   "group": "rsi",
   "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/mor-rsi-rep3-e4a879d84b61",
-  "exported_at": "2026-11-06T14:27:13+00:00",
+  "exported_at": "2026-11-06T15:34:11+00:00",
   "steps": [
     {
       "job_id": "7d1fa3ac87cf",
