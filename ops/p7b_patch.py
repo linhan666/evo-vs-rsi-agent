@@ -52,7 +52,10 @@ def patch_python() -> str:
 
 
 def patch_ts() -> str:
-    text = REGISTRY.read_text(encoding="utf-8")
+    # newline="" keeps the file's CRLF terminator; the default would rewrite
+    # every line and turn a one-line change into a 318-line diff
+    with REGISTRY.open(encoding="utf-8", newline="") as handle:
+        text = handle.read()
     enum = "target: z.enum([" + ", ".join(f"'{code}'" for code in ALL_TARGETS) + "])"
     current = re.search(r"target: z\.enum\(\[[^\]]*\]\)", text)
     if not current:
@@ -60,8 +63,30 @@ def patch_ts() -> str:
     if current.group(0) == enum:
         return "ts: already patched"
     text = text[:current.start()] + enum + text[current.end():]
-    REGISTRY.write_text(text, encoding="utf-8")
+    with REGISTRY.open("w", encoding="utf-8", newline="") as handle:
+        handle.write(text)
     return "ts: enum extended to 9 targets"
+
+
+def patch_rank_input() -> str:
+    """screening.rank passes --desc-set from args.desc_set, but RankInput never
+    declared it. tsc rejects the argv function; nothing catches it at runtime
+    because argv drops undefined, so predict silently used its default. Declaring
+    the field makes the typecheck pass and the contract explicit."""
+    with REGISTRY.open(encoding="utf-8", newline="") as handle:
+        text = handle.read()
+    if "n_bits: z.number().int().min(256).max(4096).default(2048),\r\n  desc_set:" in text:
+        return "ts: RankInput.desc_set already declared"
+    anchor = "  n_bits: z.number().int().min(256).max(4096).default(2048),\r\n}).strict()"
+    if anchor not in text:
+        return "ts: RankInput ANCHOR NOT FOUND"
+    replacement = ("  n_bits: z.number().int().min(256).max(4096).default(2048),\r\n"
+                   "  desc_set: z.enum(['v1', 'v2']).default('v1').describe('Descriptor set the fitted model was trained on'),\r\n"
+                   "}).strict()")
+    text = text.replace(anchor, replacement, 1)
+    with REGISTRY.open("w", encoding="utf-8", newline="") as handle:
+        handle.write(text)
+    return "ts: RankInput.desc_set declared (fixes a pre-existing tsc error)"
 
 
 def main() -> int:
@@ -71,6 +96,7 @@ def main() -> int:
     print(patch_python())
     if args.include_ts:
         print(patch_ts())
+        print(patch_rank_input())
     else:
         print("ts: skipped (needs pnpm build + service restart)")
     return 0

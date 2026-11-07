@@ -61,6 +61,7 @@ def receipts(workdir: Path) -> list[dict]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--stdout", action="store_true")
+    parser.add_argument("--round", default="", help="'' for round 7, 'p7b' for the redesigned round")
     args = parser.parse_args()
 
     rows = []
@@ -69,6 +70,8 @@ def main() -> int:
         if not matched:
             continue
         record = json.loads(path.read_text(encoding="utf-8"))
+        if (matched.group(4) or "") != args.round:
+            continue
         arm, target = matched.group(1), matched.group(3)
         workdir = Path(record.get("workdir") or "")
         for receipt in receipts(workdir):

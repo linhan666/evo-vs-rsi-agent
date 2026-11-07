@@ -240,11 +240,11 @@ def locked_auroc(workdir: Path) -> float | None:
     return None
 
 
-def canonical_records() -> list[dict]:
+def canonical_records(round_label: str = "") -> list[dict]:
     records = []
     for path in sorted(RUNS.glob("[ramw]_[0-9][0-9]_*.json")):
         matched = re.match(r"^([ramw])_(\d\d)_([a-z0-9]+)(?:_(.+))?$", path.stem)
-        if not matched or (matched.group(4) or ""):
+        if not matched or (matched.group(4) or "") != round_label:
             continue
         record = json.loads(path.read_text(encoding="utf-8"))
         if not record.get("best_scaffold_model"):
@@ -261,11 +261,12 @@ def main() -> int:
     parser.add_argument("--workdir")
     parser.add_argument("--model-dir")
     parser.add_argument("--batch", action="store_true")
+    parser.add_argument("--round", default="", help="'' for round 7, 'p7b' for the redesigned round")
     args = parser.parse_args()
 
     jobs = []
     if args.batch:
-        for record in canonical_records():
+        for record in canonical_records(args.round):
             jobs.append({"arm": record["arm"], "target": record["target"],
                          "workdir": Path(record["workdir"]),
                          "model_dir": record["best_scaffold_model"],

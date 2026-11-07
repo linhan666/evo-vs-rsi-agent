@@ -90,6 +90,7 @@ const RankInput = z.object({
   top_k: z.number().int().min(1).max(100000).default(100),
   radius: z.number().int().min(1).max(4).default(2),
   n_bits: z.number().int().min(256).max(4096).default(2048),
+  desc_set: z.enum(['v1', 'v2']).default('v1').describe('Descriptor set the fitted model was trained on'),
 }).strict()
 
 const SCIENTIFIC_TOOLS_APPEND = {
@@ -241,7 +242,7 @@ const EXPERIENCE_TOOL = {
 } as ScientificToolDefinition
 
 const LockedInput = z.object({
-  target: z.enum(['MOR', 'KOR', 'DRD2']),
+  target: z.enum(['MOR', 'KOR', 'DRD2', 'D2', '5HT', 'ADR', 'CBR', 'CA2', 'PT']),
   endpoint: z.enum(['Ki', 'IC50']).default('Ki').describe('Locked channel; must match the labels the model was trained on'),
   model: RelativePath.describe('Fitted pipeline FILE from ml.train in this workspace'),
   receipt: RelativePath.describe('Where the summary receipt is written'),

@@ -208,9 +208,13 @@ def fmt(value, digits: int = 1) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--stdout", action="store_true")
+    parser.add_argument("--round", default="", help="'' for round 7, 'p7b' for the redesigned round")
     args = parser.parse_args()
 
     raw_runs, _ = load()
+    # two rounds coexist on disk; mixing them would collapse different runs into
+    # one cell inside canonical()
+    raw_runs = [r for r in raw_runs if (r.get("label") or "") == args.round]
     runs = canonical(raw_runs)
     by_arm: dict[str, list[dict]] = {}
     for record in runs:
