@@ -30,6 +30,12 @@ CHANNELS = {
         "MOR": ("chembl37_ki", "final_test_Ki.csv"),
         "KOR": ("chembl37_ki_oprk1", "final_test_Ki.csv"),
         "DRD2": ("chembl37_ki_drd2", "final_test_Ki.csv"),
+        "D2": ("chembl37_ki_d2", "final_test_Ki.csv"),
+        "5HT": ("chembl37_ki_5ht", "final_test_Ki.csv"),
+        "ADR": ("chembl37_ki_adr", "final_test_Ki.csv"),
+        "CBR": ("chembl37_ki_cbr", "final_test_Ki.csv"),
+        "CA2": ("chembl37_ki_ca2", "final_test_Ki.csv"),
+        "PT": ("chembl37_ki_pt", "final_test_Ki.csv"),
     },
     "IC50": {
         "MOR": ("chembl37_ic50_oprm1", "final_test_IC50.csv"),

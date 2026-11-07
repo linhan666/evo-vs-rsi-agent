@@ -149,7 +149,9 @@ def main() -> int:
             scaffold_of = scaffolds(rows)
             held, pool = carve(rows, scaffold_of, TEST_FRACTION)
             held_ids = {row["molecule_chembl_id"] for row in held}
-            protected_dir = PROTECTED / f"chembl37_ki_{slug.replace('(', '').replace(')', '').replace('_', '')}"
+            # directory is named after the locked target code so the mapping in
+            # evaluation/locked.py stays readable: chembl37_ki_<code lowercased>
+            protected_dir = PROTECTED / f"chembl37_ki_{code.lower()}"
             test_csv = protected_dir / "final_test_Ki.csv"
             note = "carved now"
             if not args.dry_run:

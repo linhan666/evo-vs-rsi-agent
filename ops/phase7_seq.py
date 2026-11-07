@@ -52,10 +52,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 STATE_DB = ROOT / ".artifacts" / "state" / "orchestrator.sqlite"
 INBOX = ROOT / ".artifacts" / "inbox"
-TASKS = ROOT / "ops" / "phase7_custom"
+TASKS = ROOT / "ops" / "phase7_custom"   # overridden by --tasks-dir
 RUNS = ROOT / "ops" / "phase7_runs"
 DATA_ROOT = ROOT / "scientific" / ".artifacts"
-STORE = DATA_ROOT / "experience" / "experience.json"
+STORE = DATA_ROOT / "experience" / "experience.json"   # overridden by --store
 PAYLOADS = DATA_ROOT / "experience" / "payloads"
 VENV_PY = ROOT / "scientific" / ".venv" / "bin" / "python"
 
@@ -584,8 +584,8 @@ def run_code_metrics(group: str, workdir: str, target: str, label: str = "") -> 
         log(f"code_metrics error for {target}: {error}")
 
 
-def plan(group: str) -> list[dict]:
-    return [{"seq": number, "target": target, "task_id": f"seq_{group}_{target}"}
+def plan(group: str, prefix: str = "seq") -> list[dict]:
+    return [{"seq": number, "target": target, "task_id": f"{prefix}_{group}_{target}"}
             for number, target in enumerate(ORDER, start=1)]
 
 
@@ -602,10 +602,22 @@ def main(argv: list[str] | None = None) -> int:
                         help="submit under this task id instead of seq_<group>_<target> (single target only)")
     parser.add_argument("--label", default="",
                         help="suffix for record filenames, so a replay never overwrites the lineage record")
+    parser.add_argument("--prefix", default="seq",
+                        help="task-id prefix; round 7 used 'seq', the redesigned round uses 'p7b'")
+    parser.add_argument("--tasks-dir", default=None,
+                        help="directory holding the task JSONs (default ops/phase7_custom)")
+    parser.add_argument("--store", default=None,
+                        help="experience store path; each memory-bearing arm needs its own file")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
 
-    entries = plan(args.group)
+    global TASKS, STORE
+    if args.tasks_dir:
+        TASKS = (ROOT / args.tasks_dir) if not args.tasks_dir.startswith("/") else Path(args.tasks_dir)
+    if args.store:
+        STORE = Path(args.store)
+
+    entries = plan(args.group, args.prefix)
     if args.start_at:
         slugs = [entry["target"] for entry in entries]
         if args.start_at not in slugs:
