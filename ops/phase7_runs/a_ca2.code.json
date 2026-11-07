@@ -1,0 +1,28 @@
+{
+  "ticket": "anhydrase-arm-a8-21873df25d7a",
+  "jobs_total": 23,
+  "jobs_failed": 4,
+  "failure_rate": 0.174,
+  "first_success_index": 1,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r2_b2048_v2",
+    "r3_b2048_v1",
+    "r3_b4096_v2"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "random",
+    "scaffold"
+  ],
+  "n_featurizations": 4,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

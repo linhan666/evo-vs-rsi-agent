@@ -1,0 +1,27 @@
+{
+  "ticket": "prothrombin-arm-a9-e80a4cc5b7a0",
+  "jobs_total": 71,
+  "jobs_failed": 0,
+  "failure_rate": 0.0,
+  "first_success_index": 0,
+  "featurizations": [
+    "r1_b256_v1",
+    "r2_b2048_v1",
+    "r2_b2048_v2",
+    "r3_b4096_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "scaffold"
+  ],
+  "n_featurizations": 4,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}
