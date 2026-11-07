@@ -1,0 +1,6 @@
+{
+  "task_id": "seq_w_pt",
+  "sender": "operator",
+  "title": "Phase7 w #9 Prothrombin predictor",
+  "text": "Goal: build the most reliable binding-activity predictor for Prothrombin and produce a top-100 ranking of the 100k library.\n\nConstraints:/n- labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset.csv (read-only)\n- library: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\n- this is target #9 in a sequence of 9; prior targets have been modelled before you\n\nIMPORTANT: Before choosing your modelling approach, retrieve prior experience (experience.retrieve) and reuse any configuration that fits this dataset's characteristics (sample size, positive rate). Only explore new configurations if prior experience does not cover this data profile.\n\nYou may choose representation, model family, validation strategy, and fusion. Record what you reused vs what you wrote fresh.\n\nDeliverable: report with (a) choices and rationale, (b) AUROC/AUPRC/EF@1%, (c) top-100 path, (d) cost, (e) what was reused from experience."
+}

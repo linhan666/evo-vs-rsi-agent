@@ -1,0 +1,20 @@
+{
+  "target": "D2",
+  "group": "a",
+  "seq": 1,
+  "method": "recovered from DSH session transcript, calibrated against 10 ledger-matched R tickets",
+  "transcript_total_tokens": 8765069,
+  "transcript_calls": 82,
+  "calibration_ratio": {
+    "mean": 1.1555,
+    "min": 1.0416,
+    "max": 1.332,
+    "n": 10
+  },
+  "estimated_total_tokens": 10128037,
+  "estimated_range": [
+    9129695,
+    11675071
+  ],
+  "note": "arm A target 1 ran before NODE_OPTIONS=--require was added to env.sh, so its ledger is empty. Estimated, not measured."
+}

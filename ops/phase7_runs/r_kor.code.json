@@ -1,0 +1,24 @@
+{
+  "ticket": "kor-seq-target7-794b4f2a413f",
+  "jobs_total": 12,
+  "jobs_failed": 0,
+  "failure_rate": 0.0,
+  "first_success_index": 1,
+  "featurizations": [
+    "r2_b2048_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "scaffold"
+  ],
+  "n_featurizations": 1,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

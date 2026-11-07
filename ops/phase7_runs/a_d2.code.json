@@ -1,0 +1,37 @@
+{
+  "ticket": "dopamine-arm-a1-fb5f55be4fbb",
+  "jobs_total": 102,
+  "jobs_failed": 10,
+  "failure_rate": 0.098,
+  "first_success_index": 0,
+  "featurizations": [
+    "r2_b1024_v1",
+    "r2_b1024_v2",
+    "r2_b2048_v1",
+    "r2_b2048_v2",
+    "r2_b4096_v1",
+    "r2_b4096_v2",
+    "r3_b2048_v1",
+    "r3_b2048_v2",
+    "r3_b4096_v1",
+    "r3_b4096_v2",
+    "r4_b2048_v2",
+    "r4_b4096_v1",
+    "r4_b4096_v2"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "random",
+    "scaffold"
+  ],
+  "n_featurizations": 13,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

@@ -20,3 +20,18 @@ fi
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-2}"
 
 echo "[env.sh] node=$(node -v 2>/dev/null) pnpm=$(pnpm -v 2>/dev/null) gpu=$CUDA_VISIBLE_DEVICES model=${EVOVS_MODEL:-unset}"
+
+# --- Cost instrumentation ---------------------------------------------------
+# ops/usage_hook.cjs sniffs the `usage` block out of every model response and
+# appends it to $EVOVS_USAGE_LOG. It rides along via NODE_OPTIONS=--require, so
+# it has to be set here: a service started without it writes no token ledger,
+# and that arm then cannot be compared with the others on tokens. Discovered
+# missing when arm A was launched on 2026-11-07.
+_EVOVS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+if [ -f "$_EVOVS_ROOT/ops/usage_hook.cjs" ]; then
+  case ":$NODE_OPTIONS:" in
+    *":--require $_EVOVS_ROOT/ops/usage_hook.cjs:"*) ;;
+    *) export NODE_OPTIONS="$NODE_OPTIONS --require $_EVOVS_ROOT/ops/usage_hook.cjs" ;;
+  esac
+fi
+unset _EVOVS_ROOT

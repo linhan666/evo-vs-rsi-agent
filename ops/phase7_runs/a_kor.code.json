@@ -1,0 +1,27 @@
+{
+  "ticket": "kor-arm-a7-053e7e0a5b49",
+  "jobs_total": 24,
+  "jobs_failed": 1,
+  "failure_rate": 0.042,
+  "first_success_index": 0,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r2_b2048_v2",
+    "r3_b2048_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "random",
+    "scaffold"
+  ],
+  "n_featurizations": 3,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

@@ -1,0 +1,30 @@
+{
+  "ticket": "serotonin-arm-a2-ec0d3dff2118",
+  "jobs_total": 79,
+  "jobs_failed": 3,
+  "failure_rate": 0.038,
+  "first_success_index": 0,
+  "featurizations": [
+    "r2_b1024_v1",
+    "r2_b2048_v1",
+    "r2_b2048_v2",
+    "r2_b256_v1",
+    "r2_b512_v1",
+    "r3_b2048_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "random",
+    "scaffold"
+  ],
+  "n_featurizations": 6,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

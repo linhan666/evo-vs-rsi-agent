@@ -1,0 +1,31 @@
+{
+  "ticket": "dopamine-coldstart-4f74e0895047",
+  "jobs_total": 65,
+  "jobs_failed": 8,
+  "failure_rate": 0.123,
+  "first_success_index": 2,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r2_b4096_v2",
+    "r3_b4096_v1",
+    "r3_b4096_v2",
+    "r4_b2048_v2",
+    "r4_b4096_v1",
+    "r4_b4096_v2"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "random",
+    "scaffold"
+  ],
+  "n_featurizations": 7,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

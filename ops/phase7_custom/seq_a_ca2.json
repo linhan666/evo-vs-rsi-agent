@@ -1,0 +1,6 @@
+{
+  "task_id": "seq_a_ca2",
+  "sender": "operator",
+  "title": "Phase7 a #8 Carbonic anhydrase II predictor",
+  "text": "Goal: build the most reliable binding-activity predictor for Carbonic anhydrase II and produce a top-100 ranking of the 100k library.\n\nConstraints:\n- labels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset.csv (read-only)\n- library: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\n- this is target #8 in a sequence of 9\n- no prior-experience store is available in this arm and there is no experience.retrieve tool: derive everything from first principles\n\nIMPORTANT: This arm carries no cross-target memory. Derive your modelling approach from the dataset in front of you (sample size, positive rate, target class) rather than from earlier targets.\n\nYou may choose representation, model family, validation strategy, and fusion.\n\nDeliverable: report with (a) choices and rationale, (b) AUROC/AUPRC/EF@1%, (c) top-100 path, (d) cost, (e) what you would reuse if you had to model another target of this kind.\n"
+}

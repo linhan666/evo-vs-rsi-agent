@@ -1,0 +1,27 @@
+{
+  "ticket": "mor-seq-target5-fbc189d9e56a",
+  "jobs_total": 27,
+  "jobs_failed": 1,
+  "failure_rate": 0.037,
+  "first_success_index": 1,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r2_b2048_v2",
+    "r2_b4096_v1",
+    "r3_b2048_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "scaffold"
+  ],
+  "n_featurizations": 4,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

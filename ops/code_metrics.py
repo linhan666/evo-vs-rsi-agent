@@ -23,6 +23,7 @@ import glob
 import json
 import os
 import re
+import sys
 
 
 def extract(ticket_dir: str) -> dict:
@@ -44,7 +45,7 @@ def extract(ticket_dir: str) -> dict:
         argv = job.get("argv") or []
         kv = {}
         for i, item in enumerate(argv):
-            if item.startswith("--") and i + 1 < len(argv):
+            if isinstance(item, str) and item.startswith("--") and i + 1 < len(argv):
                 kv[item.lstrip("-")] = argv[i + 1]
 
         if job.get("tool_id") == "rdkit.featurize":

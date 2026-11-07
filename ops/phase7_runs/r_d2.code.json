@@ -1,0 +1,29 @@
+{
+  "ticket": "dopamine-seq-t1-73f5ccd7a984",
+  "jobs_total": 36,
+  "jobs_failed": 2,
+  "failure_rate": 0.056,
+  "first_success_index": 0,
+  "featurizations": [
+    "r2_b1024_v1",
+    "r2_b2048_v1",
+    "r2_b256_v1",
+    "r2_b4096_v1",
+    "r3_b4096_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "random",
+    "scaffold"
+  ],
+  "n_featurizations": 5,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}
