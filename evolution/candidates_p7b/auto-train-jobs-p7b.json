@@ -1,0 +1,35 @@
+{
+  "candidate_id": "auto-train-jobs-p7b",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "env",
+      "key": "EVOVS_TRAIN_JOBS",
+      "value": "8"
+    }
+  ],
+  "hypothesis": "ml.train owns 58% of the corpus wall clock at an 8.5 s median (evolution/propose.py, 9 p7b traces). RandomForest and XGBoost are constructed with n_jobs=1 and CatBoost at its default thread count, so every training call is single-threaded on a 128-core box. All three are deterministic given random_state for any thread count, so raising the thread count trades cores for wall time and changes no artifact. Measured A/B on p7b_4_drd2: 3.42 s -> 1.89 s (1.81x) with byte-identical metrics (auroc 0.8764, auprc 0.8971, ef@1% 1.705).",
+  "acceptance": {
+    "equivalence": 1.0,
+    "min_speedup": 1.3
+  },
+  "risk": "More threads per job competes with concurrent jobs for cores; if the executor runs several tickets at once (maxWorkers=3), per-job speedup may not translate into end-to-end throughput. Wall time per step is what this candidate claims, and that is what shadow measures.",
+  "basis": {
+    "generated_by": "operator (derived from evolution/candidates_p7b/auto-latency-share-ml-train-2dff1f.json)",
+    "kind": "throughput",
+    "tool_id": "ml.train",
+    "evidence": {
+      "traces": 9,
+      "share_of_wall_clock": 0.58,
+      "median_step_seconds": 8.5,
+      "ab_test": {
+        "trace": "p7b_4_drd2",
+        "default_seconds": 3.42,
+        "jobs8_seconds": 1.89,
+        "speedup": 1.81,
+        "metrics_identical": true
+      }
+    }
+  },
+  "version": "0.1.0-p7b"
+}

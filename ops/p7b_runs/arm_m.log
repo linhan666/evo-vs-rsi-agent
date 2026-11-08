@@ -155,3 +155,30 @@
 [17:54:19Z] submitted p7b_m_drd2.json -> inbox/p7b_m_drd2.json
 [17:54:49Z] #4 drd2 waiting (state=running, assigned 1x)
 [17:55:19Z] #4 drd2 waiting (state=running, assigned 1x)
+[17:55:49Z] #4 drd2 waiting (state=running, assigned 1x)
+[17:56:19Z] #4 drd2 waiting (state=running, assigned 1x)
+[17:56:49Z] #4 drd2 waiting (state=running, assigned 1x)
+[17:57:19Z] #4 drd2 waiting (state=running, assigned 1x)
+[17:57:49Z] #4 drd2 waiting (state=running, assigned 1x)
+[17:58:19Z] #4 drd2 waiting (state=running, assigned 1x)
+[17:58:49Z] #4 drd2 waiting (state=running, assigned 1x)
+[17:59:19Z] #4 drd2 DONE state=ready wall=290.0s jobs=13 best=p7b_drd2_m/v2_rf(0.9544) scaffold=p7b_drd2_m/v2_rf(0.9544) top100=1
+[17:59:20Z] experience recorded for DRD2: {"experience_id": "dataset_DRD2_007", "target": "DRD2"}; {"experience_id": "model_DRD2_008", "target": "DRD2"}
+[17:59:20Z] code_metrics -> m_drd2_p7b.code.json
+[17:59:20Z] submitted p7b_m_mor.json -> inbox/p7b_m_mor.json
+[17:59:50Z] #5 mor waiting (state=running, assigned 1x)
+[18:00:20Z] #5 mor waiting (state=running, assigned 1x)
+[18:00:50Z] #5 mor waiting (state=running, assigned 1x)
+[18:01:20Z] #5 mor waiting (state=running, assigned 1x)
+[18:01:50Z] #5 mor waiting (state=running, assigned 1x)
+[18:02:20Z] #5 mor waiting (state=running, assigned 1x)
+[18:02:50Z] #5 mor waiting (state=running, assigned 1x)
+[18:03:20Z] #5 mor waiting (state=running, assigned 1x)
+[18:03:50Z] #5 mor waiting (state=running, assigned 1x)
+[18:04:21Z] #5 mor DONE state=ready wall=271.2s jobs=14 best=models/rf_v2_s23(0.9424) scaffold=models/rf_v2_s23(0.9424) top100=3
+[18:04:21Z] experience recorded for MOR: {"experience_id": "dataset_MOR_009", "target": "MOR"}; {"experience_id": "model_MOR_010", "target": "MOR"}
+[18:04:21Z] code_metrics -> m_mor_p7b.code.json
+[18:04:21Z] submitted p7b_m_cbr.json -> inbox/p7b_m_cbr.json
+[18:04:51Z] #6 cbr waiting (state=running, assigned 1x)
+[18:05:21Z] #6 cbr waiting (state=running, assigned 1x)
+[18:05:51Z] #6 cbr waiting (state=running, assigned 1x)

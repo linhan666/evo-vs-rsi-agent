@@ -29,19 +29,36 @@ from ..manifest import describe_input, utc_now, write_manifest
 MODELS = ("logreg", "rf", "xgboost", "catboost")
 
 
+def _train_jobs() -> int:
+    """Thread count for the tree models.
+
+    Default 1 preserves the historical behaviour exactly. RandomForest and
+    XGBoost are deterministic given `random_state` for any thread count, so this
+    knob trades wall time for cores and nothing else. It exists as an env var
+    because shadow replay can only apply env-type candidates; a hard-coded change
+    would be unverifiable and therefore unpromotable.
+    """
+    raw = os.environ.get("EVOVS_TRAIN_JOBS", "1").strip()
+    try:
+        value = int(raw)
+    except ValueError:
+        return 1
+    return value if value != 0 else 1
+
+
 def build_model(kind: str, seed: int):
     """Construct a classifier; a missing optional library is a clear error."""
     if kind == "logreg":
         return LogisticRegression(max_iter=2000, class_weight="balanced")
     if kind == "rf":
-        return RandomForestClassifier(n_estimators=200, random_state=seed, n_jobs=1)
+        return RandomForestClassifier(n_estimators=200, random_state=seed, n_jobs=_train_jobs())
     if kind == "xgboost":
         try:
             from xgboost import XGBClassifier
         except ImportError as error:
             raise SystemExit("xgboost is not installed in this environment; pip install xgboost") from error
         return XGBClassifier(n_estimators=300, max_depth=6, learning_rate=0.1, subsample=0.9,
-                             colsample_bytree=0.9, min_child_weight=1.0, random_state=seed, n_jobs=1,
+                             colsample_bytree=0.9, min_child_weight=1.0, random_state=seed, n_jobs=_train_jobs(),
                              eval_metric="logloss", tree_method="hist", verbosity=0)
     if kind == "catboost":
         try:
@@ -49,7 +66,8 @@ def build_model(kind: str, seed: int):
         except ImportError as error:
             raise SystemExit("catboost is not installed in this environment; pip install catboost") from error
         return CatBoostClassifier(iterations=300, depth=6, learning_rate=0.1, random_seed=seed,
-                                  verbose=False, allow_writing_files=False)
+                                  verbose=False, allow_writing_files=False,
+                                  thread_count=_train_jobs())
     raise SystemExit(f"unknown model kind: {kind}")
 
 
