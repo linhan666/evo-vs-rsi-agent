@@ -37,6 +37,9 @@ def run_step(argv: list[str], cwd: str, env_delta: dict[str, str], timeout: int)
 
 
 DERIVED_BASENAMES = {"artifact_manifest.json"}  # index of the other artifacts; no independent information
+# Serialised models are derived from (features, labels, hyper-parameters) and their
+# encoding is not byte-deterministic; behaviour is carried by predictions.csv.
+MODEL_BINARY_SUFFIXES = (".joblib", ".pkl", ".pickle", ".pt", ".pth", ".onnx", ".h5", ".ubj", ".cbm")
 
 
 def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delta: dict[str, str],
@@ -44,6 +47,7 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
     results = []
     os.makedirs(sandbox, exist_ok=True)
     derived_skipped = 0
+    models_skipped_total = 0
     failures_replayed = 0
     failures_remaining = 0
     failures_by_class: dict[str, dict] = {}
@@ -63,9 +67,14 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
         mismatches: list[str] = []
         equal = 0
         total_step = 0
+        models_skipped = 0
         for artifact in step["artifacts"]:
-            if os.path.basename(artifact["path"]) in DERIVED_BASENAMES:
+            basename = os.path.basename(artifact["path"])
+            if basename in DERIVED_BASENAMES:
                 derived_skipped += 1
+                continue
+            if basename.endswith(MODEL_BINARY_SUFFIXES):
+                models_skipped += 1
                 continue
             total_step += 1
             path = os.path.join(sandbox, artifact["path"])
@@ -76,6 +85,12 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
                 equal += 1
             else:
                 mismatches.append(f"{artifact['path']}: digest differs")
+        if total_step == 0:
+            # Only model binaries were written: nothing behavioural to compare with,
+            # so the step is unverifiable rather than equal.
+            total_step = 1
+            mismatches.append("no comparable artifact (model binaries only)")
+        models_skipped_total += models_skipped
         if failed_before:
             failures_replayed += 1
             # Classify both sides: what failed then, and what still fails now.
@@ -97,6 +112,7 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
             "exit_code": run["exit_code"],
             "artifacts_total": total_step,
             "artifacts_equal": equal,
+            "model_binaries_skipped": models_skipped,
             "mismatches": mismatches,
             "stderr_tail": run["stderr_tail"],
         })
@@ -108,6 +124,7 @@ def evaluate(trace: dict, sandbox: str, steps_filter: list[str] | None, env_delt
         "steps": results,
         "equivalence_rate": round(equal / total, 4) if total else None,
         "artifacts_total": total,
+        "model_binaries_skipped": models_skipped_total,
         "artifacts_equal": equal,
         "derived_skipped": derived_skipped,
         "failures_replayed": failures_replayed,
