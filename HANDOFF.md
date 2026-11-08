@@ -56,6 +56,33 @@
 
 ---
 
+## 三之零、模型与推理强度（2026-11-09 实测）
+
+**模型**：`deepseek-flash`，用户确认即 `deepseek-v4.1-1017`。台账 424 次调用全部是该模型；
+提供商 `/models` 只暴露 `deepseek-flash` 与 `deepseek-v4-pro`。
+
+**推理强度：当前是「开了思考、用提供商默认强度」，不是没开。** 实测（同模型同 prompt）：
+
+| `reasoning_effort` | reasoning_tokens | 返回 reasoning_content |
+|---|---|---|
+| 不传 | **76** | ✅ 241 字符 |
+| `high` | 180 | ✅ 590 字符 |
+| `none` | **0** | ❌ 无 |
+
+**为什么真实实验也属于"不传"这一行**：`src/policy.ts` 里
+`ExecutorConfigSchema.model` 与 `EvalConfigSchema.model` 默认都是 `null`，
+而 `src/app/role-models.ts` 用的是 `...(model.reasoningEffort ? {...} : {})` ——
+配置为 null 时该字段被整条丢弃，请求里根本不出现。
+
+**已知局限**：`ops/usage_hook.cjs` 只提取 `model / prompt_tokens / completion_tokens / cached_tokens`，
+**不记录 `completion_tokens_details.reasoning_tokens`**。所以真实调用的默认思考预算无法从台账反查。
+做「思考强度」对照实验前必须先补这个字段，否则无法量化强度。
+
+**配置入口**（本轮按用户决定不改）：`executor.model = {provider, model, reasoningEffort}`；
+`EvalConfigSchema` 另有 `mode: observe`、`timeoutSeconds: 120`。
+`ExecutorConfigSchema.maxWorkers` 默认 **3** —— 超过 3 个工单会排队，这是 2026-11-09 凌晨
+M 臂被 3 个测试工单堵住的直接原因。
+
 ## 三之一、无人值守链（2026-11-08 启动，两次事故后于 21:23 恢复）
 
 `ops/p7b_run_all.sh`（编排器，tmux `p7b-all`）+ `ops/p7b_watchdog.sh`（看门狗，tmux `p7b-watch`），
