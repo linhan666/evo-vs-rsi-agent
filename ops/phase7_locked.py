@@ -77,15 +77,20 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--stdout", action="store_true")
     parser.add_argument("--round", default="", help="'' for round 7, 'p7b' for the redesigned round")
+    parser.add_argument("--rounds", default=None,
+                        help="comma-separated rounds, e.g. p7b,p7c -- needed to put the same arm "
+                             "under two harness versions into one report")
     args = parser.parse_args()
 
+    wanted = [r.strip() for r in (args.rounds.split(",") if args.rounds else [args.round])]
     rows = []
     for path in sorted(RUNS.glob("[ramw]_[0-9][0-9]_*.json")):
         matched = re.match(r"^([ramw])_(\d\d)_([a-z0-9]+)(?:_(.+))?$", path.stem)
         if not matched:
             continue
         record = json.loads(path.read_text(encoding="utf-8"))
-        if (matched.group(4) or "") != args.round:
+        this_round = matched.group(4) or ""
+        if this_round not in wanted:
             continue
         arm, target = matched.group(1), matched.group(3)
         # W records carry no `workdir`, and `Path("")` is `.` -- walking it made
@@ -106,6 +111,7 @@ def main() -> int:
             valid = expected is not None and evaluated == expected
             rows.append({
                 "arm": arm,
+                "round": this_round,
                 "seq": int(matched.group(2)),
                 "target": target,
                 "evaluated_as": evaluated,
@@ -123,7 +129,8 @@ def main() -> int:
     lines.append("| 臂 | seq | 序列靶点 | 评测目标 | 有效 | AUROC | AUPRC | EF@1% |")
     lines.append("|---|---|---|---|---|---|---|---|")
     for row in sorted(rows, key=lambda r: (r["arm"], r["seq"])):
-        lines.append(f"| {row['arm'].upper()} | {row['seq']} | {row['target']} | {row['evaluated_as']} | "
+        label = row["arm"].upper() if row["round"] == wanted[0] else f"{row['arm'].upper()}({row['round']})"
+        lines.append(f"| {label} | {row['seq']} | {row['target']} | {row['evaluated_as']} | "
                      f"{'✅' if row['valid'] else '❌ 目标不匹配'} | "
                      f"{row['auroc'] if row['auroc'] is not None else '—'} | "
                      f"{row['auprc'] if row['auprc'] is not None else '—'} | "
@@ -131,14 +138,15 @@ def main() -> int:
     lines.append("")
 
     valid = [r for r in rows if r["valid"] and r["auroc"] is not None]
-    by_key: dict[tuple[str, str], dict] = {}
+    by_key: dict[tuple[str, str, str], dict] = {}
     for row in valid:
-        by_key[(row["evaluated_as"], row["arm"])] = row
+        by_key[(row["evaluated_as"], row["arm"], row["round"])] = row
+    base_round = wanted[0]
 
     pairs = []
     for target in sorted({r["evaluated_as"] for r in valid}):
-        r_row = by_key.get((target, "r"))
-        a_row = by_key.get((target, "a"))
+        r_row = by_key.get((target, "r", base_round))
+        a_row = by_key.get((target, "a", base_round))
         if r_row and a_row:
             diff = r_row["auroc"] - a_row["auroc"]
             pairs.append((target, r_row["auroc"], a_row["auroc"], diff))
@@ -154,9 +162,41 @@ def main() -> int:
         lines.append("")
         if len(pairs) < 6:
             lines.append(f"⚠️ 只有 {len(pairs)} 对，Wilcoxon 双侧最小可达 p = "
-                         f"{2 / (2 ** len(pairs)):.4f}，**不足以做显著性判断**。"
-                         "而且 9 个靶点里只有 MOR/KOR/DRD2 有受保护测试集，"
-                         "其余 6 个靶点的跨臂质量比较在方法上不成立。")
+                         f"{2 / (2 ** len(pairs)):.4f}，**不足以做显著性判断**。")
+    lines.append("")
+
+    # Same arm, two harness versions. This is the direct test of whether a
+    # gate-certified promotion changed anything: the arm, the task text, the
+    # target sequence and the locked sets are identical; only the harness
+    # version differs.
+    for later in wanted[1:]:
+        version_pairs = []
+        for target in sorted({r["evaluated_as"] for r in valid}):
+            before = by_key.get((target, "r", base_round))
+            after = by_key.get((target, "r", later))
+            if before and after:
+                version_pairs.append((target, before["auroc"], after["auroc"],
+                                      after["auroc"] - before["auroc"]))
+        if not version_pairs:
+            continue
+        lines.append(f"## 同臂跨版本：R({later}) vs R({base_round})")
+        lines.append("")
+        lines.append("同一靶点序列、同一锁定测试集、同一任务文本，只有 harness 版本不同。"
+                     "差值为「新版本 − 旧版本」。")
+        lines.append("")
+        lines.append(f"| 靶点 | R({later}) | R({base_round}) | 差 |")
+        lines.append("|---|---|---|---|")
+        for target, after_value, before_value, diff in version_pairs:
+            lines.append(f"| {target} | {after_value:.4f} | {before_value:.4f} | **{diff:+.4f}** |")
+        mean = sum(p[3] for p in version_pairs) / len(version_pairs)
+        lines.append(f"| **均值** | | | **{mean:+.4f}** |")
+        lines.append("")
+        ties = sum(1 for p in version_pairs if abs(p[3]) < 1e-9)
+        lines.append(f"逐靶点：{len(version_pairs)} 对，其中 {ties} 对完全相同。"
+                     "v7 只改训练线程数、不改任何数值，所以质量应当逐点持平——"
+                     "持平是「改动如设计般中性」的证据；若出现偏移，说明并行影响了数值，应回滚。")
+        lines.append("")
+
     lines.append("")
 
     text = "\n".join(lines) + "\n"
