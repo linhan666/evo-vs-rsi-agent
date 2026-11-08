@@ -37,12 +37,23 @@ arm_driver() {
 }
 
 newest_job_age() {
+  # Seconds since the newest job directory, scanning workdirs newest-first for one
+  # that actually has jobs. Prints NOTHING when no scorable workdir exists.
+  #
+  # It used to print 99999 here, and the caller compared it against IDLE_LIMIT --
+  # so a workdir that had no .jobs yet (the normal state right after a ticket is
+  # claimed) read as "idle for 27 hours". That produced the 2026-11-09 05:05/05:15
+  # `no new job for 99999s` reports on a perfectly healthy run, and because the
+  # sentinel appeared and disappeared between samples the counter kept resetting
+  # between 1/3 and 0/3. An unknown must never accumulate as idleness.
   local dir job
-  dir=$(ls -dt "$WORK"/*/ 2>/dev/null | head -1)
-  if [ -z "$dir" ]; then echo 99999; return; fi
-  job=$(ls -dt "${dir}.jobs"/*/ 2>/dev/null | head -1)
-  if [ -z "$job" ]; then echo 99999; return; fi
-  echo $(( $(date +%s) - $(stat -c %Y "$job") ))
+  for dir in $(ls -dt "$WORK"/*/ 2>/dev/null); do
+    job=$(ls -dt "${dir}.jobs"/*/ 2>/dev/null | head -1)
+    if [ -n "$job" ]; then
+      echo $(( $(date +%s) - $(stat -c %Y "$job") ))
+      return
+    fi
+  done
 }
 
 science_running() {
@@ -138,6 +149,11 @@ while :; do
 
   age=$(newest_job_age)
   busy=$(science_running)
+  if [ -z "$age" ]; then
+    # nothing scorable yet (a fresh ticket, or every workdir is empty): not evidence
+    stuck=0
+    continue
+  fi
   if [ "$age" -ge "$IDLE_LIMIT" ] && [ "$busy" -eq 0 ]; then
     stuck=$((stuck + 1))
     log "suspect: arm=$arm no new job for ${age}s, 0 science processes (${stuck}/3)"

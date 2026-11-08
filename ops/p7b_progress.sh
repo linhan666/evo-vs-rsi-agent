@@ -87,6 +87,9 @@ def science_processes():
 print(json.dumps({
     "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
     "records": {arm: records(arm) for arm in ("r", "m", "a", "w")},
+    # the four arms saturate at 36 and never move again; later rounds (R' under v7)
+    # write *_p7c records, so progress has to be carried by this counter
+    "p7c_records": len(glob.glob("ops/phase7_runs/*_p7c.json")),
     "sessions": tmux_sessions(),
     "current_target_line": current_target(),
     "unfinished_tickets": unfinished(),
