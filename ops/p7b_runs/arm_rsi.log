@@ -1,0 +1,8 @@
+usage: phase7 sequential driver [-h] --group {r,a,m,w} [--from START_AT]
+                                [--only ONLY] [--poll POLL]
+                                [--timeout TIMEOUT] [--retries RETRIES]
+                                [--no-record] [--task-id TASK_ID_OVERRIDE]
+                                [--label LABEL] [--prefix PREFIX]
+                                [--tasks-dir TASKS_DIR] [--store STORE]
+                                [--dry-run]
+phase7 sequential driver: error: argument --group: invalid choice: 'rsi' (choose from 'r', 'a', 'm', 'w')

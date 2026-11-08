@@ -1,0 +1,28 @@
+{
+  "ticket": "adenosine-arm-m3-24cda9d7d2f5",
+  "jobs_total": 72,
+  "jobs_failed": 2,
+  "failure_rate": 0.028,
+  "first_success_index": 0,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r2_b2048_v2",
+    "r2_b4096_v1",
+    "r3_b2048_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "random",
+    "scaffold"
+  ],
+  "n_featurizations": 4,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

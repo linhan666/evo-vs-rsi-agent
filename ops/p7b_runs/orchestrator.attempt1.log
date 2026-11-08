@@ -1,0 +1,65 @@
+[05:00:42] phase7b oracle chain start (pid 1811313)
+[05:00:42] step 0: waiting for the round-7 M driver
+[05:15:42]   still waiting (900s)
+[05:30:42]   still waiting (1800s)
+[05:45:42]   still waiting (2700s)
+[06:00:42]   still waiting (3600s)
+[06:15:43]   still waiting (4500s)
+[06:16:43] step 0: driver gone; waiting for tickets to settle
+[06:16:43] step 0: clean, 0 unfinished tickets
+[06:16:43] step 1: extending the locked-eval schema
+python: already patched
+ts: already patched
+ts: RankInput.desc_set already declared
+[06:16:43] step 1: pnpm typecheck
+$ tsc --noEmit
+[06:16:53] step 1: pnpm build
+$ tsdown
+ℹ tsdown v0.22.14 powered by rolldown v1.2.7
+ℹ config file: /home/linhan_cluster/evo_vs_rsi/tsdown.config.ts 
+ℹ entry: src/index.ts, src/sources/github.ts, src/sources/feishu.ts, src/sources/local.ts
+ℹ target: es2024
+ℹ tsconfig: tsconfig.json
+ℹ entry: src/client/index.tsx
+ℹ target: node22.19.0
+ℹ tsconfig: tsconfig.json
+ℹ Build start
+
+ WARN  We recommend using the ESM format instead of CommonJS.
+The ESM format is compatible with modern platforms and runtimes, and most new libraries are now distributed only in ESM format.
+Learn more at https://nodejs.org/en/learn/modules/publishing-a-package#how-did-we-get-here
+
+ℹ Cleaning 15 files
+ℹ [CJS] lib/client.js  358.52 kB │ gzip: 86.64 kB
+ℹ [CJS] 1 files, total: 358.52 kB
+✔ Build complete in 3388ms
+ℹ [ESM] lib/index.js                 482.94 kB │ gzip: 137.68 kB
+ℹ [ESM] lib/github-watch.js           33.95 kB │ gzip:  11.01 kB
+ℹ [ESM] lib/local-watch.js             9.41 kB │ gzip:   3.76 kB
+ℹ [ESM] lib/feishu-watch.js            0.60 kB │ gzip:   0.29 kB
+ℹ [ESM] lib/feishu-DAHN88AO.js        48.36 kB │ gzip:  14.59 kB
+ℹ [ESM] lib/poll-Q1HkRK4f.js          36.34 kB │ gzip:  12.89 kB
+ℹ [ESM] lib/github-pull-Cb8JLX8d.js   25.46 kB │ gzip:   8.25 kB
+ℹ [ESM] lib/host-D5TtR2Yd.js           2.21 kB │ gzip:   1.21 kB
+ℹ [ESM] lib/index.d.ts                24.97 kB │ gzip:   7.72 kB
+ℹ [ESM] lib/feishu-watch.d.ts          5.98 kB │ gzip:   2.00 kB
+ℹ [ESM] lib/local-watch.d.ts           2.20 kB │ gzip:   0.97 kB
+ℹ [ESM] lib/github-watch.d.ts          0.39 kB │ gzip:   0.22 kB
+ℹ [ESM] lib/kind-CC2z1Ko1.d.ts        35.84 kB │ gzip:   9.06 kB
+ℹ [ESM] lib/intake-BntR4bhz.d.ts      29.31 kB │ gzip:   9.22 kB
+ℹ [ESM] 14 files, total: 737.98 kB
+[33m[PLUGIN_TIMINGS] [0mPlugin hooks ran for 3.3s of this 3.5s build (93%).
+The slowest hooks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - rolldown-plugin-dts:generate load (83%, 2.9s, 43 calls)
+Additional hook time came from the hooks below and from hooks under 1s.
+3 hooks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with `node --cpu-prof`:
+  - rolldown-plugin-dts:resolver resolveId (306 calls)
+  - tsdown:deps resolveId (92 calls)
+  - rolldown-plugin-dts:fake-js transform (43 calls)
+See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
+
+✔ Build complete in 3781ms
+[06:16:58] step 1: deploy ok
+[06:16:58] stores cleared for the new round
+[06:16:58] === arm rsi ===
+dsh-superagent stopped. Automatic recovery is paused until start/restart.

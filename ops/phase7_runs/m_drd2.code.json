@@ -1,0 +1,24 @@
+{
+  "ticket": "chembl-drd2-arm-m4-857d183f24c9",
+  "jobs_total": 13,
+  "jobs_failed": 1,
+  "failure_rate": 0.077,
+  "first_success_index": 0,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r3_b4096_v2"
+  ],
+  "models": [
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom",
+    "scaffold"
+  ],
+  "n_featurizations": 2,
+  "n_models": 3,
+  "code_lines": 0,
+  "top100": true
+}

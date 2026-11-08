@@ -1,0 +1,107 @@
+[17:15:03] phase7b oracle chain start (pid 3214317)
+[17:15:03] step 0: waiting for the round-7 M driver
+[17:15:03] step 0: driver gone; waiting for tickets to settle
+[17:15:04] step 0: clean, 0 unfinished tickets
+[17:15:04] step 1: extending the locked-eval schema
+python: already patched
+ts: already patched
+ts: RankInput.desc_set already declared
+[17:15:04] step 1: pnpm typecheck
+$ tsc --noEmit
+[17:15:18] step 1: pnpm build
+$ tsdown
+ℹ tsdown v0.22.14 powered by rolldown v1.2.7
+ℹ config file: /home/linhan_cluster/evo_vs_rsi/tsdown.config.ts 
+ℹ entry: src/index.ts, src/sources/github.ts, src/sources/feishu.ts, src/sources/local.ts
+ℹ target: es2024
+ℹ tsconfig: tsconfig.json
+ℹ entry: src/client/index.tsx
+ℹ target: node22.19.0
+ℹ tsconfig: tsconfig.json
+ℹ Build start
+
+ WARN  We recommend using the ESM format instead of CommonJS.
+The ESM format is compatible with modern platforms and runtimes, and most new libraries are now distributed only in ESM format.
+Learn more at https://nodejs.org/en/learn/modules/publishing-a-package#how-did-we-get-here
+
+ℹ Cleaning 15 files
+ℹ [CJS] lib/client.js  358.52 kB │ gzip: 86.64 kB
+ℹ [CJS] 1 files, total: 358.52 kB
+✔ Build complete in 4200ms
+ℹ [ESM] lib/index.js                 482.94 kB │ gzip: 137.68 kB
+ℹ [ESM] lib/github-watch.js           33.95 kB │ gzip:  11.01 kB
+ℹ [ESM] lib/local-watch.js             9.41 kB │ gzip:   3.76 kB
+ℹ [ESM] lib/feishu-watch.js            0.60 kB │ gzip:   0.29 kB
+ℹ [ESM] lib/feishu-DAHN88AO.js        48.36 kB │ gzip:  14.59 kB
+ℹ [ESM] lib/poll-Q1HkRK4f.js          36.34 kB │ gzip:  12.89 kB
+ℹ [ESM] lib/github-pull-Cb8JLX8d.js   25.46 kB │ gzip:   8.25 kB
+ℹ [ESM] lib/host-D5TtR2Yd.js           2.21 kB │ gzip:   1.21 kB
+ℹ [ESM] lib/index.d.ts                24.97 kB │ gzip:   7.72 kB
+ℹ [ESM] lib/feishu-watch.d.ts          5.98 kB │ gzip:   2.00 kB
+ℹ [ESM] lib/local-watch.d.ts           2.20 kB │ gzip:   0.97 kB
+ℹ [ESM] lib/github-watch.d.ts          0.39 kB │ gzip:   0.22 kB
+ℹ [ESM] lib/kind-CC2z1Ko1.d.ts        35.84 kB │ gzip:   9.06 kB
+ℹ [ESM] lib/intake-BntR4bhz.d.ts      29.31 kB │ gzip:   9.22 kB
+ℹ [ESM] 14 files, total: 737.98 kB
+✔ Build complete in 4630ms
+[17:15:24] step 1: deploy ok
+[17:15:24] stores cleared for the new round
+[17:15:24] === arm r (service group rsi) ===
+dsh-superagent stopped. Automatic recovery is paused until start/restart.
+Log: /home/linhan_cluster/evo_vs_rsi/.artifacts/dsh-superagent-superagent-20261108-171529-3215753.log
+{
+  "pids": [
+    3215759
+  ],
+  "cwd": "/home/linhan_cluster/evo_vs_rsi",
+  "url": "http://127.0.0.1:3082",
+  "manually_stopped": false,
+  "health": {
+    "runtime": "ready",
+    "relay": "ready",
+    "notice": "ready",
+    "launch": "ready",
+    "delivery": "ready",
+    "assessment": "ready",
+    "reply": "ready",
+    "evals": "ready",
+    "models": "ready",
+    "github": "paused",
+    "local": "ready"
+  },
+  "errors": {},
+  "setup": null,
+  "feishu": null
+}
+[17:15:48]   service up: group=rsi pid=3215759
+[17:16:00]   driver up: tmux p7b-r
+[21:18:03]   arm r finished, unfinished tickets: 0
+[21:18:03] === arm m (service group memory) ===
+dsh-superagent stopped. Automatic recovery is paused until start/restart.
+Log: /home/linhan_cluster/evo_vs_rsi/.artifacts/dsh-superagent-superagent-20261108-211808-3762729.log
+{
+  "pids": [
+    3762741
+  ],
+  "cwd": "/home/linhan_cluster/evo_vs_rsi",
+  "url": "http://127.0.0.1:3082",
+  "manually_stopped": false,
+  "health": {
+    "runtime": "ready",
+    "relay": "ready",
+    "notice": "ready",
+    "launch": "ready",
+    "delivery": "ready",
+    "assessment": "ready",
+    "reply": "ready",
+    "evals": "ready",
+    "models": "ready",
+    "github": "paused",
+    "local": "ready"
+  },
+  "errors": {},
+  "setup": null,
+  "feishu": null
+}
+[21:18:25]   service up: group=memory pid=3762741
+[21:18:37]   driver up: tmux p7b-m

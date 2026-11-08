@@ -29,9 +29,9 @@ echo "[env.sh] node=$(node -v 2>/dev/null) pnpm=$(pnpm -v 2>/dev/null) gpu=$CUDA
 # missing when arm A was launched on 2026-11-07.
 _EVOVS_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 if [ -f "$_EVOVS_ROOT/ops/usage_hook.cjs" ]; then
-  case ":$NODE_OPTIONS:" in
+  case ":${NODE_OPTIONS:-}:" in
     *":--require $_EVOVS_ROOT/ops/usage_hook.cjs:"*) ;;
-    *) export NODE_OPTIONS="$NODE_OPTIONS --require $_EVOVS_ROOT/ops/usage_hook.cjs" ;;
+    *) export NODE_OPTIONS="${NODE_OPTIONS:-} --require $_EVOVS_ROOT/ops/usage_hook.cjs" ;;
   esac
 fi
 unset _EVOVS_ROOT

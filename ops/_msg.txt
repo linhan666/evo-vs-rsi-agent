@@ -1,0 +1,20 @@
+fix(phase7b): two automation defects that cost 11 hours, plus a watchdog
+
+事故链（2026-11-08，06:16 与 17:16 两次）：
+
+1. service_start 里调用 tmux kill-server —— 编排器自身就住在 tmux 里，把自己杀了
+2. env.sh 里 case ":$NODE_OPTIONS:" 未加 :- 保护 —— 编排器开了 set -u，
+   source 时整个 shell 中止（这段代码是埋点那次追加的）
+3. Windows 侧用 Python 打补丁写回了 CRLF —— bash 报 $'\r': command not found
+4. 把服务分组名 rsi 当成驱动器的 --group —— argparse 报 invalid choice
+
+修复后仍出现第二个故障：评估阶段的 LLM 调用挂死。表现是 trigger 表有记录、
+decision 表从不产生，本地 source 又按 taskId 去重，于是同一个任务被重投 480 次
+而工单数始终为 0。重启服务即恢复。
+
+新增 ops/p7b_watchdog.sh：独立进程，按「臂驱动器存活但工单数 20 分钟不变」判定挂起，
+用与编排器相同的 set-environment -g 机制重启服务。刻意不用 trigger 与 decision 的差值，
+因为去重后 trigger 表同样不增长。
+
+顺带清理了 3 条陈旧 trigger 与 1 条 decision，解除 taskId 去重死锁；
+p7b_watchdog.sh 里带了服务分组到 usage 日志的映射，避免重启后台账写错文件。

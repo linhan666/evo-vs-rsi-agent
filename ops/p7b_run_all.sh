@@ -67,7 +67,7 @@ wait_round7() {
 deploy() {
   log "step 1: extending the locked-eval schema"
   "$PY" ops/p7b_patch.py --include-ts >>"$LOG" 2>&1 || die "p7b_patch failed"
-  . ./env.sh >/dev/null 2>&1
+  set +u; . ./env.sh >/dev/null 2>&1; set -u   # env.sh is now -u safe, this is belt and braces
   log "step 1: pnpm typecheck"
   pnpm typecheck >>"$LOG" 2>&1 || die "typecheck failed"
   log "step 1: pnpm build"
@@ -80,8 +80,19 @@ service_start() {  # $1 group  $2 usage-log filename
   local group=$1 usage=$2
   scripts/dsh-superagent stop >>"$LOG" 2>&1
   sleep 3
-  if tmux ls >/dev/null 2>&1; then tmux kill-server >/dev/null 2>&1; sleep 2; fi
-  . ./env.sh >/dev/null 2>&1
+  # NEVER `tmux kill-server` here: this orchestrator runs inside tmux itself, so
+  # killing the server killed the chain at 06:16 on the first attempt. Drop only
+  # the agent session, then push the arm configuration into tmux's *global*
+  # environment so a new session picks it up even though the server predates it.
+  tmux kill-session -t dsh-superagent >/dev/null 2>&1 || true
+  sleep 1
+  tmux set-environment -g EVOVS_GROUP "$group"
+  tmux set-environment -g EVOVS_PYTHON "$PY"
+  tmux set-environment -g EVOVS_DATA_ROOT "$ROOT/scientific/.artifacts"
+  tmux set-environment -g EVOVS_MODEL deepseek-flash
+  tmux set-environment -g EVOVS_USAGE_LOG "$ROOT/scientific/.artifacts/$usage"
+  tmux set-environment -g NODE_OPTIONS "--require $ROOT/ops/usage_hook.cjs"
+  set +u; . ./env.sh >/dev/null 2>&1; set -u   # env.sh is now -u safe, this is belt and braces
   export EVOVS_GROUP="$group"
   export EVOVS_PYTHON="$PY"
   export EVOVS_DATA_ROOT="$ROOT/scientific/.artifacts"
@@ -100,22 +111,51 @@ service_start() {  # $1 group  $2 usage-log filename
 }
 
 # ---------------------------------------------------------------- arms
-run_agent_arm() {  # $1 group  $2 store file (may be empty)  $3 usage log
-  local group=$1 store=$2 usage=$3
-  log "=== arm $group ==="
-  service_start "$group" "$usage"
-  local cmd="python3 -u ops/phase7_seq.py --group $group --prefix p7b --tasks-dir ops/phase7b_custom --label p7b"
+
+pending_triggers() {
+  python3 - <<'EOF'
+import sqlite3
+con = sqlite3.connect('.artifacts/state/orchestrator.sqlite')
+t = con.execute('SELECT COUNT(*) FROM trigger').fetchone()[0]
+d = con.execute('SELECT COUNT(*) FROM decision').fetchone()[0]
+print(t - d)
+EOF
+}
+
+run_agent_arm() {  # $1 driver group (r|a|m)  $2 service group (rsi|memory|fixed)  $3 store  $4 usage
+  local dgroup=$1 sgroup=$2 store=$3 usage=$4
+  log "=== arm $dgroup (service group $sgroup) ==="
+  service_start "$sgroup" "$usage"
+  local cmd="python3 -u ops/phase7_seq.py --group $dgroup --prefix p7b --tasks-dir ops/phase7b_custom --label p7b"
   [ -n "$store" ] && cmd="$cmd --store $store"
-  tmux new-session -d -s "p7b-$group" -c "$ROOT" \
-    "$cmd >> ops/p7b_runs/arm_${group}.log 2>&1"
-  sleep 10
-  tmux has-session -t "p7b-$group" 2>/dev/null || die "driver for $group did not stay up"
-  log "  driver up: tmux p7b-$group"
-  while tmux has-session -t "p7b-$group" 2>/dev/null; do sleep 60; done
+  tmux new-session -d -s "p7b-$dgroup" -c "$ROOT" \
+    "$cmd >> ops/p7b_runs/arm_${dgroup}.log 2>&1"
+  sleep 12
+  tmux has-session -t "p7b-$dgroup" 2>/dev/null || die "driver for $dgroup did not stay up"
+  log "  driver up: tmux p7b-$dgroup"
+  # Watchdog for the failure seen twice: the assessment LLM call hangs and the
+  # trigger never gets a decision, so it never becomes a ticket and the driver
+  # just re-submits forever. A restart of the service clears the stuck client.
+  local stuck=0 pend
+  while tmux has-session -t "p7b-$dgroup" 2>/dev/null; do
+    sleep 60
+    pend=$(pending_triggers 2>/dev/null || echo 0)
+    if [ "${pend:-0}" -gt 0 ]; then
+      stuck=$((stuck + 1))
+      log "  watchdog: $pend trigger(s) without a decision (${stuck}/4)"
+      if [ "$stuck" -ge 4 ]; then
+        log "  WATCHDOG: assessment stuck for 4 min -- restarting the service"
+        service_start "$sgroup" "$usage"
+        stuck=0
+      fi
+    else
+      stuck=0
+    fi
+  done
   local n
   n=$(unfinished_tickets)
-  log "  arm $group finished, unfinished tickets: $n"
-  [ "$n" = "0" ] || die "arm $group left $n unfinished tickets"
+  log "  arm $dgroup finished, unfinished tickets: $n"
+  [ "$n" = "0" ] || die "arm $dgroup left $n unfinished tickets"
 }
 
 run_w_arm() {
@@ -143,9 +183,9 @@ deploy
 rm -f "$EXPERIENCE/experience_r.json" "$EXPERIENCE/experience_m.json"
 log "stores cleared for the new round"
 
-run_agent_arm rsi    "$EXPERIENCE/experience_r.json" usage_p7b_r.jsonl
-run_agent_arm memory "$EXPERIENCE/experience_m.json" usage_p7b_m.jsonl
-run_agent_arm fixed  ""                              usage_p7b_a.jsonl
+run_agent_arm r rsi       "$EXPERIENCE/experience_r.json" usage_p7b_r.jsonl
+run_agent_arm m memory    "$EXPERIENCE/experience_m.json" usage_p7b_m.jsonl
+run_agent_arm a fixed     ""                              usage_p7b_a.jsonl
 run_w_arm
 reports
 
