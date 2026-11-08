@@ -118,9 +118,16 @@ while :; do
   sleep 60
   arm=$(arm_driver)
   if [ -z "$arm" ]; then
-    log "no arm driver running; watchdog exits"
-    break
+    # Do NOT exit. Arm handovers leave a window with no driver, and exiting there
+    # is exactly how the A->W stall on 2026-11-09 went unwatched -- the second time
+    # a handover lost its monitor. Stay alive and keep sampling.
+    idle=$(( ${idle:-0} + 60 ))
+    if [ $((idle % 600)) -eq 0 ]; then
+      log "no arm driver yet (${idle}s); staying alive for the next arm"
+    fi
+    continue
   fi
+  idle=0
 
   cleared=$(retry_failed_assessments 2>/dev/null || echo 0)
   if [ "${cleared:-0}" -gt 0 ]; then

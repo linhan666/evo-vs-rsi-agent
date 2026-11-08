@@ -1,0 +1,131 @@
+[18:28:51Z] group=a sequence=['d2', '5ht', 'adr', 'drd2', 'mor', 'cbr', 'kor', 'ca2', 'pt']
+[18:28:51Z] submitted p7b_a_d2.json -> inbox/p7b_a_d2.json
+[18:29:21Z] #1 d2 waiting (state=running, assigned 1x)
+[18:29:51Z] #1 d2 waiting (state=running, assigned 1x)
+[18:30:21Z] #1 d2 waiting (state=running, assigned 1x)
+[18:30:51Z] #1 d2 waiting (state=running, assigned 1x)
+[18:31:21Z] #1 d2 waiting (state=running, assigned 1x)
+[18:31:51Z] #1 d2 waiting (state=running, assigned 1x)
+[18:32:21Z] #1 d2 waiting (state=running, assigned 1x)
+[18:32:51Z] #1 d2 waiting (state=running, assigned 1x)
+[18:33:21Z] #1 d2 waiting (state=running, assigned 1x)
+[18:33:51Z] #1 d2 waiting (state=running, assigned 1x)
+[18:34:21Z] #1 d2 waiting (state=running, assigned 1x)
+[18:34:51Z] #1 d2 DONE state=ready wall=332.9s jobs=20 best=runs/rf_v1_seed101(0.9816) scaffold=runs/rf_v1_seed101(0.9816) top100=1
+[18:34:51Z] code_metrics -> a_d2_p7b.code.json
+[18:34:52Z] submitted p7b_a_5ht.json -> inbox/p7b_a_5ht.json
+[18:35:22Z] #2 5ht waiting (state=running, assigned 1x)
+[18:35:52Z] #2 5ht waiting (state=running, assigned 1x)
+[18:36:22Z] #2 5ht waiting (state=running, assigned 1x)
+[18:36:52Z] #2 5ht waiting (state=running, assigned 1x)
+[18:37:22Z] #2 5ht waiting (state=running, assigned 1x)
+[18:37:52Z] #2 5ht waiting (state=running, assigned 1x)
+[18:38:22Z] #2 5ht waiting (state=running, assigned 1x)
+[18:38:52Z] #2 5ht waiting (state=running, assigned 1x)
+[18:39:22Z] #2 5ht waiting (state=running, assigned 1x)
+[18:39:52Z] #2 5ht waiting (state=running, assigned 1x)
+[18:40:22Z] #2 5ht waiting (state=running, assigned 1x)
+[18:40:52Z] #2 5ht DONE state=ready wall=351.8s jobs=21 best=p7b_5ht/train_rf_v1_seed7(0.9992) scaffold=p7b_5ht/train_rf_v1_seed7(0.9992) top100=4
+[18:40:52Z] code_metrics -> a_5ht_p7b.code.json
+[18:40:53Z] submitted p7b_a_adr.json -> inbox/p7b_a_adr.json
+[18:41:23Z] #3 adr waiting (state=running, assigned 1x)
+[18:41:53Z] #3 adr waiting (state=running, assigned 1x)
+[18:42:23Z] #3 adr waiting (state=running, assigned 1x)
+[18:42:53Z] #3 adr waiting (state=running, assigned 1x)
+[18:43:23Z] #3 adr waiting (state=running, assigned 1x)
+[18:43:53Z] #3 adr waiting (state=running, assigned 1x)
+[18:44:23Z] #3 adr waiting (state=running, assigned 1x)
+[18:44:53Z] #3 adr waiting (state=running, assigned 1x)
+[18:45:23Z] #3 adr DONE state=ready wall=258.6s jobs=20 best=models/rf_v1_4k(0.9457) scaffold=models/rf_v1_4k(0.9457) top100=1
+[18:45:23Z] code_metrics -> a_adr_p7b.code.json
+[18:45:23Z] submitted p7b_a_drd2.json -> inbox/p7b_a_drd2.json
+[18:45:53Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:46:23Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:46:53Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:47:23Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:47:53Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:48:23Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:48:54Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:49:24Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:49:54Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:50:24Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:50:54Z] #4 drd2 waiting (state=running, assigned 1x)
+[18:51:24Z] #4 drd2 DONE state=ready wall=347.4s jobs=15 best=work/drd2/model_v2_rf_seed42(0.9565) scaffold=work/drd2/model_v2_rf_seed42(0.9565) top100=1
+[18:51:24Z] code_metrics -> a_drd2_p7b.code.json
+[18:51:24Z] submitted p7b_a_mor.json -> inbox/p7b_a_mor.json
+[18:51:54Z] #5 mor waiting (state=running, assigned 1x)
+[18:52:24Z] #5 mor waiting (state=running, assigned 1x)
+[18:52:54Z] #5 mor waiting (state=running, assigned 1x)
+[18:53:24Z] #5 mor waiting (state=running, assigned 1x)
+[18:53:54Z] #5 mor waiting (state=running, assigned 1x)
+[18:54:24Z] #5 mor waiting (state=running, assigned 1x)
+[18:54:54Z] #5 mor waiting (state=running, assigned 1x)
+[18:55:24Z] #5 mor waiting (state=running, assigned 1x)
+[18:55:54Z] #5 mor waiting (state=running, assigned 1x)
+[18:56:24Z] #5 mor waiting (state=running, assigned 1x)
+[18:56:55Z] #5 mor DONE state=ready wall=309.3s jobs=20 best=.artifacts/state/work/mor-frozen-a-e16601ac3b6e/runs/rf_v2_s23(0.9424) scaffold=.artifacts/state/work/mor-frozen-a-e16601ac3b6e/runs/rf_v2_s23(0.9424) top100=1
+[18:56:55Z] code_metrics -> a_mor_p7b.code.json
+[18:56:55Z] submitted p7b_a_cbr.json -> inbox/p7b_a_cbr.json
+[18:57:25Z] #6 cbr waiting (state=running, assigned 1x)
+[18:57:55Z] #6 cbr waiting (state=running, assigned 1x)
+[18:58:25Z] #6 cbr waiting (state=running, assigned 1x)
+[18:58:55Z] #6 cbr waiting (state=running, assigned 1x)
+[18:59:25Z] #6 cbr waiting (state=running, assigned 1x)
+[18:59:55Z] #6 cbr waiting (state=running, assigned 1x)
+[19:00:25Z] #6 cbr waiting (state=running, assigned 1x)
+[19:00:55Z] #6 cbr waiting (state=running, assigned 1x)
+[19:01:25Z] #6 cbr waiting (state=running, assigned 1x)
+[19:01:55Z] #6 cbr waiting (state=running, assigned 1x)
+[19:02:25Z] #6 cbr waiting (state=running, assigned 1x)
+[19:02:55Z] #6 cbr waiting (state=running, assigned 1x)
+[19:03:25Z] #6 cbr waiting (state=running, assigned 1x)
+[19:03:56Z] #6 cbr waiting (state=running, assigned 1x)
+[19:04:26Z] #6 cbr DONE state=ready wall=445.9s jobs=19 best=cbr/model_rf_v2_s42(1.0) scaffold=cbr/model_rf_v2_s42(1.0) top100=2
+[19:04:26Z] code_metrics -> a_cbr_p7b.code.json
+[19:04:26Z] submitted p7b_a_kor.json -> inbox/p7b_a_kor.json
+[19:04:56Z] #7 kor waiting (state=progress, assigned 1x)
+[19:05:26Z] #7 kor waiting (state=progress, assigned 1x)
+[19:05:56Z] #7 kor waiting (state=progress, assigned 1x)
+[19:06:26Z] #7 kor waiting (state=progress, assigned 1x)
+[19:06:56Z] #7 kor waiting (state=progress, assigned 1x)
+[19:07:26Z] #7 kor waiting (state=progress, assigned 1x)
+[19:07:56Z] #7 kor waiting (state=progress, assigned 1x)
+[19:08:26Z] #7 kor waiting (state=progress, assigned 1x)
+[19:08:57Z] #7 kor DONE state=ready wall=252.3s jobs=16 best=runs/kor_ki_v1_rf(0.9843) scaffold=runs/kor_ki_v1_rf(0.9843) top100=1
+[19:08:57Z] code_metrics -> a_kor_p7b.code.json
+[19:08:57Z] submitted p7b_a_ca2.json -> inbox/p7b_a_ca2.json
+[19:09:27Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:09:57Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:10:27Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:10:57Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:11:27Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:11:57Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:12:27Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:12:57Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:13:27Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:13:57Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:14:27Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:14:57Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:15:27Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:15:57Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:16:27Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:16:58Z] #8 ca2 waiting (state=running, assigned 1x)
+[19:17:28Z] #8 ca2 DONE state=ready wall=483.0s jobs=31 best=runs/rf_v1_r2_4096(0.9865) scaffold=runs/rf_v1_r2_4096(0.9865) top100=2
+[19:17:28Z] code_metrics -> a_ca2_p7b.code.json
+[19:17:28Z] submitted p7b_a_pt.json -> inbox/p7b_a_pt.json
+[19:17:58Z] #9 pt waiting (state=running, assigned 1x)
+[19:18:28Z] #9 pt waiting (state=running, assigned 1x)
+[19:18:58Z] #9 pt waiting (state=running, assigned 1x)
+[19:19:28Z] #9 pt waiting (state=running, assigned 1x)
+[19:19:58Z] #9 pt waiting (state=running, assigned 1x)
+[19:20:28Z] #9 pt waiting (state=running, assigned 1x)
+[19:20:58Z] #9 pt waiting (state=running, assigned 1x)
+[19:21:28Z] #9 pt waiting (state=running, assigned 1x)
+[19:21:58Z] #9 pt waiting (state=running, assigned 1x)
+[19:22:28Z] #9 pt waiting (state=running, assigned 1x)
+[19:22:58Z] #9 pt waiting (state=running, assigned 1x)
+[19:23:29Z] #9 pt waiting (state=running, assigned 1x)
+[19:23:59Z] #9 pt waiting (state=running, assigned 1x)
+[19:24:29Z] #9 pt DONE state=ready wall=387.1s jobs=34 best=pt/rf_v2_r3_s42(0.9481) scaffold=pt/rf_v2_r3_s42(0.9481) top100=1
+[19:24:29Z] code_metrics -> a_pt_p7b.code.json
+[19:24:29Z] sequence complete

@@ -194,3 +194,47 @@
 [18:10:51Z] #6 cbr waiting (state=running, assigned 1x)
 [18:11:21Z] #6 cbr waiting (state=running, assigned 1x)
 [18:11:52Z] #6 cbr waiting (state=running, assigned 1x)
+[18:12:22Z] #6 cbr waiting (state=running, assigned 1x)
+[18:12:52Z] #6 cbr waiting (state=running, assigned 1x)
+[18:13:22Z] #6 cbr waiting (state=running, assigned 1x)
+[18:13:52Z] #6 cbr waiting (state=running, assigned 1x)
+[18:14:22Z] #6 cbr waiting (state=running, assigned 1x)
+[18:14:52Z] #6 cbr DONE state=ready wall=599.4s jobs=27 best=models/cbr_v2_rf_s42(1.0) scaffold=models/cbr_v2_rf_s42(1.0) top100=4
+[18:14:52Z] experience recorded for CBR: {"experience_id": "dataset_CBR_011", "target": "CBR"}; {"experience_id": "model_CBR_012", "target": "CBR"}
+[18:14:52Z] code_metrics -> m_cbr_p7b.code.json
+[18:14:52Z] submitted p7b_m_kor.json -> inbox/p7b_m_kor.json
+[18:15:22Z] #7 kor waiting (state=running, assigned 1x)
+[18:15:53Z] #7 kor waiting (state=running, assigned 1x)
+[18:16:23Z] #7 kor waiting (state=running, assigned 1x)
+[18:16:53Z] #7 kor waiting (state=running, assigned 1x)
+[18:17:23Z] #7 kor waiting (state=running, assigned 1x)
+[18:17:53Z] #7 kor waiting (state=running, assigned 1x)
+[18:18:23Z] #7 kor waiting (state=running, assigned 1x)
+[18:18:53Z] #7 kor waiting (state=running, assigned 1x)
+[18:19:23Z] #7 kor waiting (state=running, assigned 1x)
+[18:19:53Z] #7 kor DONE state=ready wall=265.4s jobs=20 best=runs/cat_v1_s42(0.9857) scaffold=runs/cat_v1_s42(0.9857) top100=1
+[18:19:53Z] experience recorded for KOR: {"experience_id": "dataset_KOR_013", "target": "KOR"}; {"experience_id": "model_KOR_014", "target": "KOR"}
+[18:19:53Z] code_metrics -> m_kor_p7b.code.json
+[18:19:53Z] submitted p7b_m_ca2.json -> inbox/p7b_m_ca2.json
+[18:20:23Z] #8 ca2 waiting (state=running, assigned 1x)
+[18:20:53Z] #8 ca2 waiting (state=running, assigned 1x)
+[18:21:24Z] #8 ca2 waiting (state=running, assigned 1x)
+[18:21:54Z] #8 ca2 waiting (state=running, assigned 1x)
+[18:22:24Z] #8 ca2 waiting (state=running, assigned 1x)
+[18:22:54Z] #8 ca2 waiting (state=running, assigned 1x)
+[18:23:24Z] #8 ca2 waiting (state=running, assigned 1x)
+[18:23:54Z] #8 ca2 waiting (state=running, assigned 1x)
+[18:24:24Z] #8 ca2 DONE state=ready wall=262.5s jobs=17 best=models/ca2_rf_v1_s42(0.9852) scaffold=models/ca2_rf_v1_s42(0.9852) top100=1
+[18:24:24Z] experience recorded for CA2: {"experience_id": "dataset_CA2_015", "target": "CA2"}; {"experience_id": "model_CA2_016", "target": "CA2"}
+[18:24:24Z] code_metrics -> m_ca2_p7b.code.json
+[18:24:24Z] submitted p7b_m_pt.json -> inbox/p7b_m_pt.json
+[18:24:54Z] #9 pt waiting (state=running, assigned 1x)
+[18:25:24Z] #9 pt waiting (state=running, assigned 1x)
+[18:25:54Z] #9 pt waiting (state=running, assigned 1x)
+[18:26:25Z] #9 pt waiting (state=running, assigned 1x)
+[18:26:55Z] #9 pt waiting (state=running, assigned 1x)
+[18:27:25Z] #9 pt waiting (state=running, assigned 1x)
+[18:27:55Z] #9 pt DONE state=ready wall=199.1s jobs=16 best=models/pt_v1_rf_r2(0.9423) scaffold=models/pt_v1_rf_r2(0.9423) top100=1
+[18:27:55Z] experience recorded for PT: {"experience_id": "dataset_PT_017", "target": "PT"}; {"experience_id": "model_PT_018", "target": "PT"}
+[18:27:55Z] code_metrics -> m_pt_p7b.code.json
+[18:27:55Z] sequence complete

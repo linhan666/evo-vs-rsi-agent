@@ -1,0 +1,28 @@
+{
+  "ticket": "anhydrase-frozen-a-316de8f4b2a2",
+  "jobs_total": 31,
+  "jobs_failed": 9,
+  "failure_rate": 0.29,
+  "first_success_index": 0,
+  "featurizations": [
+    "r1_b256_v1",
+    "r2_b2048_v1",
+    "r2_b2048_v2",
+    "r2_b4096_v1",
+    "r3_b2048_v1",
+    "r3_b4096_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom"
+  ],
+  "n_featurizations": 6,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

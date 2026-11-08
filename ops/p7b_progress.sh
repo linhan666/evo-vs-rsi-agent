@@ -43,14 +43,21 @@ def current_target():
     for path in sorted(glob.glob("ops/p7b_runs/arm_*.log")):
         try:
             with open(path) as f:
-                lines = [l.strip() for l in f if "waiting (state=" in l]
+                lines = [l.strip() for l in f if "waiting (state=" in l or "sequence complete" in l]
         except OSError:
             continue
         if lines:
             candidate = (os.path.getmtime(path), os.path.basename(path), lines[-1])
             if best is None or candidate[0] > best[0]:
                 best = candidate
-    return f"{best[1]}: {best[2]}" if best else None
+    if not best:
+        return None
+    # A finished arm keeps its last "waiting" line forever; reporting it next to
+    # records=9 is contradictory and hides a stall (2026-11-09 report).
+    if "sequence complete" in best[2]:
+        return f"{best[1]}: arm completed"
+    head = best[2].split(" waiting")[0]
+    return f"{best[1]}: {head} (running)"
 
 def unfinished():
     try:

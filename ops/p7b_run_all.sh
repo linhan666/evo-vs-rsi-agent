@@ -46,7 +46,7 @@ EOF
 wait_round7() {
   log "step 0: waiting for the round-7 M driver"
   local waited=0
-  while tmux has-session -t phase7-seq-m 2>/dev/null; do
+  while tmux has-session -t =phase7-seq-m 2>/dev/null; do
     sleep 60
     waited=$((waited + 60))
     if [ $((waited % 900)) -eq 0 ]; then log "  still waiting (${waited}s)"; fi
@@ -150,13 +150,13 @@ run_agent_arm() {  # $1 driver group (r|a|m)  $2 service group (rsi|memory|fixed
   tmux new-session -d -s "p7b-$dgroup" -c "$ROOT" \
     "$cmd >> ops/p7b_runs/arm_${dgroup}.log 2>&1"
   sleep 12
-  tmux has-session -t "p7b-$dgroup" 2>/dev/null || die "driver for $dgroup did not stay up"
+  tmux has-session -t "=p7b-$dgroup" 2>/dev/null || die "driver for $dgroup did not stay up"
   log "  driver up: tmux p7b-$dgroup"
   # Watchdog for the failure seen twice: the assessment LLM call hangs and the
   # trigger never gets a decision, so it never becomes a ticket and the driver
   # just re-submits forever. A restart of the service clears the stuck client.
   local stuck=0 pend
-  while tmux has-session -t "p7b-$dgroup" 2>/dev/null; do
+  while tmux has-session -t "=p7b-$dgroup" 2>/dev/null; do
     sleep 60
     pend=$(pending_triggers 2>/dev/null || echo 0)
     if [ "${pend:-0}" -gt 0 ]; then
@@ -217,8 +217,14 @@ else
 fi
 
 # each memory-bearing arm starts from an empty store, and they must not share one
-rm -f "$EXPERIENCE/experience_r.json" "$EXPERIENCE/experience_m.json"
-log "stores cleared for the new round"
+# -- but only when the round actually starts at arm r. A resume must never touch
+# them: at 01:08 a resume wiped experience_r.json, and a W resume would wipe M's.
+if [ "$START_FROM" = "r" ]; then
+  rm -f "$EXPERIENCE/experience_r.json" "$EXPERIENCE/experience_m.json"
+  log "stores cleared for the new round"
+else
+  log "resume mode: leaving experience stores untouched"
+fi
 
 case "$START_FROM" in
   r) run_agent_arm r rsi    "$EXPERIENCE/experience_r.json" usage_p7b_r.jsonl ;&

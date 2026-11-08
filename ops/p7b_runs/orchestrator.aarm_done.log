@@ -1,0 +1,94 @@
+[00:28:12] phase7b chain start (pid 72421, from arm m)
+[00:28:12] resume mode: skipping step 0 and deploy (schema already built)
+[00:28:12] stores cleared for the new round
+[00:28:12] === arm m (service group memory) ===
+dsh-superagent stopped. Automatic recovery is paused until start/restart.
+Log: /home/linhan_cluster/evo_vs_rsi/.artifacts/dsh-superagent-superagent-20261109-002819-72755.log
+{
+  "pids": [
+    72815
+  ],
+  "cwd": "/home/linhan_cluster/evo_vs_rsi",
+  "url": "http://127.0.0.1:3082",
+  "manually_stopped": false,
+  "health": {
+    "runtime": "ready",
+    "relay": "ready",
+    "notice": "ready",
+    "launch": "ready",
+    "delivery": "ready",
+    "assessment": "ready",
+    "reply": "ready",
+    "evals": "ready",
+    "models": "ready",
+    "github": "paused",
+    "local": "ready"
+  },
+  "errors": {},
+  "setup": null,
+  "feishu": null
+}
+[00:28:40]   service up: group=memory pid=72815
+[00:28:52]   driver up: tmux p7b-m
+[01:08:37] phase7b chain start (pid 171461, from arm m)
+[01:08:37] resume mode: skipping step 0 and deploy (schema already built)
+[01:08:37] stores cleared for the new round
+[01:08:37] === arm m (service group memory) ===
+dsh-superagent stopped. Automatic recovery is paused until start/restart.
+Log: /home/linhan_cluster/evo_vs_rsi/.artifacts/dsh-superagent-superagent-20261109-010846-171734.log
+{
+  "pids": [
+    171741
+  ],
+  "cwd": "/home/linhan_cluster/evo_vs_rsi",
+  "url": "http://127.0.0.1:3082",
+  "manually_stopped": false,
+  "health": {
+    "runtime": "ready",
+    "relay": "ready",
+    "notice": "ready",
+    "launch": "ready",
+    "delivery": "ready",
+    "assessment": "ready",
+    "reply": "ready",
+    "evals": "ready",
+    "models": "ready",
+    "github": "paused",
+    "local": "ready"
+  },
+  "errors": {},
+  "setup": null,
+  "feishu": null
+}
+[01:09:05]   service up: group=memory pid=171741
+[01:09:17]   driver up: tmux p7b-m
+[02:28:24]   arm m finished, unfinished tickets: 0
+[02:28:24] === arm a (service group fixed) ===
+dsh-superagent stopped. Automatic recovery is paused until start/restart.
+Log: /home/linhan_cluster/evo_vs_rsi/.artifacts/dsh-superagent-superagent-20261109-022832-387335.log
+{
+  "pids": [
+    387353
+  ],
+  "cwd": "/home/linhan_cluster/evo_vs_rsi",
+  "url": "http://127.0.0.1:3082",
+  "manually_stopped": false,
+  "health": {
+    "runtime": "ready",
+    "relay": "ready",
+    "notice": "ready",
+    "launch": "ready",
+    "delivery": "ready",
+    "assessment": "ready",
+    "reply": "ready",
+    "evals": "ready",
+    "models": "ready",
+    "github": "paused",
+    "local": "ready"
+  },
+  "errors": {},
+  "setup": null,
+  "feishu": null
+}
+[02:28:50]   service up: group=fixed pid=387353
+[02:29:02]   driver up: tmux p7b-a

@@ -1,0 +1,24 @@
+{
+  "ticket": "kor-frozen-m-66f28c843a9d",
+  "jobs_total": 20,
+  "jobs_failed": 2,
+  "failure_rate": 0.1,
+  "first_success_index": 1,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r2_b2048_v2"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom"
+  ],
+  "n_featurizations": 2,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}
