@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
-# Independent watchdog for the phase7b chain.
+# Watchdog + assessment-retry for the phase7b chain.
 #
-# History (read before changing the signal)
-# -----------------------------------------
-# v1 used "ticket count unchanged for 20 min" and produced nothing but false
-# positives: a ticket is created once per *target*, so the count legitimately sits
-# still for the 15-20 minutes a target takes. Worse, its arm-name lookup returned
-# "p7b-r" while the mapping expected "r", so every restart silently no-opped —
-# which is the only reason it did not restart the service every two minutes and
-# destroy the run.
+# Two jobs, both consequences of failures actually observed on 2026-11-08/09:
 #
-# The real failure it must catch: the assessment LLM call hangs, so a trigger never
-# becomes a ticket and the driver re-submits the same task forever. The reliable
-# signature is "the driver is alive, nothing scientific is running, and no new job
-# has appeared for a long time".
+# 1. RETRY FAILED ASSESSMENTS. The routing LLM sometimes times out (decision
+#    `unavailable`, reason `timeout`). The local source dedupes by task id, so the
+#    driver's 30-second re-submissions never create a fresh trigger and the arm
+#    sits at zero tickets forever. Deleting the failed trigger + decision lets the
+#    next re-submission be assessed again. All nine R-arm tasks went through this
+#    path successfully, so the model is fine — it is flaky, and a retry loop is the
+#    right shape.
+#
+# 2. DETECT A DEAD CHAIN. If the arm driver is alive, nothing scientific is
+#    running, and no new job has appeared for IDLE_LIMIT, restart the service.
+#
+# Signals deliberately NOT used: "ticket count unchanged" (a ticket is created
+# once per target, so 15-20 min of stillness is normal) and "trigger - decision
+# count" (dedupe means neither table grows when the assessment hangs).
 #
 # Run: tmux new-session -d -s p7b-watch -c /home/linhan_cluster/evo_vs_rsi \
 #        'bash ops/p7b_watchdog.sh'
@@ -29,12 +32,11 @@ mkdir -p "$ROOT/ops/p7b_runs"
 
 log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*" >>"$LOG"; }
 
-arm_driver() {  # prints r|m|a or nothing
+arm_driver() {
   tmux ls 2>/dev/null | sed -n 's/^p7b-\([rma]\):.*/\1/p' | head -1
 }
 
 newest_job_age() {
-  # seconds since the most recently touched job directory, or 99999 if none
   local dir job
   dir=$(ls -dt "$WORK"/*/ 2>/dev/null | head -1)
   if [ -z "$dir" ]; then echo 99999; return; fi
@@ -47,7 +49,35 @@ science_running() {
   ps -eo cmd 2>/dev/null | grep -c '[e]vovs_science' || true
 }
 
-restart_service() {  # $1 arm letter r|m|a
+# Delete triggers whose assessment failed so the driver's next re-submission is
+# assessed afresh. The decision references the trigger's thread id.
+retry_failed_assessments() {
+  "$PY" - <<'EOF'
+import json, sqlite3
+con = sqlite3.connect('.artifacts/state/orchestrator.sqlite')
+failed = set()
+for (v,) in con.execute('SELECT value FROM decision'):
+    d = json.loads(v)
+    # only retry the flaky-transport verdict; a real `ignore` should stand
+    if d.get('kind') == 'unavailable':
+        # the decision points at its triggers through `triggerIds` (an array),
+        # not a singular field -- matching the wrong key silently cleared nothing
+        for tid in (d.get('triggerIds') or []):
+            failed.add(tid)
+cleared = 0
+for rowid, v in list(con.execute('SELECT rowid, value FROM trigger')):
+    t = json.loads(v)
+    ids = {t.get('id')} | {th.get('id') for th in (t.get('threads') or [])}
+    if ids & failed:
+        con.execute('DELETE FROM trigger WHERE rowid=?', (rowid,))
+        cleared += 1
+if cleared:
+    con.commit()
+print(cleared)
+EOF
+}
+
+restart_service() {  # $1 arm letter
   local arm=$1 sgroup usage
   case "$arm" in
     r) sgroup=rsi;    usage=usage_p7b_r.jsonl ;;
@@ -70,7 +100,9 @@ restart_service() {  # $1 arm letter r|m|a
   scripts/dsh-superagent start >>"$LOG" 2>&1
   sleep 8
   local pid
-  pid=$(ps -eo pid,cmd | grep 'bin/dsh --profile superagent' | grep -v grep | awk '{print $1}' | head -1)
+  pid=$(scripts/dsh-superagent status 2>/dev/null | "$PY" -c 'import json,sys
+try: print((json.load(sys.stdin).get("pids") or [""])[0])
+except Exception: print("")')
   if [ -n "$pid" ] && tr '\0' '\n' < "/proc/$pid/environ" | grep -qx "EVOVS_GROUP=$sgroup"; then
     log "service back up: group=$sgroup pid=$pid"
     return 0
@@ -89,6 +121,14 @@ while :; do
     log "no arm driver running; watchdog exits"
     break
   fi
+
+  cleared=$(retry_failed_assessments 2>/dev/null || echo 0)
+  if [ "${cleared:-0}" -gt 0 ]; then
+    log "retry: cleared $cleared trigger(s) whose assessment failed; the next re-submission will be re-assessed"
+    stuck=0
+    continue
+  fi
+
   age=$(newest_job_age)
   busy=$(science_running)
   if [ "$age" -ge "$IDLE_LIMIT" ] && [ "$busy" -eq 0 ]; then

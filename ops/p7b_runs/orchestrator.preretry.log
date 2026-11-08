@@ -1,0 +1,6 @@
+[00:24:32] phase7b chain start (pid 62737, from arm m)
+[00:24:32] resume mode: skipping step 0 and deploy (schema already built)
+[00:24:32] stores cleared for the new round
+[00:24:32] === arm m (service group memory) ===
+dsh-superagent stopped. Automatic recovery is paused until start/restart.
+[00:24:37]   reaping stale tmux client pid=3769041

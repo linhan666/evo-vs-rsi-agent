@@ -1,1 +1,18 @@
 [22:00:25] watchdog start (pid 3870112, idle limit 1080s)
+[23:17:43] no arm driver running; watchdog exits
+[00:38:57] watchdog start (pid 99051, idle limit 1080s)
+[00:39:57] suspect: arm=m no new job for 5019s, 0 science processes (1/3)
+[00:40:50] watchdog start (pid 103194, idle limit 1080s)
+[00:41:50] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:42:50] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:43:50] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:44:50] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:45:50] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:46:50] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:47:50] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:48:50] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:49:51] retry: cleared 2 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:50:51] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:51:51] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[00:52:51] retry: cleared 1 trigger(s) whose assessment failed; the next re-submission will be re-assessed
+[01:10:28] watchdog start (pid 176018, idle limit 1080s)

@@ -55,50 +55,38 @@ def store_path(arm: str) -> str:
 
 
 def build_text(arm: str, seq: int, name: str, slug: str, code: str) -> str:
+    """Compact task text.
+
+    The first version ran ~1.5 KB with a Constraints/Deliverable block. The
+    routing model's assessment call timed out on it repeatedly (decision
+    `unavailable`/`timeout`) while a short probe task went through, so the text is
+    now dense: every path and every obligation survives, the prose does not.
+    """
     labels = DATA / "chembl" / slug / "ki" / "dataset_p7b.csv"
     frozen = DATA / "chembl" / slug / "ki" / "splits" / f"frozen_{slug}.json"
     library = DATA / "zinc" / "library_100k.smi"
+    receipt = f"evaluation/{code.lower()}_locked.json"
 
+    lines = [
+        f"Target {seq}/9: {name} (Ki). Build the most reliable binding-activity predictor "
+        f"and rank the 100k library.",
+        "",
+        f"labels: {labels}",
+        f"library: {library}",
+        f"split: pass {frozen} as --split-manifest to ml.train. Do not call data.split.",
+    ]
     if arm == "a":
-        memory = (
-            "- there is NO experience store in this arm and no experience.retrieve tool: "
-            "derive the approach from first principles\n"
-        )
+        lines.append("no experience store in this arm: derive the approach yourself.")
     else:
-        store = store_path(arm)
-        memory = (
-            f"- experience store: {store} (pass this absolute path as the `store` argument "
-            "of experience.retrieve; a wrong or missing path silently returns zero records)\n"
-        )
-
-    text = f"""Goal: build the most reliable binding-activity predictor for {name} and produce a top-100 ranking of the 100k library.
-
-Constraints:
-- labels: {labels} (read-only). Molecules reserved for the locked test set have already been removed from this file, so everything you see is yours to train on.
-- library: {library}
-- FROZEN SPLIT: {frozen}
-  Pass this exact path as `--split-manifest` to ml.train. Do NOT call data.split, and do not pick your own fractions: every arm is scored on this one manifest so the numbers are comparable.
-{memory}- locked evaluation (REQUIRED): when you have a final model, call evaluation.locked exactly once with --target {code} --endpoint Ki --desc-set <the descriptor set you trained on> and --receipt evaluation/{code.lower()}_locked.json. The receipt holds the AUROC that counts; report it verbatim.
-- this is target #{seq} in a sequence of 9.
-"""
-    if arm != "a":
-        text += (
-            "\nBefore choosing your modelling approach, retrieve prior experience from that store and reuse "
-            "any configuration that fits this dataset's characteristics (sample size, positive rate, target class). "
-            "Only explore new configurations if prior experience does not cover this data profile.\n"
-        )
-    text += f"""
-You may choose representation, model family, and fusion.
-
-Deliverable: report with
-  (a) choices and rationale,
-  (b) frozen-split validation AUROC/AUPRC/EF@1%,
-  (c) the locked-test AUROC from evaluation/{code.lower()}_locked.json (quote it),
-  (d) top-100 path,
-  (e) cost (wall clock, jobs),
-  (f) which experience_id(s) you used, and what you reused verbatim versus adapted.
-"""
-    return text
+        lines.append(f"store: {store_path(arm)} (the `store` argument of experience.retrieve)")
+    lines += [
+        f"finish with: evaluation.locked --target {code} --endpoint Ki "
+        f"--desc-set <the set you trained on> --receipt {receipt}",
+        "",
+        "Report: choices and why; validation AUROC/AUPRC/EF@1%; the locked AUROC quoted "
+        "from the receipt; top-100 path; wall clock and job count; experience ids reused.",
+    ]
+    return "\n".join(lines) + "\n"
 
 
 def main() -> int:

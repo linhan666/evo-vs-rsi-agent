@@ -86,6 +86,13 @@ service_start() {  # $1 group  $2 usage-log filename
   # environment so a new session picks it up even though the server predates it.
   tmux kill-session -t dsh-superagent >/dev/null 2>&1 || true
   sleep 1
+  # graceful stop can time out and leave an orphan holding port 3082; reap any
+  # node dsh process that survived, and any stale tmux *client* left behind
+  for stale in $(ps -eo pid,cmd | grep 'node .*/bin/dsh --profile superagent' | grep -v grep | awk '{print $1}'); do
+    log "  reaping orphan dsh service pid=$stale"
+    kill -9 "$stale" 2>/dev/null || true
+  done
+  sleep 2
   tmux set-environment -g EVOVS_GROUP "$group"
   tmux set-environment -g EVOVS_PYTHON "$PY"
   tmux set-environment -g EVOVS_DATA_ROOT "$ROOT/scientific/.artifacts"
@@ -99,10 +106,22 @@ service_start() {  # $1 group  $2 usage-log filename
   export EVOVS_MODEL=deepseek-flash
   export EVOVS_USAGE_LOG="$ROOT/scientific/.artifacts/$usage"
   scripts/dsh-superagent start >>"$LOG" 2>&1 || die "service start failed for group $group"
-  sleep 5
+  sleep 6
+  # Ask the supervisor which pid it owns. Grepping `ps` is ambiguous: the
+  # `tmux new-session -s dsh-superagent ... /path/bin/dsh --profile superagent`
+  # *client* carries the same command string, and `head -1` picks it. That is
+  # exactly how the r->m handover aborted on 2026-11-08 23:18: the client (a
+  # leftover from 21:23, group rsi) was verified instead of the node process
+  # (group memory), and the chain died on a false negative.
   local pid
-  pid=$(ps -eo pid,cmd | grep 'bin/dsh --profile superagent' | grep -v grep | awk '{print $1}' | head -1)
-  [ -n "$pid" ] || die "no service pid after start ($group)"
+  pid=$(scripts/dsh-superagent status 2>/dev/null | python3 -c '
+import json, sys
+try:
+    print((json.load(sys.stdin).get("pids") or [""])[0])
+except Exception:
+    print("")
+')
+  [ -n "$pid" ] || die "supervisor reports no pid after start ($group)"
   tr '\0' '\n' < "/proc/$pid/environ" | grep -qx "EVOVS_GROUP=$group" \
     || die "EVOVS_GROUP=$group not applied (pid $pid) -- tmux server probably survived the stop"
   tr '\0' '\n' < "/proc/$pid/environ" | grep -q 'usage_hook' \
@@ -175,18 +194,39 @@ reports() {
 }
 
 # ---------------------------------------------------------------- main
-log "phase7b oracle chain start (pid $$)"
-wait_round7
-deploy
+arm_done() {  # $1 arm letter -> 0 if it has all nine records
+  local n
+  n=$(ls "$ROOT"/ops/phase7_runs/"$1"_*_p7b.json 2>/dev/null | wc -l)
+  [ "$n" -ge 9 ]
+}
+
+if [ -n "${1:-}" ]; then
+  START_FROM=$1
+else
+  START_FROM=w
+  for candidate in r m a; do
+    if ! arm_done "$candidate"; then START_FROM=$candidate; break; fi
+  done
+fi
+log "phase7b chain start (pid $$, from arm ${START_FROM})"
+if [ "$START_FROM" = "r" ]; then
+  wait_round7
+  deploy
+else
+  log "resume mode: skipping step 0 and deploy (schema already built)"
+fi
 
 # each memory-bearing arm starts from an empty store, and they must not share one
 rm -f "$EXPERIENCE/experience_r.json" "$EXPERIENCE/experience_m.json"
 log "stores cleared for the new round"
 
-run_agent_arm r rsi       "$EXPERIENCE/experience_r.json" usage_p7b_r.jsonl
-run_agent_arm m memory    "$EXPERIENCE/experience_m.json" usage_p7b_m.jsonl
-run_agent_arm a fixed     ""                              usage_p7b_a.jsonl
-run_w_arm
+case "$START_FROM" in
+  r) run_agent_arm r rsi    "$EXPERIENCE/experience_r.json" usage_p7b_r.jsonl ;&
+  m) run_agent_arm m memory "$EXPERIENCE/experience_m.json" usage_p7b_m.jsonl ;&
+  a) run_agent_arm a fixed  ""                              usage_p7b_a.jsonl ;&
+  w) run_w_arm ;;
+  *) die "unknown start arm: $START_FROM" ;;
+esac
 reports
 
 log "phase7b chain complete"
