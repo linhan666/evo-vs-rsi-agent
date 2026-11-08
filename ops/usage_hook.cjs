@@ -49,7 +49,7 @@ function sniff (text, via) {
   } else {
     try { payloads.push(JSON.parse(text)) } catch { return }
   }
-  const merged = { model: null, prompt_tokens: 0, completion_tokens: 0, cached_tokens: 0 }
+  const merged = { model: null, prompt_tokens: 0, completion_tokens: 0, cached_tokens: 0, reasoning_tokens: 0 }
   let seen = false
   for (const data of payloads) {
     // Anthropic nests the first usage inside `message` (message_start) and sends the
@@ -69,6 +69,11 @@ function sniff (text, via) {
       || usage.cache_read_input_tokens || 0
     if (prompt !== undefined) merged.prompt_tokens = prompt + cached
     if (completion !== undefined) merged.completion_tokens = completion
+    // Thinking budget actually spent. Without it the ledger cannot separate
+    // "reasoned longer" from "wrote more", and an effort-vs-quality arm is
+    // unmeasurable (see HANDOFF section on reasoning effort).
+    const reasoning = usage.completion_tokens_details && usage.completion_tokens_details.reasoning_tokens
+    if (typeof reasoning === 'number') merged.reasoning_tokens = reasoning
     merged.cached_tokens = cached || merged.cached_tokens
   }
   if (!seen) return

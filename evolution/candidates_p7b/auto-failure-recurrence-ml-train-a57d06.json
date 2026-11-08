@@ -1,0 +1,55 @@
+{
+  "candidate_id": "auto-failure-recurrence-ml-train-a57d06",
+  "version": "0.1.0-auto",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "preflight:ml.train",
+      "value": "validate the job inputs before launch (required columns, file kind) and fail fast with an actionable message"
+    }
+  ],
+  "hypothesis": "ml.train keeps failing the same way in recent tickets (ml.train::no_error_recorded, ml.train::LogisticRegression does not accept missing values encoded as), so rejecting that input before launch should remove the retry loop without touching the success path.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "failures_in_replay": 0
+  },
+  "risk": "pre-flight checks add a small fixed cost to every job and may reject inputs the tool would have tolerated",
+  "basis": {
+    "generated_by": "evolution/propose.py",
+    "kind": "failure-recurrence",
+    "tool_id": "ml.train",
+    "evidence": {
+      "tickets": [
+        "p7b_1_d2.json",
+        "p7b_3_adr.json",
+        "p7b_7_kor.json",
+        "p7b_8_ca2.json"
+      ],
+      "recent_hits": 8,
+      "clusters": [
+        {
+          "cluster": "ml.train::no_error_recorded",
+          "recent_hits": 2,
+          "samples": []
+        },
+        {
+          "cluster": "ml.train::LogisticRegression does not accept missing values encoded as",
+          "recent_hits": 3,
+          "samples": [
+            "LogisticRegression does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoos",
+            "LogisticRegression does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoos"
+          ]
+        },
+        {
+          "cluster": "ml.train::ValueError",
+          "recent_hits": 3,
+          "samples": [
+            "ValueError: Input X contains infinity or a value too large for dtype('float32').",
+            "ValueError: Input X contains infinity or a value too large for dtype('float32')."
+          ]
+        }
+      ]
+    }
+  }
+}

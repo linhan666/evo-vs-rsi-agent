@@ -1,0 +1,25 @@
+{
+  "ticket": "dopamine-frozen-m-0697b661636a",
+  "jobs_total": 16,
+  "jobs_failed": 5,
+  "failure_rate": 0.312,
+  "first_success_index": 2,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r2_b2048_v2",
+    "r2_b256_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom"
+  ],
+  "n_featurizations": 3,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

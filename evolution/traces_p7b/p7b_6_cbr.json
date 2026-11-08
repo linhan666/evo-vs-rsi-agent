@@ -1,0 +1,1134 @@
+{
+  "schema_version": "2",
+  "group": "rsi",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/cannabinoid-frozen-r-3c1d482e4193",
+  "exported_at": "2026-11-08T17:40:09+00:00",
+  "steps": [
+    {
+      "job_id": "e86327604557",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:23:17.890Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/retrieval_cbr.json",
+        "--target",
+        "CBR"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/retrieval_cbr.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "d0b5b59f4719",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:23:24.471Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/retrieval_all.json"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/retrieval_all.json",
+          "recorded_sha256": "efe79b14e21b70c2f4d718248685d18db93f9844b787569208bd87d94e9bc4b9",
+          "digest": "json:1d1e7554edb6549afb44fad08651752a6018690a472b3ad971ec2ca1ec7c51fc"
+        }
+      ]
+    },
+    {
+      "job_id": "907b0e3f64c7",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:23:37.165Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output",
+        "features/cbr_train_v1_r2_2048.npz",
+        "--report",
+        "features/cbr_train_v1_r2_2048.report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.76,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/cbr_train_v1_r2_2048.npz",
+          "recorded_sha256": "87ba1d1a25f34211643063242d95593f74935511eb348ba2ca6d4d6311e94d4a",
+          "digest": "npz:de9b387eb0d3442c22bb8334790af0f4511f77533ca235ab4dd715a7d61948a0"
+        },
+        {
+          "path": "features/cbr_train_v1_r2_2048.report.json",
+          "recorded_sha256": "f40e4a14e1341083bb9472668e96d8ba76cee413c741b90d827b5053ebd42001",
+          "digest": "json:2f08799d05abe841efb1fea582a51fae7e9d1c6b9669123aca8b1be73c0e95e7"
+        }
+      ]
+    },
+    {
+      "job_id": "4c5f1e2228e0",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:23:52.294Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v1_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_logreg_v1",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 2.49,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_logreg_v1/metrics.json",
+          "recorded_sha256": "497d5e6892074eb84fd6a0aab783788a83531df52aa1b745928b867d550ee98c",
+          "digest": "json:bd8f26cecbcbeb48618ddb700a7e4f9c6faa9e4f1fd241e266271215033d3aec"
+        },
+        {
+          "path": "models/cbr_logreg_v1/predictions.csv",
+          "recorded_sha256": "f63fc95780007a68548ee5ff9f98111c621d9a0c8e03e126b350caa06dba36a7",
+          "digest": "sha256:f63fc95780007a68548ee5ff9f98111c621d9a0c8e03e126b350caa06dba36a7"
+        },
+        {
+          "path": "models/cbr_logreg_v1/model.joblib",
+          "recorded_sha256": "144b1c5f526a3fe3857d63adab945415e44dd430a5b6d1c10eb5632a2d8e17e9",
+          "digest": "sha256:144b1c5f526a3fe3857d63adab945415e44dd430a5b6d1c10eb5632a2d8e17e9"
+        },
+        {
+          "path": "models/cbr_logreg_v1/artifact_manifest.json",
+          "recorded_sha256": "b4db1e3dd383f448e36339ee8748d8f4f92f9d5ce88836b2ddb671cac2cb7adc",
+          "digest": "json:5127c48d27c48da9d0fc9bb3f7671436a92b2468e959636aa62205ab45939fc4"
+        }
+      ]
+    },
+    {
+      "job_id": "c32bcde283e3",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:24:07.422Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v1_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_rf_v1",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 3.21,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_rf_v1/metrics.json",
+          "recorded_sha256": "77e5b2cef9de8f68d1545934eaa4caa3364fccccbacfa76aad6c924cae9fca78",
+          "digest": "json:bd2cd2b35d168298961e3ed92fca9cbd67f20278675995624e2e3773b4c18ea5"
+        },
+        {
+          "path": "models/cbr_rf_v1/predictions.csv",
+          "recorded_sha256": "f298eb51834fac4eef0c635ed3736835cd32c834877d92405b8df79397760e50",
+          "digest": "sha256:f298eb51834fac4eef0c635ed3736835cd32c834877d92405b8df79397760e50"
+        },
+        {
+          "path": "models/cbr_rf_v1/model.joblib",
+          "recorded_sha256": "e8d11d560cca66e3b17c34bbce0360a1a4bccb37ac0898b6f225cb5be9189c0f",
+          "digest": "sha256:e8d11d560cca66e3b17c34bbce0360a1a4bccb37ac0898b6f225cb5be9189c0f"
+        },
+        {
+          "path": "models/cbr_rf_v1/artifact_manifest.json",
+          "recorded_sha256": "603af8ba118dfe4bafe9713c178f415d727c4fe22333f0451d830e68bffd02d1",
+          "digest": "json:f72b57d71713f29854943760867ecd2cc92e4b0e6d72c5f0489a55bb04fdb003"
+        }
+      ]
+    },
+    {
+      "job_id": "c85ce90d98a9",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:24:10.652Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v1_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_xgb_v1",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 4.82,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_xgb_v1/metrics.json",
+          "recorded_sha256": "4fb1512875898b8c5650646a43e04c9af9a00a9a0f28b4b2733caa68ac9f58ef",
+          "digest": "json:e040b47e122fb676f39aabd245406878e24e4fdfd7038da61b88610544488532"
+        },
+        {
+          "path": "models/cbr_xgb_v1/predictions.csv",
+          "recorded_sha256": "a5ed009e900b34ae93460a2f303ec07cf7608ae3e80f3f58fa9d710596153db5",
+          "digest": "sha256:a5ed009e900b34ae93460a2f303ec07cf7608ae3e80f3f58fa9d710596153db5"
+        },
+        {
+          "path": "models/cbr_xgb_v1/model.joblib",
+          "recorded_sha256": "8e84dfd25b7936a3c07e496ed44058c945bdf7e884635beee166f4edf9157732",
+          "digest": "sha256:8e84dfd25b7936a3c07e496ed44058c945bdf7e884635beee166f4edf9157732"
+        },
+        {
+          "path": "models/cbr_xgb_v1/artifact_manifest.json",
+          "recorded_sha256": "73e65ea8c11e091d6055c651e4138a05c293ded3a71a71730078f6940600b065",
+          "digest": "json:346191461a211805380bbfab686083cfb11ce3eccb31d7f832a94a6206253504"
+        }
+      ]
+    },
+    {
+      "job_id": "2d447f760f97",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:24:15.494Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v1_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_cat_v1",
+        "--model",
+        "catboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 24.75,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_cat_v1/metrics.json",
+          "recorded_sha256": "6f819aaa2e2ea756732bebf2ca600614088f56b351d3cbe6d53ca0e852ec342b",
+          "digest": "json:3e23acabf2452b2a7e6514c209654297936c333feb7839ba03854f5a7f2da4b7"
+        },
+        {
+          "path": "models/cbr_cat_v1/predictions.csv",
+          "recorded_sha256": "58e43e47c3d85a34865449e3a57a56c383e34cc609739e8a0bd0bbe818b31bc0",
+          "digest": "sha256:58e43e47c3d85a34865449e3a57a56c383e34cc609739e8a0bd0bbe818b31bc0"
+        },
+        {
+          "path": "models/cbr_cat_v1/model.joblib",
+          "recorded_sha256": "7f73d035993c17bd90bee69a31d56aa546f4e896704a59899d7ed64adb1b4b65",
+          "digest": "sha256:7f73d035993c17bd90bee69a31d56aa546f4e896704a59899d7ed64adb1b4b65"
+        },
+        {
+          "path": "models/cbr_cat_v1/artifact_manifest.json",
+          "recorded_sha256": "5ff1e49bbea08554e61b9cf5024f01ad249bb8308dda4a2c0b5ca609a45fbe70",
+          "digest": "json:3aba0b2fd5c6b918c8f6752150833e70e8a491c2de848bd140de8007c7fa5522"
+        }
+      ]
+    },
+    {
+      "job_id": "cb5d386ed282",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:24:47.946Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output",
+        "features/cbr_train_v2_r2_2048.npz",
+        "--report",
+        "features/cbr_train_v2_r2_2048.report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 3.55,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/cbr_train_v2_r2_2048.npz",
+          "recorded_sha256": "77281f5e9f151afd9d8602ad9b9650e148bdac03fcb555569ecf90ee77587a2f",
+          "digest": "npz:4449b3918d51da88cf123093a9d0fa8779538f7b995b3c47360092634086a76c"
+        },
+        {
+          "path": "features/cbr_train_v2_r2_2048.report.json",
+          "recorded_sha256": "4f1a4c8ea6875c97f28c333b9bcd76d0b55a24a3d38995bd962037ae5cf2b330",
+          "digest": "json:2f08799d05abe841efb1fea582a51fae7e9d1c6b9669123aca8b1be73c0e95e7"
+        }
+      ]
+    },
+    {
+      "job_id": "906f7e4ea471",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:24:51.518Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output",
+        "features/cbr_train_v1_r3_4096.npz",
+        "--report",
+        "features/cbr_train_v1_r3_4096.report.json",
+        "--radius",
+        "3",
+        "--n-bits",
+        "4096",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.83,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/cbr_train_v1_r3_4096.npz",
+          "recorded_sha256": "f36c0675b1db91d91979deea5a50d07fd0fe3b63ea414b27aede1d5ccee9ac93",
+          "digest": "npz:7f325f199890cc083568b291548e31b0d19596337b0c2cfc42341c9673974bfb"
+        },
+        {
+          "path": "features/cbr_train_v1_r3_4096.report.json",
+          "recorded_sha256": "9529b5798e618f57bbc7ba27116ae52a037783d9e5f2a4d4a82c552a07a7ca30",
+          "digest": "json:7168e5920bf2b2d516b95e80028e2a06095659ea9b64dfeead019a898a5a2546"
+        }
+      ]
+    },
+    {
+      "job_id": "4ff67fd47ce7",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:25:03.861Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v2_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_rf_v2",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 3.54,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_rf_v2/metrics.json",
+          "recorded_sha256": "df631fff47c84e0ab899481095414dea71392c3d13f76b7ea7bda0b595082916",
+          "digest": "json:ff16597aa71bbac6057d9966e233ea8639ab2fe8342b2f41270f5e3ef79bce05"
+        },
+        {
+          "path": "models/cbr_rf_v2/predictions.csv",
+          "recorded_sha256": "2c031e6d102c3f4a5b4f9efd1c876e0ec97a3bc9953c2c8f1d0bc95627203d60",
+          "digest": "sha256:2c031e6d102c3f4a5b4f9efd1c876e0ec97a3bc9953c2c8f1d0bc95627203d60"
+        },
+        {
+          "path": "models/cbr_rf_v2/model.joblib",
+          "recorded_sha256": "138d6c795b6e72d0b9bd45c70d032c52561fe9ebe8b439282ed4f589e6138da6",
+          "digest": "sha256:138d6c795b6e72d0b9bd45c70d032c52561fe9ebe8b439282ed4f589e6138da6"
+        },
+        {
+          "path": "models/cbr_rf_v2/artifact_manifest.json",
+          "recorded_sha256": "d75f9a96018e103333e9e52fad72eb311384f28ddb2fec1b2a311754fb347ae5",
+          "digest": "json:7e2f99ba7e3bbdb12a022bf870922b0c1e033eeb047e6c4762addc13855955f2"
+        }
+      ]
+    },
+    {
+      "job_id": "1ca203409476",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:25:07.422Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v1_r3_4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_rf_r3_4096",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 2.89,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_rf_r3_4096/metrics.json",
+          "recorded_sha256": "c73dc9f22620e925f130fee7ae20a320e56b523dee4bf926eaa3701c7f81dd2d",
+          "digest": "json:5fb7f9b403c9a97f20b84e602e75f7627b171593b42acb2f2832035e65a3c623"
+        },
+        {
+          "path": "models/cbr_rf_r3_4096/predictions.csv",
+          "recorded_sha256": "5efed45528799627a35d29d6ea267b04d390f65f244fef881e4841e74ae0d32d",
+          "digest": "sha256:5efed45528799627a35d29d6ea267b04d390f65f244fef881e4841e74ae0d32d"
+        },
+        {
+          "path": "models/cbr_rf_r3_4096/model.joblib",
+          "recorded_sha256": "e1a2241f66f3cb5f299c5e5bccca0d92537df3055dc6849a1de38f433771caa0",
+          "digest": "sha256:e1a2241f66f3cb5f299c5e5bccca0d92537df3055dc6849a1de38f433771caa0"
+        },
+        {
+          "path": "models/cbr_rf_r3_4096/artifact_manifest.json",
+          "recorded_sha256": "aff81b8af3d29f3e4c08bd8853226f8e1bf078b524c13e5b148a2f5fd4e22ae0",
+          "digest": "json:4ed0158aa899500d0c409ce05d4d6b19de7cbbc760897b1bf366eff8a9135a9f"
+        }
+      ]
+    },
+    {
+      "job_id": "fdaf0cfa5793",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:25:10.335Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v1_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_rf_v1_seed2",
+        "--model",
+        "rf",
+        "--seed",
+        "2",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 3.61,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_rf_v1_seed2/metrics.json",
+          "recorded_sha256": "d19c60fc6468082799503c945c770f3971e57422f02375fcd410770365ac47fa",
+          "digest": "json:01fd51c2ddc92360caa7e38d1c145901208c0a3f34409c85f5f3368ef24e578d"
+        },
+        {
+          "path": "models/cbr_rf_v1_seed2/predictions.csv",
+          "recorded_sha256": "ebe8282e23205ac685b6a48712839530c1b1185c7b56e101cef6e33d87fe72e9",
+          "digest": "sha256:ebe8282e23205ac685b6a48712839530c1b1185c7b56e101cef6e33d87fe72e9"
+        },
+        {
+          "path": "models/cbr_rf_v1_seed2/model.joblib",
+          "recorded_sha256": "d1d8d8f380339af0270013c35269ad487529c06589625283d4204207f84c89d2",
+          "digest": "sha256:d1d8d8f380339af0270013c35269ad487529c06589625283d4204207f84c89d2"
+        },
+        {
+          "path": "models/cbr_rf_v1_seed2/artifact_manifest.json",
+          "recorded_sha256": "e33fff43f02341ef5dc96d95bced4a1202512b691960fd6f7c7cbb7694a010df",
+          "digest": "json:8e5803de4108abd989c0416011a2a940cc2eb884c3ae10ffa95646fa133ec0d0"
+        }
+      ]
+    },
+    {
+      "job_id": "2d42227f5a54",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:25:13.968Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v1_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_rf_v1_seed3",
+        "--model",
+        "rf",
+        "--seed",
+        "3",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 3.19,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_rf_v1_seed3/metrics.json",
+          "recorded_sha256": "b275b133bbc1af4f16b2cac29b58eea883fce437132f170ec2e9a13929ce006f",
+          "digest": "json:1839750a8c58e99e020668853eb8d3da95ec20d6bacd5c2a9071047405e36bf8"
+        },
+        {
+          "path": "models/cbr_rf_v1_seed3/predictions.csv",
+          "recorded_sha256": "b6b4809ce9a00c133fbe8c2590a1bb87b75801fdc37f547e42f4eea015c71afc",
+          "digest": "sha256:b6b4809ce9a00c133fbe8c2590a1bb87b75801fdc37f547e42f4eea015c71afc"
+        },
+        {
+          "path": "models/cbr_rf_v1_seed3/model.joblib",
+          "recorded_sha256": "05cd8195d839f6127a77487ba906b0baeb7ac6312efb669a4aa0d6cd0bd4e147",
+          "digest": "sha256:05cd8195d839f6127a77487ba906b0baeb7ac6312efb669a4aa0d6cd0bd4e147"
+        },
+        {
+          "path": "models/cbr_rf_v1_seed3/artifact_manifest.json",
+          "recorded_sha256": "bcf1129c2844196bd990c8f8e23646cf99022805731f4af5c1656d5636fb7c0c",
+          "digest": "json:e82b476bf7b4b2973650cc4775298087938f3fcb3ab3913713f17c51b42376ae"
+        }
+      ]
+    },
+    {
+      "job_id": "b57aedf1b726",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:25:31.945Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v2_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_rf_v2_seed2",
+        "--model",
+        "rf",
+        "--seed",
+        "2",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 2.27,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_rf_v2_seed2/metrics.json",
+          "recorded_sha256": "5e78c4b1a99628d42e4b3dc3be795c51002649b9dc171eb24e6907a9088064af",
+          "digest": "json:96c5bc97e2271010aa09d65e35dd0ef0dbc6a7caa10a70cdbc7c2afc96112c6f"
+        },
+        {
+          "path": "models/cbr_rf_v2_seed2/predictions.csv",
+          "recorded_sha256": "c6f70101f6ce916275739e2195a4ffcea54cbefb63a08c20b859503945fdf12c",
+          "digest": "sha256:c6f70101f6ce916275739e2195a4ffcea54cbefb63a08c20b859503945fdf12c"
+        },
+        {
+          "path": "models/cbr_rf_v2_seed2/model.joblib",
+          "recorded_sha256": "67154408c1387a93b478ef22237c745a354229b15603c84d8cc43623f525fb9c",
+          "digest": "sha256:67154408c1387a93b478ef22237c745a354229b15603c84d8cc43623f525fb9c"
+        },
+        {
+          "path": "models/cbr_rf_v2_seed2/artifact_manifest.json",
+          "recorded_sha256": "b9327aaa73d1a5798c368577b3fc982e0d5d74d86ae2e8780ce2fa4e93235b22",
+          "digest": "json:0749cd8638ad93bfa8de0726e2a3b1d545ebbfcbcc3755cf9da33fd5561db3a4"
+        }
+      ]
+    },
+    {
+      "job_id": "a222f6f49669",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:25:34.236Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v2_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_rf_v2_seed3",
+        "--model",
+        "rf",
+        "--seed",
+        "3",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 3.22,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_rf_v2_seed3/metrics.json",
+          "recorded_sha256": "c34a133760f59e7d8e0274dff7fc5a6c39de073ef79d0dfdbbd875a10138d807",
+          "digest": "json:781d3cab6afb628d684794670e45c4a6c1db38a0ec3201d3bf167cb78f6e8ced"
+        },
+        {
+          "path": "models/cbr_rf_v2_seed3/predictions.csv",
+          "recorded_sha256": "53b8f286c4c1b497de938133e21b33e99ecb4cb289b8d2912d744fdf1c56968d",
+          "digest": "sha256:53b8f286c4c1b497de938133e21b33e99ecb4cb289b8d2912d744fdf1c56968d"
+        },
+        {
+          "path": "models/cbr_rf_v2_seed3/model.joblib",
+          "recorded_sha256": "3d947302a1e658f6f8bbcb2e6956c63546331f27ab6dfb3f79df59c986f6dfd2",
+          "digest": "sha256:3d947302a1e658f6f8bbcb2e6956c63546331f27ab6dfb3f79df59c986f6dfd2"
+        },
+        {
+          "path": "models/cbr_rf_v2_seed3/artifact_manifest.json",
+          "recorded_sha256": "f29feefdc7e3c8ac582ccd447a411c386256c4e1b016a618ede047ef61f9b965",
+          "digest": "json:5b5015f796b573520220f139c6d3543cca01a3999858fd5c0cca3146e196b302"
+        }
+      ]
+    },
+    {
+      "job_id": "91dc04f52d27",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:25:37.483Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v2_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_cat_v2",
+        "--model",
+        "catboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 24.61,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_cat_v2/metrics.json",
+          "recorded_sha256": "77d6ee7e507849fcf1536e5cfcc0d01d50ee572c5eb5fba69f3d3e7587676623",
+          "digest": "json:5149fb28fcf587d4c3783a5bec2c2c19d9390a34194d7451aeec38efbd9b397e"
+        },
+        {
+          "path": "models/cbr_cat_v2/predictions.csv",
+          "recorded_sha256": "be365e2be9b9f259a47839c0520563934a683b935d9c6a7ece6f4a854d315011",
+          "digest": "sha256:be365e2be9b9f259a47839c0520563934a683b935d9c6a7ece6f4a854d315011"
+        },
+        {
+          "path": "models/cbr_cat_v2/model.joblib",
+          "recorded_sha256": "6efeae22ac01cce32910187eb8f4b9af783b5ab61f5010acfee6b939b56d3152",
+          "digest": "sha256:6efeae22ac01cce32910187eb8f4b9af783b5ab61f5010acfee6b939b56d3152"
+        },
+        {
+          "path": "models/cbr_cat_v2/artifact_manifest.json",
+          "recorded_sha256": "09d029b6edf20bd1e2c466b7fa3cc3e72e0f4e5c942dea2950dd693bb238dba3",
+          "digest": "json:982eee7d0f33df075c5eeac1cd7d0638df1edb4383800ff8161b5820068a1765"
+        }
+      ]
+    },
+    {
+      "job_id": "2ea629a3a44e",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:26:02.119Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v2_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_xgb_v2",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 5.04,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_xgb_v2/metrics.json",
+          "recorded_sha256": "68ce966cf3e3de00e04d4f410098e18a9e4a53b12e9c71c98ed09c61c52e5cb5",
+          "digest": "json:72b77ab449778978c885770b4f02c8d4deed85539526c33b9bb61c69b75277c1"
+        },
+        {
+          "path": "models/cbr_xgb_v2/predictions.csv",
+          "recorded_sha256": "d81b83d8759e0e069c6b16103b47ecd56b0a4575675c88d9c02bb8ba9cb1801f",
+          "digest": "sha256:d81b83d8759e0e069c6b16103b47ecd56b0a4575675c88d9c02bb8ba9cb1801f"
+        },
+        {
+          "path": "models/cbr_xgb_v2/model.joblib",
+          "recorded_sha256": "ab94d922d73ca7d5bf8f0cbc2710f092d0a5d2fc2a295376d2b0c44d3701ed1d",
+          "digest": "sha256:ab94d922d73ca7d5bf8f0cbc2710f092d0a5d2fc2a295376d2b0c44d3701ed1d"
+        },
+        {
+          "path": "models/cbr_xgb_v2/artifact_manifest.json",
+          "recorded_sha256": "8e711452f4d5872e0c9b622ca3c6207aac08d29887d43cd56283aac71cb78de9",
+          "digest": "json:01a1cd438327046f2646f1aa2480ce87a5609cea2fa4afc83fc5168557b466d5"
+        }
+      ]
+    },
+    {
+      "job_id": "233898658563",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:26:17.616Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v2_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_cat_v2_seed2",
+        "--model",
+        "catboost",
+        "--seed",
+        "2",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 29.6,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_cat_v2_seed2/metrics.json",
+          "recorded_sha256": "106ba1b4e663c0c49c707f7900c3ee8176ed4133a72b03f52640150c210065e9",
+          "digest": "json:be842b4e05a26a06655e05a230be28b9dc86dee379af98a0c7d40738bb75921c"
+        },
+        {
+          "path": "models/cbr_cat_v2_seed2/predictions.csv",
+          "recorded_sha256": "eccf3c79abfb940ff8f686a09dd5f67a38d30a2d3bbe671b88c41c1f58067179",
+          "digest": "sha256:eccf3c79abfb940ff8f686a09dd5f67a38d30a2d3bbe671b88c41c1f58067179"
+        },
+        {
+          "path": "models/cbr_cat_v2_seed2/model.joblib",
+          "recorded_sha256": "b4bcc4d3adf7f9e3c1306a9bf527089ef8ebe421b2c4f5d7ea3f94e25a5c0346",
+          "digest": "sha256:b4bcc4d3adf7f9e3c1306a9bf527089ef8ebe421b2c4f5d7ea3f94e25a5c0346"
+        },
+        {
+          "path": "models/cbr_cat_v2_seed2/artifact_manifest.json",
+          "recorded_sha256": "72255225db162fcec6c61f621ef1f482b116b8813eaabddc176b9086a43fb860",
+          "digest": "json:2c056297e7eca3c73cb4bbe034e0e74f811b97248b47235033fe2ece03b90b6f"
+        }
+      ]
+    },
+    {
+      "job_id": "ecbdc9820c8e",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:26:47.248Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/cbr_train_v2_r2_2048.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cbr_cat_v2_seed3",
+        "--model",
+        "catboost",
+        "--seed",
+        "3",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/cannabinoid_receptor/ki/splits/frozen_cannabinoid_receptor.json"
+      ],
+      "wall_seconds": 28.15,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cbr_cat_v2_seed3/metrics.json",
+          "recorded_sha256": "00ad07d380f1f5ed9442af1b96fe12247014388ca975be260f85b14af1f3e47a",
+          "digest": "json:4d9f92f65c09d5c0f759e91cf2a2743713f05980d6e4fd5e9029218bfb54ec39"
+        },
+        {
+          "path": "models/cbr_cat_v2_seed3/predictions.csv",
+          "recorded_sha256": "527c8b4498de8884f493d13f78024f697d0a670cecb5c4eddcfb66eea3fa04e2",
+          "digest": "sha256:527c8b4498de8884f493d13f78024f697d0a670cecb5c4eddcfb66eea3fa04e2"
+        },
+        {
+          "path": "models/cbr_cat_v2_seed3/model.joblib",
+          "recorded_sha256": "b793d623521e474ae2443e2009313832f207f8077dba8fb770886d3680029b36",
+          "digest": "sha256:b793d623521e474ae2443e2009313832f207f8077dba8fb770886d3680029b36"
+        },
+        {
+          "path": "models/cbr_cat_v2_seed3/artifact_manifest.json",
+          "recorded_sha256": "294f2f4beecccbb48fcc1166eed1632d314d5bf2802297a45337fef0f8314415",
+          "digest": "json:7b0d47b6e3603f1b4b1fe0ee8e5d13aa1d3c4b1115b3e788e00191bdf6908fbd"
+        }
+      ]
+    },
+    {
+      "job_id": "6867633779c2",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:27:28.498Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "models/cbr_cat_v2/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "screening/cbr_library_ranked.csv",
+        "--top-output",
+        "screening/cbr_top100.csv",
+        "--report",
+        "screening/cbr_screening_report.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 90.63,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "screening/cbr_library_ranked.csv",
+          "recorded_sha256": "71992622907aca315898dcd1f8dd68a7a119cf56d28dbcfcd0669c9fe394eed3",
+          "digest": "sha256:71992622907aca315898dcd1f8dd68a7a119cf56d28dbcfcd0669c9fe394eed3"
+        },
+        {
+          "path": "screening/cbr_top100.csv",
+          "recorded_sha256": "93a32c38b3601bd32f9999fa99dbf756114b4db286fb678462dfeaa899e80487",
+          "digest": "sha256:93a32c38b3601bd32f9999fa99dbf756114b4db286fb678462dfeaa899e80487"
+        },
+        {
+          "path": "screening/cbr_screening_report.json",
+          "recorded_sha256": "491a1faf6e56420b39c69367a59ac6c1b2f20be3f1f4d7e42e1bdac14e98047a",
+          "digest": "json:dcca125b6043104d4b4d801ddf57c9b2c5270b88cab5c2a829414569780cfdb9"
+        }
+      ]
+    },
+    {
+      "job_id": "a034c6be933a",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:29:02.425Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "CBR",
+        "--endpoint",
+        "Ki",
+        "--model",
+        "models/cbr_cat_v2/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "evaluation/cbr_locked.json",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 2.65,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "evaluation/cbr_locked.json",
+          "recorded_sha256": "e03ef62d726da78f3b29e44572780e9dcd8983357fef7509603d85317dde827f",
+          "digest": "json:7d9f6d4f9b083f69e9092566a06da4d462cc5db0df3af1f1480a2ef73f7dddb3"
+        }
+      ]
+    },
+    {
+      "job_id": "e61ecb245cdc",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:30:53.069Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/retrieval_model_mor.json",
+        "--target",
+        "MOR",
+        "--kind",
+        "model"
+      ],
+      "wall_seconds": 0.13,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/retrieval_model_mor.json",
+          "recorded_sha256": "a96822815c697ee6feffd7389a6f9929e736741d30faa35af7f9b632f5606745",
+          "digest": "json:b09e45e314b74d7011a7e5af24829fd9fc8785a07f1793dfca923b947beda130"
+        }
+      ]
+    }
+  ]
+}

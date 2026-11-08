@@ -1,0 +1,47 @@
+{
+  "candidate_id": "auto-latency-share-ml-train-2dff1f",
+  "version": "0.1.0-auto",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "throughput:ml.train",
+      "value": "chunk the work over inputs and keep output order, so the result is byte-identical"
+    }
+  ],
+  "hypothesis": "ml.train owns 58% of the corpus wall clock at a 8.5s median, so making it cheaper should shorten every screening ticket without changing a single artifact.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "max_time_ratio": 1.2,
+    "min_speedup": 1.3
+  },
+  "risk": "parallel work multiplies peak memory; the single code path must keep output order byte-identical",
+  "basis": {
+    "generated_by": "evolution/propose.py",
+    "kind": "latency-share",
+    "tool_id": "ml.train",
+    "evidence": {
+      "share": 0.5835,
+      "median_seconds": 8.52,
+      "calls": 93,
+      "substantial_tickets": [
+        "p7b_1_d2.json",
+        "p7b_2_5ht.json",
+        "p7b_3_adr.json",
+        "p7b_4_drd2.json",
+        "p7b_5_mor.json",
+        "p7b_6_cbr.json",
+        "p7b_7_kor.json",
+        "p7b_8_ca2.json",
+        "p7b_9_pt.json"
+      ],
+      "corpus_seconds": 1358.18,
+      "corpus_window": {
+        "first": "2026-11-08T17:40:04+00:00",
+        "last": "2026-11-08T17:40:10+00:00",
+        "traces": 9
+      },
+      "caveat": "wall clock spans the whole corpus, which may predate a promotion; re-measure the baseline with shadow.py --baseline-replay before trusting it"
+    }
+  }
+}

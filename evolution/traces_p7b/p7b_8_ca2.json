@@ -1,0 +1,778 @@
+{
+  "schema_version": "2",
+  "group": "rsi",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/anhydrase-frozen-r-e412acda8b8d",
+  "exported_at": "2026-11-08T17:40:10+00:00",
+  "steps": [
+    {
+      "job_id": "b3d97646a70e",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:38:49.780Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience_retrieval.json",
+        "--target",
+        "CA2"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience_retrieval.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "a4ba5c0d1551",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:38:49.882Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience_retrieval_all.json",
+        "--kind",
+        "model"
+      ],
+      "wall_seconds": 0.08,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience_retrieval_all.json",
+          "recorded_sha256": "99d0be19cfc88c5cd784483d7d0480474954c401030fa798c652ea5c56537eea",
+          "digest": "json:df0754673c897d3cbd035ac665eede51d45eaae4fc2eee74ab8859cddd0de2e9"
+        }
+      ]
+    },
+    {
+      "job_id": "ed888f0dfd99",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:39:25.009Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output",
+        "features/ca2_v1.npz",
+        "--report",
+        "features/ca2_v1_featurize_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 1.47,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/ca2_v1.npz",
+          "recorded_sha256": "672d83cbeda2fa2b34a0b6426e0c5deb6202eab2d636c2898591db80afc3dcb1",
+          "digest": "npz:6fd22956cf9f18bd3d9e7babe642f0b24f85a00983017fed650c78b446160997"
+        },
+        {
+          "path": "features/ca2_v1_featurize_report.json",
+          "recorded_sha256": "63320c262bee11b7db7a4cab3a0da8eccf97f2f8d0084c0cf6b5a0f90e2c54b2",
+          "digest": "json:81b3f08b9b198c91fad948c056b08804948caf9dfa3b7e1a80731347ff84cd18"
+        }
+      ]
+    },
+    {
+      "job_id": "9c23b1228ad1",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:39:36.283Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/ca2_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/ca2_logreg_v1",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ca2_ki",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/splits/frozen_carbonic_anhydrase_2.json"
+      ],
+      "wall_seconds": 2.81,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/ca2_logreg_v1/metrics.json",
+          "recorded_sha256": "46da64303abc80e01c29dc45da314e53b6e9c328fbf30565cf7fa5ec765e4ded",
+          "digest": "json:12bc0884b2cdb78c981a874b128a7d899858dc6e43054e2931967ae11f43baa7"
+        },
+        {
+          "path": "models/ca2_logreg_v1/predictions.csv",
+          "recorded_sha256": "0bc4cf3754f591a1026340883d2093cbafd2b0ee71c3871dd45ecad67a51fa8f",
+          "digest": "sha256:0bc4cf3754f591a1026340883d2093cbafd2b0ee71c3871dd45ecad67a51fa8f"
+        },
+        {
+          "path": "models/ca2_logreg_v1/model.joblib",
+          "recorded_sha256": "92a26ef21d869f605f641f5ad54a3f7fcf9a2e0e93c840260a0bd1b61b478112",
+          "digest": "sha256:92a26ef21d869f605f641f5ad54a3f7fcf9a2e0e93c840260a0bd1b61b478112"
+        },
+        {
+          "path": "models/ca2_logreg_v1/artifact_manifest.json",
+          "recorded_sha256": "9820fdaccd403bfb30e7baccb934856e2bd19eea441927c9289be55c5521b347",
+          "digest": "json:7fa175a2f03bebc0294b3ae19a15e6a1c8cddd7b11d003b36373da84657f866d"
+        }
+      ]
+    },
+    {
+      "job_id": "85aef028df4c",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:39:57.444Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output",
+        "features/ca2_v2.npz",
+        "--report",
+        "features/ca2_v2_featurize_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 7.57,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/ca2_v2.npz",
+          "recorded_sha256": "48dd4988092e87532146e78f7d70078fe056e5e8b2dfb77fa6beee08e2691a58",
+          "digest": "npz:37cc70bd9b376850f79eb4aab154e614be5f74ba65101915354f6b000dbb49ca"
+        },
+        {
+          "path": "features/ca2_v2_featurize_report.json",
+          "recorded_sha256": "6a8f6c76f808a650f27b00b42c2697b387721a0c7704a920d8cd992aadcde8ad",
+          "digest": "json:81b3f08b9b198c91fad948c056b08804948caf9dfa3b7e1a80731347ff84cd18"
+        }
+      ]
+    },
+    {
+      "job_id": "5c2d9847e271",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:40:05.041Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/ca2_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/ca2_rf_v1_s17",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ca2_ki",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/splits/frozen_carbonic_anhydrase_2.json"
+      ],
+      "wall_seconds": 7.38,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/ca2_rf_v1_s17/metrics.json",
+          "recorded_sha256": "ab19e04c3badd74e768ac04234d646c3e50ee47544205de4a392f3704400d533",
+          "digest": "json:104fbd6b555d54cbfdc691ca7b402fdde88acc0b10781082d3111affec2d5eed"
+        },
+        {
+          "path": "models/ca2_rf_v1_s17/predictions.csv",
+          "recorded_sha256": "ca2bb7265933d54a568de9cc942ac57a4024342d6afeffd04b6535400d288fc0",
+          "digest": "sha256:ca2bb7265933d54a568de9cc942ac57a4024342d6afeffd04b6535400d288fc0"
+        },
+        {
+          "path": "models/ca2_rf_v1_s17/model.joblib",
+          "recorded_sha256": "dd238e4f6deaa6fd77f869998c4bb088504b7567bb2ed041cb277031c4cc91db",
+          "digest": "sha256:dd238e4f6deaa6fd77f869998c4bb088504b7567bb2ed041cb277031c4cc91db"
+        },
+        {
+          "path": "models/ca2_rf_v1_s17/artifact_manifest.json",
+          "recorded_sha256": "c74d75ddd7614baa4d2d2d6e978bb9a1471f42747d40c2b038f8c04ef4f1d247",
+          "digest": "json:180d19eef7279a86349d5cbd53e546bb0154f98de7e79e8a7e76641f4d7b94f3"
+        }
+      ]
+    },
+    {
+      "job_id": "8b35c5a0e4d9",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:40:12.450Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/ca2_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/ca2_xgb_v1_s17",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ca2_ki",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/splits/frozen_carbonic_anhydrase_2.json"
+      ],
+      "wall_seconds": 10.03,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/ca2_xgb_v1_s17/metrics.json",
+          "recorded_sha256": "ccf3817e7640031d6e5c48ee0bf985e4b2e8ca4dd8242a2aaf69fb21300e0955",
+          "digest": "json:eeafe012ca8b09e70361e0a39b6a51d7787f34206abd56e861a2aa36ce763c26"
+        },
+        {
+          "path": "models/ca2_xgb_v1_s17/predictions.csv",
+          "recorded_sha256": "50c0280c2fb088de46191679f48add98bb659fe75a42023cbdc09ef40e4e2b02",
+          "digest": "sha256:50c0280c2fb088de46191679f48add98bb659fe75a42023cbdc09ef40e4e2b02"
+        },
+        {
+          "path": "models/ca2_xgb_v1_s17/model.joblib",
+          "recorded_sha256": "dd08c13138c0ad172fbb8b2cb3ba2f69e740a3754a82c3fcd5803159cd0e3ae8",
+          "digest": "sha256:dd08c13138c0ad172fbb8b2cb3ba2f69e740a3754a82c3fcd5803159cd0e3ae8"
+        },
+        {
+          "path": "models/ca2_xgb_v1_s17/artifact_manifest.json",
+          "recorded_sha256": "a430cef0eddafc32d80a5fb35fd5a874e5ab07ed7df899806461d27b377f6d9c",
+          "digest": "json:6250c489f9405addefa3eb5e98203b174be228447ddcc7aed188eb03bfdb8bb8"
+        }
+      ]
+    },
+    {
+      "job_id": "3a77119438ea",
+      "tool_id": "ml.train",
+      "state": "TIMED_OUT",
+      "started_at": "2026-11-08T14:40:22.508Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/ca2_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/ca2_cat_v1_s17",
+        "--model",
+        "catboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ca2_ki",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/splits/frozen_carbonic_anhydrase_2.json"
+      ],
+      "wall_seconds": 1800.06,
+      "exit_code": null,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "cfdae089c579",
+      "tool_id": "ml.train",
+      "state": "FAILED",
+      "started_at": "2026-11-08T15:10:32.294Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/ca2_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/ca2_rf_v2_s17",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ca2_ki",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/splits/frozen_carbonic_anhydrase_2.json"
+      ],
+      "wall_seconds": 2.99,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "e.py\", line 1473, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/preprocessing/_data.py\", line 914, in partial_fit\n    X = self._validate_data(\n        ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/base.py\", line 633, in _validate_data\n    out = check_array(X, input_name=\"X\", **check_params)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 1064, in check_array\n    _assert_all_finite(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 123, in _assert_all_finite\n    _assert_all_finite_element_wise(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 172, in _assert_all_finite_element_wise\n    raise ValueError(msg_err)\nValueError: Input X contains infinity or a value too large for dtype('float32').",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "c6239a7dafff",
+      "tool_id": "ml.train",
+      "state": "FAILED",
+      "started_at": "2026-11-08T15:10:35.315Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/ca2_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/ca2_xgb_v2_s17",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ca2_ki",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/splits/frozen_carbonic_anhydrase_2.json"
+      ],
+      "wall_seconds": 2.01,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "e.py\", line 1473, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/preprocessing/_data.py\", line 914, in partial_fit\n    X = self._validate_data(\n        ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/base.py\", line 633, in _validate_data\n    out = check_array(X, input_name=\"X\", **check_params)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 1064, in check_array\n    _assert_all_finite(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 123, in _assert_all_finite\n    _assert_all_finite_element_wise(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 172, in _assert_all_finite_element_wise\n    raise ValueError(msg_err)\nValueError: Input X contains infinity or a value too large for dtype('float32').",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "f0f14a73e4e1",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:10:37.354Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/ca2_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/ca2_rf_v1_s7",
+        "--model",
+        "rf",
+        "--seed",
+        "7",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ca2_ki",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/splits/frozen_carbonic_anhydrase_2.json"
+      ],
+      "wall_seconds": 6.02,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/ca2_rf_v1_s7/metrics.json",
+          "recorded_sha256": "8ac503df2c51f66b703c1c0c676b9ccb4119870a0bc2c632cd059cbe90eaed89",
+          "digest": "json:6e19b6f3728af1eca1e710b4c6903334cc0c9931f79f7a6a12ff56f23ae47c6d"
+        },
+        {
+          "path": "models/ca2_rf_v1_s7/predictions.csv",
+          "recorded_sha256": "ff8ccf778a78fdcedec5a6b25c167f20ad502fa31fd38c6ce99c1ff02f0ccd8c",
+          "digest": "sha256:ff8ccf778a78fdcedec5a6b25c167f20ad502fa31fd38c6ce99c1ff02f0ccd8c"
+        },
+        {
+          "path": "models/ca2_rf_v1_s7/model.joblib",
+          "recorded_sha256": "a7fdd4d135fa654890f1bdbe70e01cfee1d224cb3cd88ec23acaf05a1c3c90e1",
+          "digest": "sha256:a7fdd4d135fa654890f1bdbe70e01cfee1d224cb3cd88ec23acaf05a1c3c90e1"
+        },
+        {
+          "path": "models/ca2_rf_v1_s7/artifact_manifest.json",
+          "recorded_sha256": "4d0fba4aada1e0a4739ac537a8a8d88dced4c4a4f752830dc7bbd0882a89aac5",
+          "digest": "json:053abc38b2c117308d42f2252685c91d33a13781e65cd0b2d3cba42255c80946"
+        }
+      ]
+    },
+    {
+      "job_id": "b383268f8e1f",
+      "tool_id": "ml.train",
+      "state": "FAILED",
+      "started_at": "2026-11-08T15:11:08.146Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/ca2_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/ca2_logreg_v2_s17",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ca2_ki",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/splits/frozen_carbonic_anhydrase_2.json"
+      ],
+      "wall_seconds": 1.95,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "e.py\", line 1473, in wrapper\n    return fit_method(estimator, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/preprocessing/_data.py\", line 914, in partial_fit\n    X = self._validate_data(\n        ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/base.py\", line 633, in _validate_data\n    out = check_array(X, input_name=\"X\", **check_params)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 1064, in check_array\n    _assert_all_finite(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 123, in _assert_all_finite\n    _assert_all_finite_element_wise(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 172, in _assert_all_finite_element_wise\n    raise ValueError(msg_err)\nValueError: Input X contains infinity or a value too large for dtype('float32').",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "1e38c53c77a0",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:11:10.124Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/ca2_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/ca2_rf_v1_s42",
+        "--model",
+        "rf",
+        "--seed",
+        "42",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ca2_ki",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/carbonic_anhydrase_2/ki/splits/frozen_carbonic_anhydrase_2.json"
+      ],
+      "wall_seconds": 5.9,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/ca2_rf_v1_s42/metrics.json",
+          "recorded_sha256": "5dd23067b0b16a63787db077415db8a8cafa17ba056f7f2f8668c61db4549d9b",
+          "digest": "json:cc6d61f28a990e77d626ab25fe9bb0e958cdab397c2ad0d2cfa822522c80db9d"
+        },
+        {
+          "path": "models/ca2_rf_v1_s42/predictions.csv",
+          "recorded_sha256": "e6442913bc1f6bc6a9b466f881f7ae456d7fd00335ab567f435f7d042c2badd5",
+          "digest": "sha256:e6442913bc1f6bc6a9b466f881f7ae456d7fd00335ab567f435f7d042c2badd5"
+        },
+        {
+          "path": "models/ca2_rf_v1_s42/model.joblib",
+          "recorded_sha256": "abd899f7c7a4821b33b9ee27f321cc4c319a761bda70b80370d062acaf6bf42f",
+          "digest": "sha256:abd899f7c7a4821b33b9ee27f321cc4c319a761bda70b80370d062acaf6bf42f"
+        },
+        {
+          "path": "models/ca2_rf_v1_s42/artifact_manifest.json",
+          "recorded_sha256": "27f57eb9272447667b2bea1cc795ee71427a315a6f0ac33abdad3dd2583e6914",
+          "digest": "json:144d91339baf0e125df53049db74b2dba8aebac0c96f92d610ef4227c20e2313"
+        }
+      ]
+    },
+    {
+      "job_id": "da2da093d036",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:11:22.288Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "models/ca2_rf_v1_s42/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "rankings/ca2_rf_v1_s42_ranked.csv",
+        "--top-output",
+        "rankings/ca2_rf_v1_s42_top100.csv",
+        "--report",
+        "rankings/ca2_rf_v1_s42_screening_report.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 20.25,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "rankings/ca2_rf_v1_s42_ranked.csv",
+          "recorded_sha256": "91ba60d91320f20aa3738604bd671276d09221c6e7f3620aaabea1320882ced7",
+          "digest": "sha256:91ba60d91320f20aa3738604bd671276d09221c6e7f3620aaabea1320882ced7"
+        },
+        {
+          "path": "rankings/ca2_rf_v1_s42_top100.csv",
+          "recorded_sha256": "a130062c87f3b7430350abfb89be366a5f1175632fba86ee15cef17d9ee3ddda",
+          "digest": "sha256:a130062c87f3b7430350abfb89be366a5f1175632fba86ee15cef17d9ee3ddda"
+        },
+        {
+          "path": "rankings/ca2_rf_v1_s42_screening_report.json",
+          "recorded_sha256": "c34cb0c4c626253ea3b8d5347b9353f9c3b562ae4e21653c3ef4046f04ce4fb0",
+          "digest": "json:4a9d8b589a81ccaf0a97d5b3a50e5c3a55a967273ec4ffe13b76b0994c924310"
+        }
+      ]
+    },
+    {
+      "job_id": "493669ee39c7",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:11:46.826Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "CA2",
+        "--endpoint",
+        "Ki",
+        "--model",
+        "models/ca2_rf_v1_s42/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "evaluation/ca2_locked.json",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 2.67,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "evaluation/ca2_locked.json",
+          "recorded_sha256": "609b1e2892021a4f092003a6dd54fa43c7f62ce78d900f13cfd4a7cdbb0f6110",
+          "digest": "json:0eb72fb3bf1bc516ba2967d52741f67c7676460f537b2d0176a34649e50bb5e6"
+        }
+      ]
+    },
+    {
+      "job_id": "45de9b461662",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:11:57.131Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience_D2.json",
+        "--target",
+        "D2",
+        "--kind",
+        "model"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience_D2.json",
+          "recorded_sha256": "ba8b0d0029c3f6ef089ee7557c9bb3aa6c3b90bbe73c498ae422439e1239a198",
+          "digest": "json:6f2cbf6639fbfcc900b59a12ea4b20e24c12c8257e8d2aa6cad4ab30af6f1e12"
+        }
+      ]
+    },
+    {
+      "job_id": "fa00233afea4",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:12:15.464Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/payloads/52ea51f6084b09d3cd493d794f54084991de266223befb148b4a8195ac557a83.json",
+        "--out",
+        "probe_payload.json",
+        "--target",
+        "D2",
+        "--kind",
+        "model"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "probe_payload.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "cba606c8a50c",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:12:15.579Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/records/model_D2_002.json",
+        "--out",
+        "probe_record.json",
+        "--kind",
+        "model"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "probe_record.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1042 @@
+{
+  "schema_version": "2",
+  "group": "rsi",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/ht-frozen-r-e3be5f2c4f30",
+  "exported_at": "2026-11-08T17:40:05+00:00",
+  "steps": [
+    {
+      "job_id": "a5ff5b27e15a",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:50:19.538Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/5ht_retrieval.json",
+        "--target",
+        "5HT"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/5ht_retrieval.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "da795ea74574",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:50:23.846Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/all_retrieval.json"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/all_retrieval.json",
+          "recorded_sha256": "bfd7a650636a1ba76845d3898ea5c257a402a14a8551b3458a8170be5a16b882",
+          "digest": "json:4f6955f8b8b937d35edbdf8eb23760fc6bc60cff2af3a3e8fdf1d76432587221"
+        }
+      ]
+    },
+    {
+      "job_id": "4b07b8805bee",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:50:35.312Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/dataset_p7b.csv",
+        "--output",
+        "features/5ht_all_v1.npz",
+        "--report",
+        "features/5ht_all_v1.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 1.19,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/5ht_all_v1.npz",
+          "recorded_sha256": "e5e9548def0140ba14db180a7de504b8b457d043fdbb405a037c5e49714aba85",
+          "digest": "npz:f35cbbae5638b955044ad166e1dd6f5529383d66396d8688f8ab3cec1454234e"
+        },
+        {
+          "path": "features/5ht_all_v1.json",
+          "recorded_sha256": "21ba03d712c5db16945ed16e64e11d7a7fab13c26a85ab6c6d7dc969b20c1a62",
+          "digest": "json:cbbd9820fca5cad0f8cddb2fa9188910d7de185ea65649dd241bebf18dea2708"
+        }
+      ]
+    },
+    {
+      "job_id": "d1f2be550287",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:50:44.090Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/5ht_all_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/dataset_p7b.csv",
+        "--output-dir",
+        "experiments/probe",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/splits/frozen_5-hydroxytryptamine_.json"
+      ],
+      "wall_seconds": 2.76,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experiments/probe/metrics.json",
+          "recorded_sha256": "d8399b8c331340ef7d98a75993d1dae9bef266f9d3f6772d944542edf2faa122",
+          "digest": "json:3b412fa31ea365d1e656fbc92472f4d43720e45285f73c341a09b08cfa3d0a49"
+        },
+        {
+          "path": "experiments/probe/predictions.csv",
+          "recorded_sha256": "e5483559c9047ebf0459bed12be303e051001859466ba0363714a8d45aa30673",
+          "digest": "sha256:e5483559c9047ebf0459bed12be303e051001859466ba0363714a8d45aa30673"
+        },
+        {
+          "path": "experiments/probe/model.joblib",
+          "recorded_sha256": "7d3c5ffd96539fabb99a23fd7c9f5f6d1d001880991d88b259f9db4aa58a0193",
+          "digest": "sha256:7d3c5ffd96539fabb99a23fd7c9f5f6d1d001880991d88b259f9db4aa58a0193"
+        },
+        {
+          "path": "experiments/probe/artifact_manifest.json",
+          "recorded_sha256": "2c27832440e8de8cc78c6dc0e7f1df9904df80c245ed2b3a4332d4b3b4ae8e44",
+          "digest": "json:d4cc57c96213124621112ff66ddb5bb63a76d79292c9b44e3a70d6afaf738b46"
+        }
+      ]
+    },
+    {
+      "job_id": "96ce84e038a3",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:51:11.878Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/d2_model.json",
+        "--target",
+        "D2",
+        "--kind",
+        "model"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/d2_model.json",
+          "recorded_sha256": "ba8b0d0029c3f6ef089ee7557c9bb3aa6c3b90bbe73c498ae422439e1239a198",
+          "digest": "json:6f2cbf6639fbfcc900b59a12ea4b20e24c12c8257e8d2aa6cad4ab30af6f1e12"
+        }
+      ]
+    },
+    {
+      "job_id": "bec08314f485",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:51:40.303Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/5ht_all_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/dataset_p7b.csv",
+        "--output-dir",
+        "experiments/rf_v1",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/splits/frozen_5-hydroxytryptamine_.json"
+      ],
+      "wall_seconds": 4.99,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experiments/rf_v1/metrics.json",
+          "recorded_sha256": "868430a7d6fccfe9d4f271a9e8e9383bc34d978cc09fee8e41e2ec03029790f9",
+          "digest": "json:3eead665acd8a6260711e768aa40f22809f41bbd7067a6c5d5f27cb2a2af8cad"
+        },
+        {
+          "path": "experiments/rf_v1/predictions.csv",
+          "recorded_sha256": "d4af1fe6f2b22dba5952b13566b2acf1ffb14323e49646e91d908a584b3166c1",
+          "digest": "sha256:d4af1fe6f2b22dba5952b13566b2acf1ffb14323e49646e91d908a584b3166c1"
+        },
+        {
+          "path": "experiments/rf_v1/model.joblib",
+          "recorded_sha256": "bb831039702a18685e2ac8d3f8c7c9092be78d75ad22ad3b7d9fa2cd54e2aeee",
+          "digest": "sha256:bb831039702a18685e2ac8d3f8c7c9092be78d75ad22ad3b7d9fa2cd54e2aeee"
+        },
+        {
+          "path": "experiments/rf_v1/artifact_manifest.json",
+          "recorded_sha256": "b867d304b79c920dd09bbd4766bee891a1a9d89fc11c50ea186b4a7da96d2ded",
+          "digest": "json:46739eebd339f40e7fae3b4550f771a27fa2fa5a5fa90696fb9bf8f24e8f3bdc"
+        }
+      ]
+    },
+    {
+      "job_id": "050332453d3c",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:51:45.325Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/5ht_all_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/dataset_p7b.csv",
+        "--output-dir",
+        "experiments/xgb_v1",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/splits/frozen_5-hydroxytryptamine_.json"
+      ],
+      "wall_seconds": 7.52,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experiments/xgb_v1/metrics.json",
+          "recorded_sha256": "b2fd273bfbdaed684fc9f0395fdeb7eb7f295cca4c5b64cc0b932b0734f8d794",
+          "digest": "json:dad176d9a4f54f3737c8e820ba42cde4c32bd7f56d33166116181e14273ab2c5"
+        },
+        {
+          "path": "experiments/xgb_v1/predictions.csv",
+          "recorded_sha256": "7e8e96ec37269dd5521caf72c03ec3e3a5412fb1834a5307db14bddf6d576e83",
+          "digest": "sha256:7e8e96ec37269dd5521caf72c03ec3e3a5412fb1834a5307db14bddf6d576e83"
+        },
+        {
+          "path": "experiments/xgb_v1/model.joblib",
+          "recorded_sha256": "acec637a3fe9c6af313a693029f637b80f4e9785a474ff1d4d4b3e4f4b9a0679",
+          "digest": "sha256:acec637a3fe9c6af313a693029f637b80f4e9785a474ff1d4d4b3e4f4b9a0679"
+        },
+        {
+          "path": "experiments/xgb_v1/artifact_manifest.json",
+          "recorded_sha256": "e6198cdf40228cdd7efa583c62fc40489fd7f6551e58c042443bd678dd443dd4",
+          "digest": "json:b2ae95b87fc97665b503ccb2e0790e5bc0339ce7a521b5e74ed1619572362e00"
+        }
+      ]
+    },
+    {
+      "job_id": "ce51f49a3695",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:51:53.030Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/5ht_all_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/dataset_p7b.csv",
+        "--output-dir",
+        "experiments/cat_v1",
+        "--model",
+        "catboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/splits/frozen_5-hydroxytryptamine_.json"
+      ],
+      "wall_seconds": 26.23,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experiments/cat_v1/metrics.json",
+          "recorded_sha256": "a717eaa0def7cf2cc448c758d37ca6eba71521ffc7c0db56c6487f290e8dc085",
+          "digest": "json:5b80df4656bd868abced2ee14a593906c6076aa436f934e7e2b21e009011a316"
+        },
+        {
+          "path": "experiments/cat_v1/predictions.csv",
+          "recorded_sha256": "81fe42d1cade9d16cf32d2618f1555f6f67522d38fde9da306e8bb9a52ea4c50",
+          "digest": "sha256:81fe42d1cade9d16cf32d2618f1555f6f67522d38fde9da306e8bb9a52ea4c50"
+        },
+        {
+          "path": "experiments/cat_v1/model.joblib",
+          "recorded_sha256": "96ac6e3d47f7a24032db39f94e26cd133416a9de83415802f0c5ce04940316ab",
+          "digest": "sha256:96ac6e3d47f7a24032db39f94e26cd133416a9de83415802f0c5ce04940316ab"
+        },
+        {
+          "path": "experiments/cat_v1/artifact_manifest.json",
+          "recorded_sha256": "9e35f6d3117971500e1d200b5233c18ebfb1acc41929eed565170a21d299c159",
+          "digest": "json:392651b1baa303df182f8c3eed5f7c050f8a6f73b0b45a3b1de28e6a0d0cf02c"
+        }
+      ]
+    },
+    {
+      "job_id": "a2905a0b4390",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:52:25.171Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/dataset_p7b.csv",
+        "--output",
+        "features/5ht_all_v2.npz",
+        "--report",
+        "features/5ht_all_v2.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 6.38,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/5ht_all_v2.npz",
+          "recorded_sha256": "ecb6749c8af82f95d0e0a2d6406d704ebc819a511d07117d017bea530fe230bd",
+          "digest": "npz:9040c776bc55571b30e1d211bffb61993a5ea68588218ee346a17c99acfc6f77"
+        },
+        {
+          "path": "features/5ht_all_v2.json",
+          "recorded_sha256": "0e894dedb16bfbd2b3ad8ebfef2febc7b46efae8a9fcc139ca478d091f0265f8",
+          "digest": "json:cbbd9820fca5cad0f8cddb2fa9188910d7de185ea65649dd241bebf18dea2708"
+        }
+      ]
+    },
+    {
+      "job_id": "7bf3bd32c3af",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:52:34.109Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/5ht_all_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/dataset_p7b.csv",
+        "--output-dir",
+        "experiments/rf_v2",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/splits/frozen_5-hydroxytryptamine_.json"
+      ],
+      "wall_seconds": 3.71,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experiments/rf_v2/metrics.json",
+          "recorded_sha256": "f3eb7fcddbfc2c991c1665f81bd7466e17cb7a20f14524b67e911d5c910ebc0a",
+          "digest": "json:13fd13129e92fc26811d76b73cfbede0b8f69c604c2158b46b1cf30a6a550b22"
+        },
+        {
+          "path": "experiments/rf_v2/predictions.csv",
+          "recorded_sha256": "2aa924d24897501e2c9c6a9ed91a7bf54a73146aabb3d15d760c38474ccb4c29",
+          "digest": "sha256:2aa924d24897501e2c9c6a9ed91a7bf54a73146aabb3d15d760c38474ccb4c29"
+        },
+        {
+          "path": "experiments/rf_v2/model.joblib",
+          "recorded_sha256": "6176dcdd261f12c4b317df0e75f5ea67dc6fb56cf7c5ae770985091277766964",
+          "digest": "sha256:6176dcdd261f12c4b317df0e75f5ea67dc6fb56cf7c5ae770985091277766964"
+        },
+        {
+          "path": "experiments/rf_v2/artifact_manifest.json",
+          "recorded_sha256": "be2906d1d3665ac394e4df72febcf43629afedc1fe73d6adf65e34e2934f1fae",
+          "digest": "json:8b894cccec7f36bf0fdec4713a79d109d970d36ff15c5be94fe2dc5450ec7303"
+        }
+      ]
+    },
+    {
+      "job_id": "01414f482994",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:53:09.859Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "experiments/rf_v1/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "screening/library_100k_rf_v1_ranked.csv",
+        "--top-output",
+        "screening/top100_rf_v1.csv",
+        "--report",
+        "screening/report_rf_v1.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 18.25,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "screening/library_100k_rf_v1_ranked.csv",
+          "recorded_sha256": "8e6683b9912e6ec2a4b5c0573e2cbaa25dcb83b3d9c322f29b5cad31d2e320e9",
+          "digest": "sha256:8e6683b9912e6ec2a4b5c0573e2cbaa25dcb83b3d9c322f29b5cad31d2e320e9"
+        },
+        {
+          "path": "screening/top100_rf_v1.csv",
+          "recorded_sha256": "2fb5a8c0de5f5672e62579815a9438ac8e2c1b3bd0b098a976912f18a638a847",
+          "digest": "sha256:2fb5a8c0de5f5672e62579815a9438ac8e2c1b3bd0b098a976912f18a638a847"
+        },
+        {
+          "path": "screening/report_rf_v1.json",
+          "recorded_sha256": "6861573970d0342a10a345d0b2708d3d190606f948f9b702b1506875cdaa3962",
+          "digest": "json:6f65233caf888679db9ff7ff74a1aae08e94c9bd2748aa65769945cb109db6d0"
+        }
+      ]
+    },
+    {
+      "job_id": "ab5d122d3965",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:53:54.309Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "experiments/cat_v1/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "screening/library_100k_cat_v1_ranked.csv",
+        "--top-output",
+        "screening/top100_cat_v1.csv",
+        "--report",
+        "screening/report_cat_v1.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 13.7,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "screening/library_100k_cat_v1_ranked.csv",
+          "recorded_sha256": "f1a676a35f0a6e18443bae9d249b7c1bc050ce122f7e7f874f6f246afe5918db",
+          "digest": "sha256:f1a676a35f0a6e18443bae9d249b7c1bc050ce122f7e7f874f6f246afe5918db"
+        },
+        {
+          "path": "screening/top100_cat_v1.csv",
+          "recorded_sha256": "8f9be290c500969784ca362ebd73dfcffcb47e75ffb3b4f2fb9817075a2309a1",
+          "digest": "sha256:8f9be290c500969784ca362ebd73dfcffcb47e75ffb3b4f2fb9817075a2309a1"
+        },
+        {
+          "path": "screening/report_cat_v1.json",
+          "recorded_sha256": "e9c2df1ef6eb1e2f687dac35a0b6eb8a1d5c0ee16a2156251aa609ed28e23f53",
+          "digest": "json:8402116b05ebf6e9bc4de53b27dc624176ac03f0b2a42210ff90443a9cabe352"
+        }
+      ]
+    },
+    {
+      "job_id": "3f3a0241c1b5",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:54:08.097Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "experiments/xgb_v1/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "screening/library_100k_xgb_v1_ranked.csv",
+        "--top-output",
+        "screening/top100_xgb_v1.csv",
+        "--report",
+        "screening/report_xgb_v1.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 14.4,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "screening/library_100k_xgb_v1_ranked.csv",
+          "recorded_sha256": "044fef41fbfa63bdd1f55dd3ec899ea88d0c7a1389c70bde74d57939d50516f4",
+          "digest": "sha256:044fef41fbfa63bdd1f55dd3ec899ea88d0c7a1389c70bde74d57939d50516f4"
+        },
+        {
+          "path": "screening/top100_xgb_v1.csv",
+          "recorded_sha256": "978b13b9cf1e58d9e57b45ab125d3552a0b81eaa9c600ee901c3c9b71d6d9961",
+          "digest": "sha256:978b13b9cf1e58d9e57b45ab125d3552a0b81eaa9c600ee901c3c9b71d6d9961"
+        },
+        {
+          "path": "screening/report_xgb_v1.json",
+          "recorded_sha256": "ac401422b42bff06bda995f21118e3ebad59ee7b8a0c79c3750608b66ec150b3",
+          "digest": "json:f9c3d2d2d085b64c218fc9c0f073efab2919cdf0f78ca836b77bd294e5ce2516"
+        }
+      ]
+    },
+    {
+      "job_id": "4e41b4fc39c4",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:55:03.757Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/5ht_all_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/dataset_p7b.csv",
+        "--output-dir",
+        "experiments/rf_v1_s23",
+        "--model",
+        "rf",
+        "--seed",
+        "23",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/splits/frozen_5-hydroxytryptamine_.json"
+      ],
+      "wall_seconds": 5.37,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experiments/rf_v1_s23/metrics.json",
+          "recorded_sha256": "0299af974589c621803a31c0a6a3b59e6bb7f63d47573a71494158dc4a3b9128",
+          "digest": "json:d8fcb9d1245ee75254512547fb80b07f2919a8d5c88d016294e394a4798f42a2"
+        },
+        {
+          "path": "experiments/rf_v1_s23/predictions.csv",
+          "recorded_sha256": "9bd5af18db700033f18797077f54e963847a54b48caa2e77be8e42223f044b71",
+          "digest": "sha256:9bd5af18db700033f18797077f54e963847a54b48caa2e77be8e42223f044b71"
+        },
+        {
+          "path": "experiments/rf_v1_s23/model.joblib",
+          "recorded_sha256": "340effcd9c703ca0c9b6da27f28ea4535bd1db37a4a4c29d98ec7e7352959b47",
+          "digest": "sha256:340effcd9c703ca0c9b6da27f28ea4535bd1db37a4a4c29d98ec7e7352959b47"
+        },
+        {
+          "path": "experiments/rf_v1_s23/artifact_manifest.json",
+          "recorded_sha256": "44764e64d19ef8a46a333736c172fb9c9dec7052dfc5e3fc47a0302db3788eaa",
+          "digest": "json:b25c37b4ac2b5625697b648f8fdd3c6affc1a946033c88a7b0153e53f8de8dbf"
+        }
+      ]
+    },
+    {
+      "job_id": "43b0375c449f",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:55:09.151Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/5ht_all_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/dataset_p7b.csv",
+        "--output-dir",
+        "experiments/cat_v1_s23",
+        "--model",
+        "catboost",
+        "--seed",
+        "23",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/splits/frozen_5-hydroxytryptamine_.json"
+      ],
+      "wall_seconds": 29.87,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experiments/cat_v1_s23/metrics.json",
+          "recorded_sha256": "f9a47b0defa87d9bb3f4ffb3bb62b64d9a205eab6ae71a53054644aaed44750e",
+          "digest": "json:1473adf4f95875661b63f97f2519bed95b677c52a1f84d2f4d0a3d161bf869a0"
+        },
+        {
+          "path": "experiments/cat_v1_s23/predictions.csv",
+          "recorded_sha256": "7a91f220e5e02c24b2223cae6bef6ee02de620ab287500d7b84e79397bb49023",
+          "digest": "sha256:7a91f220e5e02c24b2223cae6bef6ee02de620ab287500d7b84e79397bb49023"
+        },
+        {
+          "path": "experiments/cat_v1_s23/model.joblib",
+          "recorded_sha256": "8635a393244685a0c919a91725c34795bb3d6ad07963b5ed1d8bffe31dfa4392",
+          "digest": "sha256:8635a393244685a0c919a91725c34795bb3d6ad07963b5ed1d8bffe31dfa4392"
+        },
+        {
+          "path": "experiments/cat_v1_s23/artifact_manifest.json",
+          "recorded_sha256": "0bc1a6139cc30d8e175f3929f042a4353b329a60ea82037d1c5d09724815dda9",
+          "digest": "json:61e3a763911e98a9c4a50dd04bcc5118ca23b440985d54d9d58e0ccd9c68d7b0"
+        }
+      ]
+    },
+    {
+      "job_id": "95654f089991",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:55:51.232Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "5HT",
+        "--endpoint",
+        "Ki",
+        "--model",
+        "experiments/rf_v1/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "evaluation/5ht_locked.json",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 1.76,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "evaluation/5ht_locked.json",
+          "recorded_sha256": "4fe940f38ab87905affa71a240dca036dee9689d386cd6f8a93811d04cd3d365",
+          "digest": "json:75af118b135a03616b82e0478ab5315e2d98b4a9a9f83867656cbc5f0ed7ef4b"
+        }
+      ]
+    },
+    {
+      "job_id": "4f6cc66f1664",
+      "tool_id": "rdkit.featurize",
+      "state": "FAILED",
+      "started_at": "2026-11-08T13:56:22.872Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--output",
+        "probe/store_peek.npz",
+        "--report",
+        "probe/store_peek.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "50",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.39,
+      "exit_code": 2,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "{\"rows_valid\": 0, \"rows_invalid\": 50, \"output\": \"probe/store_peek.npz\"}",
+      "artifacts": [
+        {
+          "path": "probe/store_peek.npz",
+          "recorded_sha256": "58e052d3ec18050610ecbfe9bbb91fa2c48a68cb975dc67fb92fe020488fd6a5",
+          "digest": "npz:cf8729584b458596a796a692243ce2dd7c98fede2c4517beea0b939af0ea56e4"
+        },
+        {
+          "path": "probe/store_peek.json",
+          "recorded_sha256": "4388ae2093870ef824930d148e79106e9c57ba3811b53c26b552bab40f9cf26f",
+          "digest": "json:f2772fb0882666799c81139500a2c29979b52f3ced3f4d30c9f646ab5f74936f"
+        }
+      ]
+    },
+    {
+      "job_id": "973d49345702",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:56:34.839Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/r_01_d2_model.json",
+        "--out",
+        "experience/d2_model_payload_direct.json"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/d2_model_payload_direct.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "86a4c0bd1e77",
+      "tool_id": "experience.retrieve",
+      "state": "FAILED",
+      "started_at": "2026-11-08T13:56:34.957Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/payloads/r_01_d2_model.json",
+        "--out",
+        "experience/d2_model_payload_dir.json"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/src/evovs_science/experience/store.py\", line 121, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/src/evovs_science/experience/store.py\", line 106, in main\n    \"records\": [{key: item[key] for key in (\"experience_id\", \"kind\", \"target\", \"applicability\",\n                      ~~~~^^^^^\nTypeError: string indices must be integers, not 'str'",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "c69d2d55cf5b",
+      "tool_id": "rdkit.featurize",
+      "state": "FAILED",
+      "started_at": "2026-11-08T13:56:38.439Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/r_01_d2_model.json",
+        "--output",
+        "probe/d2_payload.npz",
+        "--report",
+        "probe/d2_payload.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "300",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.17,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "no such input file: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/r_01_d2_model.json (data root: unset; tried: ['/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/r_01_d2_model.json']); no file with that name under the data root",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "8f841b92ca73",
+      "tool_id": "screening.rank",
+      "state": "FAILED",
+      "started_at": "2026-11-08T13:56:56.320Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "experiments/rf_v1/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/r_01_d2_model.json",
+        "--output",
+        "probe/d2_payload_ranked.csv",
+        "--top-output",
+        "probe/d2_payload_top.csv",
+        "--report",
+        "probe/d2_payload_rank_report.json",
+        "--top-k",
+        "1",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.2,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "no such input file: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/r_01_d2_model.json (data root: unset; tried: ['/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/r_01_d2_model.json']); no file with that name under the data root",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "aea8cbb0f6a2",
+      "tool_id": "rdkit.featurize",
+      "state": "FAILED",
+      "started_at": "2026-11-08T13:57:10.217Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--output",
+        "probe/store_peek2.npz",
+        "--report",
+        "probe/store_peek2.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "200",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.34,
+      "exit_code": 2,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "{\"rows_valid\": 0, \"rows_invalid\": 79, \"output\": \"probe/store_peek2.npz\"}",
+      "artifacts": [
+        {
+          "path": "probe/store_peek2.npz",
+          "recorded_sha256": "58e052d3ec18050610ecbfe9bbb91fa2c48a68cb975dc67fb92fe020488fd6a5",
+          "digest": "npz:cf8729584b458596a796a692243ce2dd7c98fede2c4517beea0b939af0ea56e4"
+        },
+        {
+          "path": "probe/store_peek2.json",
+          "recorded_sha256": "2d239759c9c0c97a60eb220837a61e38c48cd19120fd4825c311ad8991ce769d",
+          "digest": "json:dfacb86adf73522e2b218ba6de2167599ce4d6efe5fbf9216c049c34c2cd67a1"
+        }
+      ]
+    },
+    {
+      "job_id": "111ff9c14293",
+      "tool_id": "rdkit.featurize",
+      "state": "FAILED",
+      "started_at": "2026-11-08T13:57:36.263Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/5-hydroxytryptamine_/ki/splits/frozen_5-hydroxytryptamine_.json",
+        "--output",
+        "probe/split_peek.npz",
+        "--report",
+        "probe/split_peek.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "200",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.31,
+      "exit_code": 2,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "{\"rows_valid\": 0, \"rows_invalid\": 1, \"output\": \"probe/split_peek.npz\"}",
+      "artifacts": [
+        {
+          "path": "probe/split_peek.npz",
+          "recorded_sha256": "58e052d3ec18050610ecbfe9bbb91fa2c48a68cb975dc67fb92fe020488fd6a5",
+          "digest": "npz:cf8729584b458596a796a692243ce2dd7c98fede2c4517beea0b939af0ea56e4"
+        },
+        {
+          "path": "probe/split_peek.json",
+          "recorded_sha256": "f20cd9745b67b930ee7aa1a294ce739e71ec40b92f8539f185526635fd4710cf",
+          "digest": "json:1a596574f7f3148c68be6db95eda12704fd1972fc2349424bb41457a16e71221"
+        }
+      ]
+    }
+  ]
+}

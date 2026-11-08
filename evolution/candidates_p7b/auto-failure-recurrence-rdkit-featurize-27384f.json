@@ -1,0 +1,40 @@
+{
+  "candidate_id": "auto-failure-recurrence-rdkit-featurize-27384f",
+  "version": "0.1.0-auto",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "preflight:rdkit.featurize",
+      "value": "validate the job inputs before launch (required columns, file kind) and fail fast with an actionable message"
+    }
+  ],
+  "hypothesis": "rdkit.featurize keeps failing the same way in recent tickets (rdkit.featurize::no such input file: <path> (data root: unset; tried: ['<path), so rejecting that input before launch should remove the retry loop without touching the success path.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "failures_in_replay": 0
+  },
+  "risk": "pre-flight checks add a small fixed cost to every job and may reject inputs the tool would have tolerated",
+  "basis": {
+    "generated_by": "evolution/propose.py",
+    "kind": "failure-recurrence",
+    "tool_id": "rdkit.featurize",
+    "evidence": {
+      "tickets": [
+        "p7b_1_d2.json",
+        "p7b_2_5ht.json"
+      ],
+      "recent_hits": 2,
+      "clusters": [
+        {
+          "cluster": "rdkit.featurize::no such input file: <path> (data root: unset; tried: ['<path",
+          "recent_hits": 2,
+          "samples": [
+            "no such input file: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json (data root: unset; tried: ['/home/linhan_cluster/evo_vs_r",
+            "no such input file: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/r_01_d2_model.json (data root: unset; tried: ['/home/linhan_cluster/evo_vs_"
+          ]
+        }
+      ]
+    }
+  }
+}

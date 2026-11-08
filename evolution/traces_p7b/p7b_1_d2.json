@@ -1,0 +1,909 @@
+{
+  "schema_version": "2",
+  "group": "rsi",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/dopamine-frozen-r-96805c682ce8",
+  "exported_at": "2026-11-08T17:40:04+00:00",
+  "steps": [
+    {
+      "job_id": "46f1af0d6584",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:24:10.043Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/d2_retrieval.json",
+        "--target",
+        "D2"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/d2_retrieval.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "e1d7c3478e14",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:24:10.175Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output",
+        "features/d2_p7b_v1.npz",
+        "--report",
+        "features/d2_p7b_v1_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 1.97,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/d2_p7b_v1.npz",
+          "recorded_sha256": "60d18ede6df00e8e92baad41dfdc9fd8fb1fd33ea2292f90365b366dbe0f7fb9",
+          "digest": "npz:88fa1ab675a239160d06479a80d717f15e1f894268b66fc4dddb9a2cfad7454c"
+        },
+        {
+          "path": "features/d2_p7b_v1_report.json",
+          "recorded_sha256": "3041628113aa98b047a0d0b284c157a1f67f4fa2b2602d7e1aea598550db3b39",
+          "digest": "json:6b20cd104d7ac58a1dbdeac4a9904f36051a1ea1eecc3c41877ac0157f99d1c3"
+        }
+      ]
+    },
+    {
+      "job_id": "23704b871691",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:24:30.617Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/d2_retrieval_all.json"
+      ],
+      "wall_seconds": 0.08,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/d2_retrieval_all.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "2c61fce93df1",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:24:36.172Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/d2_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output-dir",
+        "arms/probe_logreg",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl:d(2)_dopamine_recept:Ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json"
+      ],
+      "wall_seconds": 4.47,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "arms/probe_logreg/metrics.json",
+          "recorded_sha256": "64b04890396596cca4c67b1e740d02ea90ef4f7866a1ba8ced03baac2108bac3",
+          "digest": "json:36387d3113ba7054feaa5e49cb8419c1a54ce16aee27f70914728a5a8295aaa9"
+        },
+        {
+          "path": "arms/probe_logreg/predictions.csv",
+          "recorded_sha256": "7091827e4df8ea5dbb12ce8d8c5747c9a39cfdf6b02950232d8cf277e37e4bf2",
+          "digest": "sha256:7091827e4df8ea5dbb12ce8d8c5747c9a39cfdf6b02950232d8cf277e37e4bf2"
+        },
+        {
+          "path": "arms/probe_logreg/model.joblib",
+          "recorded_sha256": "fce4560e28b15839aed83c3d70d4f6f8629ff03df458baf89d71f6251b4a6499",
+          "digest": "sha256:fce4560e28b15839aed83c3d70d4f6f8629ff03df458baf89d71f6251b4a6499"
+        },
+        {
+          "path": "arms/probe_logreg/artifact_manifest.json",
+          "recorded_sha256": "81f8b5d4b85902402faad50e9a22cd03febaa9268ff3cdf758b7a28a13e3ded0",
+          "digest": "json:1fe9753288f4c49930146e9db8a8f63ec7d4cc1bca2c8502f8d5e18d54a40798"
+        }
+      ]
+    },
+    {
+      "job_id": "510e85fb088e",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:25:18.575Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output",
+        "features/d2_p7b_v2.npz",
+        "--report",
+        "features/d2_p7b_v2_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 9.05,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/d2_p7b_v2.npz",
+          "recorded_sha256": "f015eb6ca3d98868d8f2b0525bf5daa903d0f9b1209d9b4742695e0152f0bd28",
+          "digest": "npz:f1b7f0836c64ecfffadd2c3ebb12d60cc4ba6adbf8ed9176f9291694652811f2"
+        },
+        {
+          "path": "features/d2_p7b_v2_report.json",
+          "recorded_sha256": "9f8344e6e3b0b4340cd2d0129909505f74708f0a5957c9af1e4f55495f149b55",
+          "digest": "json:6b20cd104d7ac58a1dbdeac4a9904f36051a1ea1eecc3c41877ac0157f99d1c3"
+        }
+      ]
+    },
+    {
+      "job_id": "ef0d847a7bd3",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:25:27.662Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/d2_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output-dir",
+        "arms/rf_v1",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl:d(2)_dopamine_recept:Ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json"
+      ],
+      "wall_seconds": 6.94,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "arms/rf_v1/metrics.json",
+          "recorded_sha256": "a3b6bd3bfb22d2ac4592a4ddb7992f8ad3d4e884c30e5443b6e5558dfc64ddf3",
+          "digest": "json:9cc737e8ed1b4679430a9a644e469ecf90bd7969f7366197d9952881f0ee030d"
+        },
+        {
+          "path": "arms/rf_v1/predictions.csv",
+          "recorded_sha256": "8a0cc8cf7926bb4b6dc6fd57b3276da3dd7659960e13de6b5eca017b4ada30cf",
+          "digest": "sha256:8a0cc8cf7926bb4b6dc6fd57b3276da3dd7659960e13de6b5eca017b4ada30cf"
+        },
+        {
+          "path": "arms/rf_v1/model.joblib",
+          "recorded_sha256": "990f3ffa7e38454fc576b5af3cb46eaf3b2212ac28df74f72198320c8d5805f6",
+          "digest": "sha256:990f3ffa7e38454fc576b5af3cb46eaf3b2212ac28df74f72198320c8d5805f6"
+        },
+        {
+          "path": "arms/rf_v1/artifact_manifest.json",
+          "recorded_sha256": "2d0f67e293e06b3f9ee03ba341373f1564307d807e9f12058876e2ff723507af",
+          "digest": "json:ecbeef93477d56e712e0e0ab8299ad2d8239eb92e6c6452ebcf671148435d420"
+        }
+      ]
+    },
+    {
+      "job_id": "1ab6d7a9efd9",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:25:34.628Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/d2_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output-dir",
+        "arms/xgb_v1",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl:d(2)_dopamine_recept:Ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json"
+      ],
+      "wall_seconds": 8.56,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "arms/xgb_v1/metrics.json",
+          "recorded_sha256": "49fb090b203e4c6e69278cfc048a03774a08d79c805af43f7d6d194884111986",
+          "digest": "json:314903b0676ec3a78f3652c34e66fb3c52ac710d11d31108c6967ac227ac34d2"
+        },
+        {
+          "path": "arms/xgb_v1/predictions.csv",
+          "recorded_sha256": "37682205ab53579e2d55bc431523b571303f9e89d8aebbe7d59ff27660015dc4",
+          "digest": "sha256:37682205ab53579e2d55bc431523b571303f9e89d8aebbe7d59ff27660015dc4"
+        },
+        {
+          "path": "arms/xgb_v1/model.joblib",
+          "recorded_sha256": "d741f516fe79ad73e03c007b7e3ae31f5bbfd46ca67431cf588c5c2634e61009",
+          "digest": "sha256:d741f516fe79ad73e03c007b7e3ae31f5bbfd46ca67431cf588c5c2634e61009"
+        },
+        {
+          "path": "arms/xgb_v1/artifact_manifest.json",
+          "recorded_sha256": "4e9c68a3a345f3bd84ef61d89cedbeb9e49e95e6609fd416869b06850948d109",
+          "digest": "json:628ae569de0742485435c7deda3d3b82bc873dc3e3e7fc7cf128405b3cc8430c"
+        }
+      ]
+    },
+    {
+      "job_id": "05b69848d996",
+      "tool_id": "ml.train",
+      "state": "TIMED_OUT",
+      "started_at": "2026-11-08T13:25:43.217Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/d2_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output-dir",
+        "arms/cat_v1",
+        "--model",
+        "catboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl:d(2)_dopamine_recept:Ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json"
+      ],
+      "wall_seconds": 1200.05,
+      "exit_code": null,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "aff8732685da",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:45:43.303Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/d2_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output-dir",
+        "probe/bad_label_column",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl:d(2)_dopamine_recept:Ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "__probe_nonexistent__",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json"
+      ],
+      "wall_seconds": 3.04,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "probe/bad_label_column/metrics.json",
+          "recorded_sha256": "16d689c6e2cb7667b88d4e53ce20c47f2c46b8a68f1850fb05f6b2066d281e7a",
+          "digest": "json:526e29dd25d8d39466c3962c9a974efa907349a3e3527de6b62c643e273b4300"
+        },
+        {
+          "path": "probe/bad_label_column/predictions.csv",
+          "recorded_sha256": "7091827e4df8ea5dbb12ce8d8c5747c9a39cfdf6b02950232d8cf277e37e4bf2",
+          "digest": "sha256:7091827e4df8ea5dbb12ce8d8c5747c9a39cfdf6b02950232d8cf277e37e4bf2"
+        },
+        {
+          "path": "probe/bad_label_column/model.joblib",
+          "recorded_sha256": "fce4560e28b15839aed83c3d70d4f6f8629ff03df458baf89d71f6251b4a6499",
+          "digest": "sha256:fce4560e28b15839aed83c3d70d4f6f8629ff03df458baf89d71f6251b4a6499"
+        },
+        {
+          "path": "probe/bad_label_column/artifact_manifest.json",
+          "recorded_sha256": "49a08bcebae45aacf4de862a92587e0b110912b01385a2ab7ac34ef2fbf4ec63",
+          "digest": "json:08dd8b5be7cb0fecadcaeed88e434440cd1d25741c58066197293f9ac11c5689"
+        }
+      ]
+    },
+    {
+      "job_id": "5511d5e21d6c",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:46:09.071Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/d2_p7b_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output-dir",
+        "arms/rf_v2",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl:d(2)_dopamine_recept:Ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json"
+      ],
+      "wall_seconds": 5.82,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "arms/rf_v2/metrics.json",
+          "recorded_sha256": "5744a46f10756eaec2beebc122711ec689ba128e73e675f58986f14ee6e85a7e",
+          "digest": "json:ba4969b96ac039f4610f406bac2e29bbaa78b2509943c913376a29e936681b43"
+        },
+        {
+          "path": "arms/rf_v2/predictions.csv",
+          "recorded_sha256": "8ac538030efa39fa9ba23cc1570c18dbaf5ccf9e85ff7fe8d99801668c0a601a",
+          "digest": "sha256:8ac538030efa39fa9ba23cc1570c18dbaf5ccf9e85ff7fe8d99801668c0a601a"
+        },
+        {
+          "path": "arms/rf_v2/model.joblib",
+          "recorded_sha256": "0bfccd1d76bd7ab2683cdb7f46acb73046bfa4c73d9d1be7ede4adb0050f0589",
+          "digest": "sha256:0bfccd1d76bd7ab2683cdb7f46acb73046bfa4c73d9d1be7ede4adb0050f0589"
+        },
+        {
+          "path": "arms/rf_v2/artifact_manifest.json",
+          "recorded_sha256": "e01817478d485add04f8bbbf8b8510a08e65dc8ee6c07bd2213ad8219e4663f3",
+          "digest": "json:1609d8cbd3856f8bd7d6554c6eb3ce71ebbe5e0bdf0d50d92346435e4de7ea4d"
+        }
+      ]
+    },
+    {
+      "job_id": "2cec8f305566",
+      "tool_id": "rdkit.featurize",
+      "state": "FAILED",
+      "started_at": "2026-11-08T13:46:14.909Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--output",
+        "probe/store_probe.npz",
+        "--report",
+        "probe/store_probe.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.18,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "no such input file: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json (data root: unset; tried: ['/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json']); no file with that name under the data root",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "7bc86cfd11f2",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:46:15.107Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/d2_kind_dataset.json",
+        "--target",
+        "D2",
+        "--kind",
+        "dataset"
+      ],
+      "wall_seconds": 0.07,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/d2_kind_dataset.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "c61ad33c4484",
+      "tool_id": "ml.train",
+      "state": "FAILED",
+      "started_at": "2026-11-08T13:46:20.036Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/d2_p7b_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output-dir",
+        "arms/logreg_v2",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl:d(2)_dopamine_recept:Ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json"
+      ],
+      "wall_seconds": 2.26,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 1064, in check_array\n    _assert_all_finite(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 123, in _assert_all_finite\n    _assert_all_finite_element_wise(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 172, in _assert_all_finite_element_wise\n    raise ValueError(msg_err)\nValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "d1862649dfe7",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:46:33.670Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/d2_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output-dir",
+        "arms/rf_v1_seed23",
+        "--model",
+        "rf",
+        "--seed",
+        "23",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl:d(2)_dopamine_recept:Ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json"
+      ],
+      "wall_seconds": 6.32,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "arms/rf_v1_seed23/metrics.json",
+          "recorded_sha256": "d47e784948eeb142371ff2ca6c2c38351d853b0b0ad2b0f1c82081019b2d19a2",
+          "digest": "json:7eea703a5b2a4c1078bd3b91691a36313d38e1a54d67df714dda619e850de374"
+        },
+        {
+          "path": "arms/rf_v1_seed23/predictions.csv",
+          "recorded_sha256": "9e4c8df275ad4575bbcef6ea0f32925eaee870fb703c9c931b215bdbc79646c3",
+          "digest": "sha256:9e4c8df275ad4575bbcef6ea0f32925eaee870fb703c9c931b215bdbc79646c3"
+        },
+        {
+          "path": "arms/rf_v1_seed23/model.joblib",
+          "recorded_sha256": "5d434ce1afdc43bc933bd784255b3f67b74b694efbf84ff8f52150c6ba2efb52",
+          "digest": "sha256:5d434ce1afdc43bc933bd784255b3f67b74b694efbf84ff8f52150c6ba2efb52"
+        },
+        {
+          "path": "arms/rf_v1_seed23/artifact_manifest.json",
+          "recorded_sha256": "1cc961a3c1100502e8241cd41574cf7653acdb85d0b98e74349031d6028711f4",
+          "digest": "json:44a97a27814ed8e6dce56a077a285b67887d6759041fa59c95243e98e3074d18"
+        }
+      ]
+    },
+    {
+      "job_id": "28c177b6a389",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:46:40.019Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/d2_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv",
+        "--output-dir",
+        "arms/rf_v1_seed42",
+        "--model",
+        "rf",
+        "--seed",
+        "42",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl:d(2)_dopamine_recept:Ki",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json"
+      ],
+      "wall_seconds": 6.46,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "arms/rf_v1_seed42/metrics.json",
+          "recorded_sha256": "85fcfff5cba3d27da479fcfc36b592467942ca7cedfb78611648b980c0d20932",
+          "digest": "json:034776511a886e2a6c81ca8fd9729e6670cd2d07c9abc6cd8e3bfcbabe05b31b"
+        },
+        {
+          "path": "arms/rf_v1_seed42/predictions.csv",
+          "recorded_sha256": "9286bf095d3c744964577ba3eea8eb2833a18e1e3139e03c673320c9c8a751c9",
+          "digest": "sha256:9286bf095d3c744964577ba3eea8eb2833a18e1e3139e03c673320c9c8a751c9"
+        },
+        {
+          "path": "arms/rf_v1_seed42/model.joblib",
+          "recorded_sha256": "2d45e3e6c5f4e0824b13f62fee18cf1280528d93ba55713f74f68374f5f4d959",
+          "digest": "sha256:2d45e3e6c5f4e0824b13f62fee18cf1280528d93ba55713f74f68374f5f4d959"
+        },
+        {
+          "path": "arms/rf_v1_seed42/artifact_manifest.json",
+          "recorded_sha256": "9dd02fb6fe50227736699f2f203db9149e103b4d11b0a63af4956d734571fdda",
+          "digest": "json:f44017f9b8d18e5ba9df5142174e3e293d46d6f5e9c4e38a683c2efea72a4cec"
+        }
+      ]
+    },
+    {
+      "job_id": "848940dc2a46",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:46:56.348Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "arms/rf_v1/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "screening/d2_rf_v1_ranked.csv",
+        "--top-output",
+        "screening/d2_rf_v1_top100.csv",
+        "--report",
+        "screening/d2_rf_v1_report.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 20.03,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "screening/d2_rf_v1_ranked.csv",
+          "recorded_sha256": "deddaa93ead8189d75610fcd61ce5e245e79fae0aaec1ac347f953b47a00c0a8",
+          "digest": "sha256:deddaa93ead8189d75610fcd61ce5e245e79fae0aaec1ac347f953b47a00c0a8"
+        },
+        {
+          "path": "screening/d2_rf_v1_top100.csv",
+          "recorded_sha256": "fe0d1d3b0c63828330793705261c925bc59dfccb9cada971baeec516c5750d85",
+          "digest": "sha256:fe0d1d3b0c63828330793705261c925bc59dfccb9cada971baeec516c5750d85"
+        },
+        {
+          "path": "screening/d2_rf_v1_report.json",
+          "recorded_sha256": "d1d59ab48de4b7cfe82a596d770967e078419ba0682f6d3ca867ca45fae1c146",
+          "digest": "json:3ed8fbde2b5861adc185d013ba3a276ae7c49b3b97171ad3f6facacab6e77741"
+        }
+      ]
+    },
+    {
+      "job_id": "6a1138214171",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:47:28.113Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "D2",
+        "--endpoint",
+        "Ki",
+        "--model",
+        "arms/rf_v1/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "evaluation/d2_locked.json",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 2.42,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "evaluation/d2_locked.json",
+          "recorded_sha256": "ea299054876863cb85192bfc1ada0856b5f791c855dc82ff0f7e75c27685126a",
+          "digest": "json:b0f0757b8b05ad4f9c01f1106c60cb1d8bf9c14c5a767f2bb916a1cc1b8b302c"
+        }
+      ]
+    },
+    {
+      "job_id": "ebe56d952112",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:47:52.836Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/drd2_retrieval.json",
+        "--target",
+        "DRD2"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/drd2_retrieval.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "74de49f750e6",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:47:52.946Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/kind_model.json",
+        "--kind",
+        "model"
+      ],
+      "wall_seconds": 0.52,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/kind_model.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "c135328005dd",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:47:53.976Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/kind_screening.json",
+        "--kind",
+        "screening"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/kind_screening.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "e53dc898f2b0",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:47:54.263Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/definitely_absent_xyz.json",
+        "--out",
+        "experience/probe_missing_path.json"
+      ],
+      "wall_seconds": 0.31,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/probe_missing_path.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    }
+  ]
+}

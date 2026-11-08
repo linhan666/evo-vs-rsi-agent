@@ -1,0 +1,1573 @@
+{
+  "schema_version": "2",
+  "group": "rsi",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/adenosine-frozen-r-13b01a41fb49",
+  "exported_at": "2026-11-08T17:40:05+00:00",
+  "steps": [
+    {
+      "job_id": "cbe91fe67719",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:59:45.881Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/retrieval.json",
+        "--target",
+        "ADR"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/retrieval.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "4c07c5aa1b80",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T13:59:50.062Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/retrieval_all.json"
+      ],
+      "wall_seconds": 0.07,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/retrieval_all.json",
+          "recorded_sha256": "703def6137a3f8cc72f6c95cab8244dbee8a33cb860f41b2dac528caf2e666fd",
+          "digest": "json:49e44a4fca87e929b5b5335f06fe5456e46ee3faa0152c9bdd9517fb8787f0ae"
+        }
+      ]
+    },
+    {
+      "job_id": "1347f4d0a872",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:00:04.984Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience/retrieval_5ht_model.json",
+        "--target",
+        "5HT",
+        "--kind",
+        "model"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience/retrieval_5ht_model.json",
+          "recorded_sha256": "ea7470d98c0a2a80c584c3830d934c0cd1467cf01836e7cd11e2d392e5c6f559",
+          "digest": "json:ca56a452590d0f0d0f2dd99152e3f2d98f2e4594752ef494309281bbd22fddb5"
+        }
+      ]
+    },
+    {
+      "job_id": "12c9da65f2ac",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:00:19.030Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output",
+        "features/adr_train_v1.npz",
+        "--report",
+        "features/adr_train_v1_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.91,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/adr_train_v1.npz",
+          "recorded_sha256": "591726caf34cc5c4c7014ef0d0085026c90f5e096212bbcb612d870f4a5486f5",
+          "digest": "npz:11023d7593ddc470e80b3261afdbce5af2ba9bd032d41ce81e2199efbb5bf2f9"
+        },
+        {
+          "path": "features/adr_train_v1_report.json",
+          "recorded_sha256": "5ac5e2a2fe8e080ba5964a7da7d4e84f3acbafa7da92e2fdfd8d1d3505f89ad2",
+          "digest": "json:f2c286e73c31949d5f77eaa8f816f531f2dd88b6ca5b9cf179d3d866a0661cb0"
+        }
+      ]
+    },
+    {
+      "job_id": "eff6083d898f",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:00:26.294Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/logreg_v1",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 2.48,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/logreg_v1/metrics.json",
+          "recorded_sha256": "7ccdd9d37dc96b0e5264ca9fb8a21393e505d3dffbdc33aa37a0ea283e745d41",
+          "digest": "json:4b7e5517335618df880971916c8814d5b78a601cebc358e283841d5fed53ef31"
+        },
+        {
+          "path": "models/logreg_v1/predictions.csv",
+          "recorded_sha256": "fb488e9e6589196028b40edc5f1072db3962bd54bad2877625280ad88f0795e4",
+          "digest": "sha256:fb488e9e6589196028b40edc5f1072db3962bd54bad2877625280ad88f0795e4"
+        },
+        {
+          "path": "models/logreg_v1/model.joblib",
+          "recorded_sha256": "b517e186ac7d6304353fd116b2023d37e07fe9764fdfd451847fa607abda4a8c",
+          "digest": "sha256:b517e186ac7d6304353fd116b2023d37e07fe9764fdfd451847fa607abda4a8c"
+        },
+        {
+          "path": "models/logreg_v1/artifact_manifest.json",
+          "recorded_sha256": "2d3f8fc988aae7f40cd625400b6cc6702cd4d80e2f0814d0fdf9c25fed75e558",
+          "digest": "json:3cd3f9df4cebe39abc3dd6ee2c09ca9f355ee7cb431df4035eeda4f2c92df944"
+        }
+      ]
+    },
+    {
+      "job_id": "b0ccb4c91c13",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:00:43.086Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output",
+        "features/adr_train_v2.npz",
+        "--report",
+        "features/adr_train_v2_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 4.49,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/adr_train_v2.npz",
+          "recorded_sha256": "69c0a0b5069d72867d70090e246d09f5f7ae5883602219bdab46976d1cfa3a7a",
+          "digest": "npz:1c8ccb23070390ca357c2862db907cad74016aea528a6c4b90046a230401bf18"
+        },
+        {
+          "path": "features/adr_train_v2_report.json",
+          "recorded_sha256": "7413d8435fb0252399673b677dbaf83eda6381e4ecf4d99ea83a93677c9b9b36",
+          "digest": "json:f2c286e73c31949d5f77eaa8f816f531f2dd88b6ca5b9cf179d3d866a0661cb0"
+        }
+      ]
+    },
+    {
+      "job_id": "6b184436fa59",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:00:47.600Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_v1",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 3.81,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_v1/metrics.json",
+          "recorded_sha256": "1855a841ed03a2dd3da01ad994b5d9059425296566d594415d1822f5e9f6d3e4",
+          "digest": "json:3a412e8b258bc39a2881be80ae0938a185edbe6db4fedc1696749338888d39bf"
+        },
+        {
+          "path": "models/rf_v1/predictions.csv",
+          "recorded_sha256": "ca13fe9c7e84a588a5b37fef0918325802b09c857ca5ff91483893b6e2175293",
+          "digest": "sha256:ca13fe9c7e84a588a5b37fef0918325802b09c857ca5ff91483893b6e2175293"
+        },
+        {
+          "path": "models/rf_v1/model.joblib",
+          "recorded_sha256": "56785e3902cd9610b424b28a9ce564494e6e22bc8da619bbeb7c3322bd247b4a",
+          "digest": "sha256:56785e3902cd9610b424b28a9ce564494e6e22bc8da619bbeb7c3322bd247b4a"
+        },
+        {
+          "path": "models/rf_v1/artifact_manifest.json",
+          "recorded_sha256": "4ead26d3fc78cdbd32d539d97c3d67b76502bd678580a74bc5b7a6b845669596",
+          "digest": "json:065bb845ed4a3b6bce3d90299d25ef8e76395e6915a8390783a1d03869294379"
+        }
+      ]
+    },
+    {
+      "job_id": "3c7700eb6b35",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:00:51.430Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/xgb_v1",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 6.52,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/xgb_v1/metrics.json",
+          "recorded_sha256": "4dad115b9ea148eec358597d8d3fa8d2091b3ed1af4c4958e834b382d0153994",
+          "digest": "json:69ae88f4949c6b39c9894de9e7cd6118a63d09cdeb50b2a42b35aa2e8e54d030"
+        },
+        {
+          "path": "models/xgb_v1/predictions.csv",
+          "recorded_sha256": "0c2f7fe51955c42ea2dfe6e4c2334aee9d11ba2c214b9b90f7407e9785f669ea",
+          "digest": "sha256:0c2f7fe51955c42ea2dfe6e4c2334aee9d11ba2c214b9b90f7407e9785f669ea"
+        },
+        {
+          "path": "models/xgb_v1/model.joblib",
+          "recorded_sha256": "cac78619d4e3914143901f50aa3fb2a7ba444a5736fae9499aa08383bad89d70",
+          "digest": "sha256:cac78619d4e3914143901f50aa3fb2a7ba444a5736fae9499aa08383bad89d70"
+        },
+        {
+          "path": "models/xgb_v1/artifact_manifest.json",
+          "recorded_sha256": "1f468e9f3684d981e0d1ebad0148d842b522a661ea62eab727bc9eb46b63c94f",
+          "digest": "json:ff0cd2b96078e266470ace7858585176ae687b77e37fee42eab1da2dd4c3419f"
+        }
+      ]
+    },
+    {
+      "job_id": "ea06508adf38",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:00:57.973Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cat_v1",
+        "--model",
+        "catboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 24.63,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cat_v1/metrics.json",
+          "recorded_sha256": "b898c8ed3d4aa8ae8055a84751c420b902fec43d38f94280f202c771fa50c679",
+          "digest": "json:25190d515563c9c33e0db52954f196513bbf123e0754dfd732fd0b3229ec6268"
+        },
+        {
+          "path": "models/cat_v1/predictions.csv",
+          "recorded_sha256": "0ad1eec9ae008a17166726beab6f0d4baa82f2054f90457337f34198fe214cd0",
+          "digest": "sha256:0ad1eec9ae008a17166726beab6f0d4baa82f2054f90457337f34198fe214cd0"
+        },
+        {
+          "path": "models/cat_v1/model.joblib",
+          "recorded_sha256": "e439affa2cd2bf748a8cd6398f387c71e13467627e87f59702a4b469f79f6823",
+          "digest": "sha256:e439affa2cd2bf748a8cd6398f387c71e13467627e87f59702a4b469f79f6823"
+        },
+        {
+          "path": "models/cat_v1/artifact_manifest.json",
+          "recorded_sha256": "1d81c6a2e634778d6e5a58a52e0c4f362243ca92240b77796db9087441ac540a",
+          "digest": "json:867c568dd078312e0f40e732acb8380715f30d86fc02a39857071cbe9e5eb7cb"
+        }
+      ]
+    },
+    {
+      "job_id": "f313e223ad6b",
+      "tool_id": "ml.train",
+      "state": "FAILED",
+      "started_at": "2026-11-08T14:01:30.808Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/logreg_v2",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 2.6,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 1064, in check_array\n    _assert_all_finite(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 123, in _assert_all_finite\n    _assert_all_finite_element_wise(\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py\", line 172, in _assert_all_finite_element_wise\n    raise ValueError(msg_err)\nValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "c6957fbe2269",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:01:33.428Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_v2",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 4.31,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_v2/metrics.json",
+          "recorded_sha256": "1eebc80ee3b0b6dca81e8d06a67f89a99fe22b33f2f3c47cd0bc90720fc8d40a",
+          "digest": "json:78d10583da62f4fb4145d4e3cbc5a985fee655e40747906038c5b0b3eba41cf7"
+        },
+        {
+          "path": "models/rf_v2/predictions.csv",
+          "recorded_sha256": "b5b19e611173f07582ea93742905c1076e6afb09df2f835320785311b5c253a8",
+          "digest": "sha256:b5b19e611173f07582ea93742905c1076e6afb09df2f835320785311b5c253a8"
+        },
+        {
+          "path": "models/rf_v2/model.joblib",
+          "recorded_sha256": "30ca9df36b745fc07321f6587bb0be6654547dcc750176216c1075e6108d39a7",
+          "digest": "sha256:30ca9df36b745fc07321f6587bb0be6654547dcc750176216c1075e6108d39a7"
+        },
+        {
+          "path": "models/rf_v2/artifact_manifest.json",
+          "recorded_sha256": "eff63eb17eab0732d4b5a309d1482f3c51ace7f24baecfc178a068f2bc58cf0f",
+          "digest": "json:483db10caa92e84441e33fceaf2baa3d7d416d74ffb2d7a9c173ce880eb5c645"
+        }
+      ]
+    },
+    {
+      "job_id": "dd6015ca54d0",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:01:37.767Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/xgb_v2",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 6.52,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/xgb_v2/metrics.json",
+          "recorded_sha256": "719a7019e5853bc39f0943a79d3ace6a04347cbb5cba5d06b88273074a752795",
+          "digest": "json:b0c17106c01663e6571f672e23f744e661b200c7869c56e6060960b115d834f8"
+        },
+        {
+          "path": "models/xgb_v2/predictions.csv",
+          "recorded_sha256": "a74df9927f5656356b4b96635606d67a31b59f284215c2ce978076aeb093e9e4",
+          "digest": "sha256:a74df9927f5656356b4b96635606d67a31b59f284215c2ce978076aeb093e9e4"
+        },
+        {
+          "path": "models/xgb_v2/model.joblib",
+          "recorded_sha256": "aa0c2cb83bbece081ec34a2b4538e4aef0afb610926ecd44c0b70033bedd4c3f",
+          "digest": "sha256:aa0c2cb83bbece081ec34a2b4538e4aef0afb610926ecd44c0b70033bedd4c3f"
+        },
+        {
+          "path": "models/xgb_v2/artifact_manifest.json",
+          "recorded_sha256": "47bb41d44816fa592dbc0e6ef81e445f4336df2daa0096d4e8f4c4c0bb713f33",
+          "digest": "json:15a9cabac0621155ec36c73d34c1a729450a6fceb8073a3d6f7706c5014a0513"
+        }
+      ]
+    },
+    {
+      "job_id": "670b934a8b94",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:01:44.307Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/cat_v2",
+        "--model",
+        "catboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 27.73,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/cat_v2/metrics.json",
+          "recorded_sha256": "de16008bd19cecfadede84ab440f2108820cd53d4e49f94f5592118355c42a30",
+          "digest": "json:c861560f650d16015690b922fa50251aa09c9f222c011c15937db14d8370468f"
+        },
+        {
+          "path": "models/cat_v2/predictions.csv",
+          "recorded_sha256": "3b37f51c9d2f36fa115f789f43b2da4dc845546c299a530cf2157a2cb2605158",
+          "digest": "sha256:3b37f51c9d2f36fa115f789f43b2da4dc845546c299a530cf2157a2cb2605158"
+        },
+        {
+          "path": "models/cat_v2/model.joblib",
+          "recorded_sha256": "7120b723f12293b36555808e87c92f38e764e6ceb58b34542378f62f03802ab3",
+          "digest": "sha256:7120b723f12293b36555808e87c92f38e764e6ceb58b34542378f62f03802ab3"
+        },
+        {
+          "path": "models/cat_v2/artifact_manifest.json",
+          "recorded_sha256": "a0fcd96e157cedc1a29b861c738e7f01173169371b3e15d689baf44c63ce35ba",
+          "digest": "json:3b80261db96670c467f1825bc9d9bfa0660d7aeaccbdd825ab487b59b318def4"
+        }
+      ]
+    },
+    {
+      "job_id": "37bea33d8018",
+      "tool_id": "ml.fuse",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:02:25.263Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.fusion",
+        "--a",
+        "models/rf_v1/predictions.csv",
+        "--b",
+        "models/logreg_v1/predictions.csv",
+        "--output",
+        "fusion/rf_logreg_val.csv",
+        "--report",
+        "fusion/rf_logreg_val_report.json",
+        "--method",
+        "mean",
+        "--weight-a",
+        "0.6",
+        "--a-uprc",
+        "0.9962",
+        "--b-uprc",
+        "0.9929"
+      ],
+      "wall_seconds": 0.1,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "fusion/rf_logreg_val.csv",
+          "recorded_sha256": "dbc7681bb2089643573e24214be0b4941e9138d3eb13985a911a918c303e6993",
+          "digest": "sha256:dbc7681bb2089643573e24214be0b4941e9138d3eb13985a911a918c303e6993"
+        },
+        {
+          "path": "fusion/rf_logreg_val_report.json",
+          "recorded_sha256": "ba95375479be1c02fa0ca2705fe1f02a5703954b85c0b8ba14189c8e23dafaf7",
+          "digest": "json:59c9af6da2e6459e9aeff523b6a8a0861259e07d22dd3978f04c2a9ccc94660b"
+        }
+      ]
+    },
+    {
+      "job_id": "f98382391244",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:02:36.009Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_v1_s13",
+        "--model",
+        "rf",
+        "--seed",
+        "13",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 5.12,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_v1_s13/metrics.json",
+          "recorded_sha256": "6fb89d67d97361e3b2bbe0e895d9d5a46b8b502dcac106e45611525ee5dae709",
+          "digest": "json:1eeb055a830b3b313b9e510734e164791368961763a116949972a948326eec2a"
+        },
+        {
+          "path": "models/rf_v1_s13/predictions.csv",
+          "recorded_sha256": "a3aa01ef2a0bf8a306ebff6f52aa71a5a82f686b8eef5a58dfe9b9b21055c17b",
+          "digest": "sha256:a3aa01ef2a0bf8a306ebff6f52aa71a5a82f686b8eef5a58dfe9b9b21055c17b"
+        },
+        {
+          "path": "models/rf_v1_s13/model.joblib",
+          "recorded_sha256": "f6010adc90b7b4c49b61b11c4c9819b273b91a4a78c23d29cfeaf6ab96db56b5",
+          "digest": "sha256:f6010adc90b7b4c49b61b11c4c9819b273b91a4a78c23d29cfeaf6ab96db56b5"
+        },
+        {
+          "path": "models/rf_v1_s13/artifact_manifest.json",
+          "recorded_sha256": "6c5b909ad3e1f05c8dfaba27d9ff8fb3b6a5844b320d9567d1d906e6cd255982",
+          "digest": "json:e5bc89b719a7efa244697bc0482556b3a78bb603fe00783a1d26e1adfc96a910"
+        }
+      ]
+    },
+    {
+      "job_id": "e82fdeb46071",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:02:41.154Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_v1_s42",
+        "--model",
+        "rf",
+        "--seed",
+        "42",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 5.27,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_v1_s42/metrics.json",
+          "recorded_sha256": "d155f221b74cb89d62b6ad17dc12e7bdcb318b72b84734f342671eb8765c55e0",
+          "digest": "json:4b490ecfe41e95a579632d614c4390f2ff79827ec152a150cdfcbd488663a1a3"
+        },
+        {
+          "path": "models/rf_v1_s42/predictions.csv",
+          "recorded_sha256": "f4de491c512c8beb1c4bd4295fd6f626c873a9ca7f76f02d6270f940d6819996",
+          "digest": "sha256:f4de491c512c8beb1c4bd4295fd6f626c873a9ca7f76f02d6270f940d6819996"
+        },
+        {
+          "path": "models/rf_v1_s42/model.joblib",
+          "recorded_sha256": "5a5be112113e99073c39639b7c454840e7851b36b8abcf38f01d4d1804470e15",
+          "digest": "sha256:5a5be112113e99073c39639b7c454840e7851b36b8abcf38f01d4d1804470e15"
+        },
+        {
+          "path": "models/rf_v1_s42/artifact_manifest.json",
+          "recorded_sha256": "4f8ff38cf08c81ca6e12e069548e8502e56b1b33bae1a93f22b7d9547b9add79",
+          "digest": "json:f0f36a8f282e997a9ddbefbe9618227a2bd6d5cf1168b8ce771aeb82eadbe145"
+        }
+      ]
+    },
+    {
+      "job_id": "e6616caf0301",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:02:46.442Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_v1_s2024",
+        "--model",
+        "rf",
+        "--seed",
+        "2024",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 3.15,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_v1_s2024/metrics.json",
+          "recorded_sha256": "5bf8b74fd65a1a7c4266fa2d6564e3b089fb5600046fdee5d72d7bfab3d1e193",
+          "digest": "json:5a1b1dd975ba76b066fea064c0135bc6ec5a3c7635f569974fd2e261299a2c21"
+        },
+        {
+          "path": "models/rf_v1_s2024/predictions.csv",
+          "recorded_sha256": "2eddcc616c5f0faff02e83663f14a040486bfe4b6491814643b595dbe81c28b2",
+          "digest": "sha256:2eddcc616c5f0faff02e83663f14a040486bfe4b6491814643b595dbe81c28b2"
+        },
+        {
+          "path": "models/rf_v1_s2024/model.joblib",
+          "recorded_sha256": "dde850abd632b44bbd72a1df42e4ed0b85debfae8358f78e2bb64233e99476e9",
+          "digest": "sha256:dde850abd632b44bbd72a1df42e4ed0b85debfae8358f78e2bb64233e99476e9"
+        },
+        {
+          "path": "models/rf_v1_s2024/artifact_manifest.json",
+          "recorded_sha256": "588f309c3e5c58d2a67049c6cdeca6cf0703c8b9dc1b8e6a974b4d0bf09a36a5",
+          "digest": "json:057af6116f886c37069f4e552f0bd364b56c10b491145607b12657ede0e3588a"
+        }
+      ]
+    },
+    {
+      "job_id": "848ad842fe65",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:02:55.465Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "models/rf_v1/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "screening/adr_library_100k_ranked.csv",
+        "--top-output",
+        "screening/adr_top100.csv",
+        "--report",
+        "screening/adr_screening_report.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 18.79,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "screening/adr_library_100k_ranked.csv",
+          "recorded_sha256": "989aac827ce850bcbbde31fce038064809f886f3ac88551f80e13ea33fb1db67",
+          "digest": "sha256:989aac827ce850bcbbde31fce038064809f886f3ac88551f80e13ea33fb1db67"
+        },
+        {
+          "path": "screening/adr_top100.csv",
+          "recorded_sha256": "4517646abd06d8a94b8c92aebfc93e95b1565b1ed62ce46a5d1e1eaaa29226a7",
+          "digest": "sha256:4517646abd06d8a94b8c92aebfc93e95b1565b1ed62ce46a5d1e1eaaa29226a7"
+        },
+        {
+          "path": "screening/adr_screening_report.json",
+          "recorded_sha256": "048da4110865a554c8ba6256512f7c8c76c62644c93f82119085ab3e73a38a45",
+          "digest": "json:ab22395774264de53e6dc659bb7f69c1ea807497a2bd2147dbb5807a8bb20f60"
+        }
+      ]
+    },
+    {
+      "job_id": "071488d42882",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:03:25.312Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output",
+        "features/adr_train_r3_b4096.npz",
+        "--report",
+        "features/adr_train_r3_b4096_report.json",
+        "--radius",
+        "3",
+        "--n-bits",
+        "4096",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.94,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/adr_train_r3_b4096.npz",
+          "recorded_sha256": "f8fb85bc92a6259e73696e60bb1aa064ec6ff6347360bd7289dc3acae3f1dc79",
+          "digest": "npz:3fd5af198b6662f53b2159c22da478ea60b99e1a6dff47d5584ea8a50753cae5"
+        },
+        {
+          "path": "features/adr_train_r3_b4096_report.json",
+          "recorded_sha256": "180b8b3abc40950fec240ff7ce6959b60c9e702af21b2424613137b6f26400f9",
+          "digest": "json:feabde5d7c0ac666f97bf1ba779f473d37dafd1eed7252b7f72bc9263ad24289"
+        }
+      ]
+    },
+    {
+      "job_id": "9694ef48a74a",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:03:26.277Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output",
+        "features/adr_train_r2_b4096.npz",
+        "--report",
+        "features/adr_train_r2_b4096_report.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "4096",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.97,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/adr_train_r2_b4096.npz",
+          "recorded_sha256": "a2a93a5447b02e9beb69f516141130a54c4e523174a27ef5d5de5c770bde4b04",
+          "digest": "npz:177acb45d68fce36423154855c28d192062d9aafd08588e9bf62b15a611d219f"
+        },
+        {
+          "path": "features/adr_train_r2_b4096_report.json",
+          "recorded_sha256": "90871ebc91ca99c1909ea64bfaaa7ab5d150421fdb70a26b0d97e935a823ae5e",
+          "digest": "json:a61c072edd49795c0dd4f4e8665d581d896721b9ef5344b092058ac2262e110a"
+        }
+      ]
+    },
+    {
+      "job_id": "6a6a980cc8a1",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:03:29.909Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_r3_b4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_r3_b4096",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 6.48,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_r3_b4096/metrics.json",
+          "recorded_sha256": "d199c1e499d443745700fb2b28d854115fa56e4d792c22c0838be48f29d12ccf",
+          "digest": "json:71469bc791dc47d644c1780cbf9d61e34a93314643c3dec5ca3b3fa4d113a6f3"
+        },
+        {
+          "path": "models/rf_r3_b4096/predictions.csv",
+          "recorded_sha256": "b2a8782fafcc5d29f0225dd162d8285aa200b9596449913694d8115e076e95fc",
+          "digest": "sha256:b2a8782fafcc5d29f0225dd162d8285aa200b9596449913694d8115e076e95fc"
+        },
+        {
+          "path": "models/rf_r3_b4096/model.joblib",
+          "recorded_sha256": "6d65dee82fa70ac98e4885d9af8e83a0c817066c6d19fe9c2b092dbc3670a1c6",
+          "digest": "sha256:6d65dee82fa70ac98e4885d9af8e83a0c817066c6d19fe9c2b092dbc3670a1c6"
+        },
+        {
+          "path": "models/rf_r3_b4096/artifact_manifest.json",
+          "recorded_sha256": "f08e54bf2315677b3332ce9601e8b189a74330ab7fd213284ee0d1f1cbf972bf",
+          "digest": "json:1386247816e6c69fcb6bab2aa28772fd87122a18c5e08fc004b66955faa30980"
+        }
+      ]
+    },
+    {
+      "job_id": "fabeeeee4994",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:03:36.420Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_r2_b4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_r2_b4096",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 6.27,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_r2_b4096/metrics.json",
+          "recorded_sha256": "52cb243296670b71504d4490b48e36cde588fe9213842f9891ac69759e5140c5",
+          "digest": "json:620fcf9142d68ebc0c92e745a3b3d1db1f672717dd894055d484df26c2446e86"
+        },
+        {
+          "path": "models/rf_r2_b4096/predictions.csv",
+          "recorded_sha256": "8842170ca21666e8cb19f0e08886d97d890340e9a2e96cd60ce44e9158b65ec2",
+          "digest": "sha256:8842170ca21666e8cb19f0e08886d97d890340e9a2e96cd60ce44e9158b65ec2"
+        },
+        {
+          "path": "models/rf_r2_b4096/model.joblib",
+          "recorded_sha256": "e1612211afea90ad089639cbbb609586fcdbd0201b8307a858346ca16d428bb9",
+          "digest": "sha256:e1612211afea90ad089639cbbb609586fcdbd0201b8307a858346ca16d428bb9"
+        },
+        {
+          "path": "models/rf_r2_b4096/artifact_manifest.json",
+          "recorded_sha256": "741c4ff820cc9fcdee7578179528df3d92cf95f69cb2f92955aadeea3d3e1cdb",
+          "digest": "json:86a80e572c6a1f08f0061bdf892145d4a17fb16b8c7e5c9108e1dadd8acd2c7b"
+        }
+      ]
+    },
+    {
+      "job_id": "437430d4301b",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:03:47.906Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_r2_b4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/logreg_r2_b4096",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 2.62,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/logreg_r2_b4096/metrics.json",
+          "recorded_sha256": "c9a94124b0ef5ce2f64f4b581d3ce9908ff74049c954bf00f59a028a80579ae7",
+          "digest": "json:58d614a74fb46912a2d7e6576eaf0f4f904aa7ba5406fec37638669c18f584ce"
+        },
+        {
+          "path": "models/logreg_r2_b4096/predictions.csv",
+          "recorded_sha256": "72defee6982e56ad704496aed7377686ec3084d0757b178717658d7865ff2a1d",
+          "digest": "sha256:72defee6982e56ad704496aed7377686ec3084d0757b178717658d7865ff2a1d"
+        },
+        {
+          "path": "models/logreg_r2_b4096/model.joblib",
+          "recorded_sha256": "903cf988f948282a8197912fa8735d04ae7663abb54b67e6969d068a283159ad",
+          "digest": "sha256:903cf988f948282a8197912fa8735d04ae7663abb54b67e6969d068a283159ad"
+        },
+        {
+          "path": "models/logreg_r2_b4096/artifact_manifest.json",
+          "recorded_sha256": "7ab6c9a04421b30a6697a661667e0383e50604b87a3e9599c4fcb0bb9f126c74",
+          "digest": "json:17e54cdf18354aa056fa63d7e8438e49fee6263a857f795ac27311a2067a7f64"
+        }
+      ]
+    },
+    {
+      "job_id": "5f3d1c06d420",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:03:50.549Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_r2_b4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_r2_b4096_s42",
+        "--model",
+        "rf",
+        "--seed",
+        "42",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 6.55,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_r2_b4096_s42/metrics.json",
+          "recorded_sha256": "fd94af1fabff7b4c2a3667baf2833c85a1dfa70a4e41144bbcf365da8f056ed1",
+          "digest": "json:7deabc7bf3f0494579d6a34d8e9d9b667ee2929fa30290ed373aea62d5f306f7"
+        },
+        {
+          "path": "models/rf_r2_b4096_s42/predictions.csv",
+          "recorded_sha256": "09083e05af5ad1426f610086b469828572b280a201e8ed645934d74b93a007d6",
+          "digest": "sha256:09083e05af5ad1426f610086b469828572b280a201e8ed645934d74b93a007d6"
+        },
+        {
+          "path": "models/rf_r2_b4096_s42/model.joblib",
+          "recorded_sha256": "53006d5f76f6608fc1b2a3cf26b84a551b97e432a0569cb740d62eef37f0add6",
+          "digest": "sha256:53006d5f76f6608fc1b2a3cf26b84a551b97e432a0569cb740d62eef37f0add6"
+        },
+        {
+          "path": "models/rf_r2_b4096_s42/artifact_manifest.json",
+          "recorded_sha256": "9119de513c4164ace962f6e0197edee5a0deb76a36558cf8b47f6743ed8f6a64",
+          "digest": "json:81c0d1857a5a06cbddaab0e0bc889b2d2e476ba61b54302d683c1910d8a895ec"
+        }
+      ]
+    },
+    {
+      "job_id": "d7a269885fa8",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:03:57.128Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_r2_b4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/xgb_r2_b4096",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 9.11,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/xgb_r2_b4096/metrics.json",
+          "recorded_sha256": "4a659d492d2d53664ca0d0fef1b3e39b03b469e5255b1c8ffb74312a6e9cff3f",
+          "digest": "json:61736e3a27cd2c4cb540d2bbe18dd9152697e5707ac6d96d7344546cf54811ba"
+        },
+        {
+          "path": "models/xgb_r2_b4096/predictions.csv",
+          "recorded_sha256": "d85ea681a1f5339cf741c3abba1c245f6e5cd536661f898f1d29878fef6bcd89",
+          "digest": "sha256:d85ea681a1f5339cf741c3abba1c245f6e5cd536661f898f1d29878fef6bcd89"
+        },
+        {
+          "path": "models/xgb_r2_b4096/model.joblib",
+          "recorded_sha256": "aa2b15a72e552039079bcb84eac90d53e1583d5b2ecb90d21284bb67a1a054e3",
+          "digest": "sha256:aa2b15a72e552039079bcb84eac90d53e1583d5b2ecb90d21284bb67a1a054e3"
+        },
+        {
+          "path": "models/xgb_r2_b4096/artifact_manifest.json",
+          "recorded_sha256": "e0899e26b7c8fa7f43083e3c2ebdc03905bcaddc5bb6c2d3a795ff1642347a1e",
+          "digest": "json:d44a1d71db9e03bf6366156354d1a75b205480d02e744ed6c4aaf6e125b36410"
+        }
+      ]
+    },
+    {
+      "job_id": "b8d2e341ca88",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:04:25.215Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_r2_b4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_r2_b4096_s13",
+        "--model",
+        "rf",
+        "--seed",
+        "13",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 6.32,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_r2_b4096_s13/metrics.json",
+          "recorded_sha256": "f5baabb14db9b39d38f47c5971e1bfa619da5951deff42fa039037be6e0d078b",
+          "digest": "json:0249859dc3cf7a8872a0acd0fe2b177d142187920e9f6049608eb906c2aaf490"
+        },
+        {
+          "path": "models/rf_r2_b4096_s13/predictions.csv",
+          "recorded_sha256": "bb6a92738f1a9c1521d25cb404e97a596f2f17ae0e257db922c38aca63aaebe1",
+          "digest": "sha256:bb6a92738f1a9c1521d25cb404e97a596f2f17ae0e257db922c38aca63aaebe1"
+        },
+        {
+          "path": "models/rf_r2_b4096_s13/model.joblib",
+          "recorded_sha256": "700b56fbd6d4c212c0cbf665e78003223041b4d3f544d5d7ffe6f4789ae0a298",
+          "digest": "sha256:700b56fbd6d4c212c0cbf665e78003223041b4d3f544d5d7ffe6f4789ae0a298"
+        },
+        {
+          "path": "models/rf_r2_b4096_s13/artifact_manifest.json",
+          "recorded_sha256": "0d30c44ff445f926ef55bd5535c00c1ea49b3434b53ed676cfe380be5c3eee19",
+          "digest": "json:36cda1eb7c71de08aded8ad4928ddfaba6dd30afa410eceeb61d82c1605baf9f"
+        }
+      ]
+    },
+    {
+      "job_id": "3f192cccb32c",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:04:31.568Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_r2_b4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_r2_b4096_s2024",
+        "--model",
+        "rf",
+        "--seed",
+        "2024",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 4.15,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_r2_b4096_s2024/metrics.json",
+          "recorded_sha256": "39dee205877a4f11614abe6039de286619232680d6716afdbddf72f9cd20973d",
+          "digest": "json:3a54a3d6378f15635991a1ae4f50c34eceefff50a486a946f06cd786833a850b"
+        },
+        {
+          "path": "models/rf_r2_b4096_s2024/predictions.csv",
+          "recorded_sha256": "0617067846190d2722720ae0088be17268e8c1c1cc3ec624aa5ec54d9e0f0c14",
+          "digest": "sha256:0617067846190d2722720ae0088be17268e8c1c1cc3ec624aa5ec54d9e0f0c14"
+        },
+        {
+          "path": "models/rf_r2_b4096_s2024/model.joblib",
+          "recorded_sha256": "54395476ad673c97eadb34c7ed9ca7f54b81ab0d5cc2cf001fddd711b5c64f71",
+          "digest": "sha256:54395476ad673c97eadb34c7ed9ca7f54b81ab0d5cc2cf001fddd711b5c64f71"
+        },
+        {
+          "path": "models/rf_r2_b4096_s2024/artifact_manifest.json",
+          "recorded_sha256": "b94a1f71b372aa326c18dcd9ed2e46508c94c0c0aadd0b0fb9ebfc6fe660f999",
+          "digest": "json:dc16978c2adb3a350ffc169aaa3b6ca172b539eab732e7dcf7cf994cccd9b07a"
+        }
+      ]
+    },
+    {
+      "job_id": "29293c497b94",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:04:35.735Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/adr_train_r2_b4096.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv",
+        "--output-dir",
+        "models/rf_r2_b4096_s7",
+        "--model",
+        "rf",
+        "--seed",
+        "7",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_binary",
+        "--label-id-column",
+        "id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json"
+      ],
+      "wall_seconds": 5.32,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "models/rf_r2_b4096_s7/metrics.json",
+          "recorded_sha256": "9d80c92e8988ee053df2196ec2a25cc85ab70a198922befd272ffe01affb2200",
+          "digest": "json:144192e803d9e3a34f442c3b53d8d73a93cc1d1059ed081d0ca725c5a50c09d5"
+        },
+        {
+          "path": "models/rf_r2_b4096_s7/predictions.csv",
+          "recorded_sha256": "7e7194aad2ffce598e1085851ac2226baa3c972d20532a9e27a7bbcb4a8ae621",
+          "digest": "sha256:7e7194aad2ffce598e1085851ac2226baa3c972d20532a9e27a7bbcb4a8ae621"
+        },
+        {
+          "path": "models/rf_r2_b4096_s7/model.joblib",
+          "recorded_sha256": "dd34762f24ef8410423c426618201731a7809087671bc7eef6f432a15b012124",
+          "digest": "sha256:dd34762f24ef8410423c426618201731a7809087671bc7eef6f432a15b012124"
+        },
+        {
+          "path": "models/rf_r2_b4096_s7/artifact_manifest.json",
+          "recorded_sha256": "f5c4e73d48c52c6772a155eb9e1053f70b49d70f497537d2fa6ece87a2d1df2c",
+          "digest": "json:62752c8afd7692e3e26752190c44c04a93b31fb557452e204b36b1e667cf73e4"
+        }
+      ]
+    },
+    {
+      "job_id": "257684ff5988",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:04:47.561Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "models/rf_r2_b4096/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "screening/adr_library_100k_ranked_r2_b4096.csv",
+        "--top-output",
+        "screening/adr_top100_r2_b4096.csv",
+        "--report",
+        "screening/adr_screening_report_r2_b4096.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "4096",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 28.24,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "screening/adr_library_100k_ranked_r2_b4096.csv",
+          "recorded_sha256": "1f6751e9e0005a866e2e87ba246d4353e29b0886a665ac93af314ce38922ef6a",
+          "digest": "sha256:1f6751e9e0005a866e2e87ba246d4353e29b0886a665ac93af314ce38922ef6a"
+        },
+        {
+          "path": "screening/adr_top100_r2_b4096.csv",
+          "recorded_sha256": "eaa07ff05acd2566f4a07404cdd4ba98df30e2dbb4a78b6a1051d5bc5603ddf9",
+          "digest": "sha256:eaa07ff05acd2566f4a07404cdd4ba98df30e2dbb4a78b6a1051d5bc5603ddf9"
+        },
+        {
+          "path": "screening/adr_screening_report_r2_b4096.json",
+          "recorded_sha256": "93fca2c17b25d7c789aea6bf8e259a4ddb0d2276689051c256b6ab1446378703",
+          "digest": "json:c0283d47524b09b110e41d7b9be694b3981844149e55d2d3a8a4f55379bf11cd"
+        }
+      ]
+    },
+    {
+      "job_id": "201a8dbaca44",
+      "tool_id": "evaluation.locked",
+      "state": "FAILED",
+      "started_at": "2026-11-08T14:05:26.203Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "ADR",
+        "--endpoint",
+        "Ki",
+        "--model",
+        "models/rf_r2_b4096/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "evaluation/adr_locked.json",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 2.37,
+      "exit_code": 1,
+      "error": "",
+      "stderr_tail": "vs_science/evaluation/evaluate.py\", line 82, in main\n    scores = model.predict_proba(features)[:, 1]\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/pipeline.py\", line 720, in predict_proba\n    Xt = transform.transform(Xt)\n         ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/utils/_set_output.py\", line 316, in wrapped\n    data_to_wrap = f(self, X, *args, **kwargs)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/preprocessing/_data.py\", line 1045, in transform\n    X = self._validate_data(\n        ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/base.py\", line 654, in _validate_data\n    self._check_n_features(X, reset=reset)\n  File \"/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/base.py\", line 443, in _check_n_features\n    raise ValueError(\nValueError: X has 2055 features, but StandardScaler is expecting 4103 features as input.",
+      "stdout_tail": "",
+      "artifacts": []
+    },
+    {
+      "job_id": "cb8de1f8a919",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T14:05:52.564Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "ADR",
+        "--endpoint",
+        "Ki",
+        "--model",
+        "models/rf_v1/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "evaluation/adr_locked.json",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 2.38,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "evaluation/adr_locked.json",
+          "recorded_sha256": "03f1c44cd61f4badb0dd819a876a4afc0d2002e56ff5f12dc40dff1272ed9101",
+          "digest": "json:0fc7ded5b901ad00da8d2e8b895582ca4747d7ab21ffb98772c1ffde452efc61"
+        }
+      ]
+    }
+  ]
+}

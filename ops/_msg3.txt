@@ -1,0 +1,25 @@
+feat(phase7b): drive the self-improvement loop on this round's own traces
+
+按用户要求把「序列中途晋升」做成可执行链路，并用本轮 R 臂 9 个工单的数据实跑一遍。
+
+链路（全部跑通）：
+1. trace_export 从 r_01..r_09 的工单目录导出 9 条 trace -> evolution/traces_p7b/
+2. propose --traces-dir traces_p7b --recent 9 --emit -> 3 个候选：
+   - preflight:ml.train（8 次同簇失败证据，最强）
+   - preflight:rdkit.featurize（2 次）
+   - throughput:ml.train（占 58% 墙钟，中位 8.5 s）
+3. shadow 重放 p7b_4_drd2 的 11 个 ml.train 步：equivalence 0.8788，11 步全部 exit 0
+4. gate 裁决：fail，blocking = [equivalence, success, failure]
+
+关键发现（值得改的地方）：
+equivalence 的 3 处不一致全是 `model.joblib: digest differs`，
+即 joblib 序列化不是字节确定的。这类「不改输出、只加快失败」的候选
+在字节级等价判据下**永远不可能通过**。门禁应改为比较 predictions/metrics，
+而不是模型二进制摘要，否则 preflight 类候选一律被误杀。
+
+复现 `shadow` 的两个坑：
+- 必须从 evolution/ 目录运行（imports `artifacts` 作为顶层模块）
+- sandbox 必须预先填入该工单的输入工件（features/*.npz 等），
+  否则重放一律 FileNotFoundError、equivalence 恒为 0
+
+M 臂此前卡在派发是 maxWorkers=3 被 3 个测试工单占满，已释放，现 #1 完成、#2 运行中。

@@ -1,0 +1,39 @@
+{
+  "candidate_id": "auto-failure-recurrence-ml-fuse-02b6a4",
+  "version": "0.1.0-auto",
+  "status": "proposal",
+  "changes": [
+    {
+      "type": "experiment",
+      "key": "preflight:ml.fuse",
+      "value": "validate the job inputs before launch (required columns, file kind) and fail fast with an actionable message"
+    }
+  ],
+  "hypothesis": "ml.fuse keeps failing the same way in recent tickets (ml.fuse::FileNotFoundError), so rejecting that input before launch should remove the retry loop without touching the success path.",
+  "acceptance": {
+    "equivalence": 1.0,
+    "failures_in_replay": 0
+  },
+  "risk": "pre-flight checks add a small fixed cost to every job and may reject inputs the tool would have tolerated",
+  "basis": {
+    "generated_by": "evolution/propose.py",
+    "kind": "failure-recurrence",
+    "tool_id": "ml.fuse",
+    "evidence": {
+      "tickets": [
+        "chembl-drd2-ctl-m-3d239bb3330b.json"
+      ],
+      "recent_hits": 3,
+      "clusters": [
+        {
+          "cluster": "ml.fuse::FileNotFoundError",
+          "recent_hits": 3,
+          "samples": [
+            "FileNotFoundError: [Errno 2] No such file or directory: 'artifacts/models/scaf_s17_xgb_2048/predictions.csv'",
+            "FileNotFoundError: [Errno 2] No such file or directory: 'artifacts/models/scaf_s17_xgb_2048/predictions.csv'"
+          ]
+        }
+      ]
+    }
+  }
+}

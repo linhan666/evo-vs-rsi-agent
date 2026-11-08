@@ -1,0 +1,738 @@
+{
+  "schema_version": "2",
+  "group": "rsi",
+  "ticket_dir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/prothrombin-frozen-r-9ce42a9db977",
+  "exported_at": "2026-11-08T17:40:10+00:00",
+  "steps": [
+    {
+      "job_id": "3eabc52d79b2",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:13:21.925Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience_retrieved.json",
+        "--target",
+        "PT"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience_retrieved.json",
+          "recorded_sha256": "b8dbaa59b5dd2388328685c87ba46e4e7d9de0c7ab0dc1783d872d8ba941f537",
+          "digest": "json:a69c239407128dfcb2563bd61dbb4f3a79cfb58bcf4248a0320908becf48f0f3"
+        }
+      ]
+    },
+    {
+      "job_id": "f4e6543d334a",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:13:25.995Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience_all.json"
+      ],
+      "wall_seconds": 0.07,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience_all.json",
+          "recorded_sha256": "32899ba016970aaeabc17878fded65e5aa2376a16e3b1fc062b9c4a312ec18a4",
+          "digest": "json:2681a9ace94401a6f2a8bef02bbac38e926bc87049db935f9e1317ed3e8afae3"
+        }
+      ]
+    },
+    {
+      "job_id": "730206ec6f17",
+      "tool_id": "experience.retrieve",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:13:32.906Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.experience.store",
+        "retrieve",
+        "--store",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json",
+        "--out",
+        "experience_ca2.json",
+        "--target",
+        "CA2"
+      ],
+      "wall_seconds": 0.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "experience_ca2.json",
+          "recorded_sha256": "c21806abf5c3b43c1997bd93487810c6c5ca9f8e8c37e671e39a8c1f415d4a8a",
+          "digest": "json:ef31314364fe5e977dccc8eca629113c2d67e2157899f6021f04f0ae3bf2a3d3"
+        }
+      ]
+    },
+    {
+      "job_id": "3489689c4820",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:13:59.037Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output",
+        "features/pt_dataset_p7b_v1.npz",
+        "--report",
+        "features/pt_dataset_p7b_v1.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 0.92,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/pt_dataset_p7b_v1.npz",
+          "recorded_sha256": "d55558eb07ce0d04167cec883d081b3a7694d9b458e603cfdef274dbffe5cf0d",
+          "digest": "npz:71df3cbfe53784934f833a5fa376ab00086d8f5bf8a15df1cfc5d5efe26038e4"
+        },
+        {
+          "path": "features/pt_dataset_p7b_v1.json",
+          "recorded_sha256": "aafae486f74259dd03248d620bcf6b1017942ceca35cda8a69e1369500678856",
+          "digest": "json:544193298b947fad9770710c1b912b12556b88d75ce852f6ab0aa088c833edf3"
+        }
+      ]
+    },
+    {
+      "job_id": "20fe0de27774",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:14:16.683Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/pt_dataset_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output-dir",
+        "runs/pt_rf_v1_s17",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_measured",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/splits/frozen_prothrombin.json"
+      ],
+      "wall_seconds": 4.16,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/pt_rf_v1_s17/metrics.json",
+          "recorded_sha256": "0f8c25ae5f671e34941e904a8a006d1c7bffed76ea2e098de5569a55cd0c6cd6",
+          "digest": "json:d6b28faba84385a26a1f502f3d2d70d2ff6fb89396cdc1f7ccaddbaeddd3a860"
+        },
+        {
+          "path": "runs/pt_rf_v1_s17/predictions.csv",
+          "recorded_sha256": "33251401176096f6592d6b1eea444256fd5cb3e9ff97b6abdecd9cbbe780053e",
+          "digest": "sha256:33251401176096f6592d6b1eea444256fd5cb3e9ff97b6abdecd9cbbe780053e"
+        },
+        {
+          "path": "runs/pt_rf_v1_s17/model.joblib",
+          "recorded_sha256": "a2b7347897e9e13a328db413b877b2e1a851f07e93ecd65c7f4a11e9417967df",
+          "digest": "sha256:a2b7347897e9e13a328db413b877b2e1a851f07e93ecd65c7f4a11e9417967df"
+        },
+        {
+          "path": "runs/pt_rf_v1_s17/artifact_manifest.json",
+          "recorded_sha256": "67cc402070e9bbf36036337aa1574a62945baf49621500bf7b6935a8bf8fd3bb",
+          "digest": "json:ad5948278a7d0fa7c2f4464617af5c0524601332b92ef9528aae913a91f4b66b"
+        }
+      ]
+    },
+    {
+      "job_id": "1fbed22628ff",
+      "tool_id": "rdkit.featurize",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:14:28.991Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.chemistry.featurize",
+        "--input",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output",
+        "features/pt_dataset_p7b_v2.npz",
+        "--report",
+        "features/pt_dataset_p7b_v2.json",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--limit",
+        "0",
+        "--id-column",
+        "id",
+        "--smiles-column",
+        "smiles",
+        "--desc-set",
+        "v2"
+      ],
+      "wall_seconds": 5.68,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "features/pt_dataset_p7b_v2.npz",
+          "recorded_sha256": "bdd8bf81c25988854665cdbd074f3132df4c7013f1125fd96b9c83f2fcfe8610",
+          "digest": "npz:0341fce7f7587b4173b76948f2bdd7e458ef2ff040f5340c458e7968f70a1899"
+        },
+        {
+          "path": "features/pt_dataset_p7b_v2.json",
+          "recorded_sha256": "e428dbe61caf74c9cff42eab5dbfc156075af3ad7dd733a533c823a728e023e3",
+          "digest": "json:544193298b947fad9770710c1b912b12556b88d75ce852f6ab0aa088c833edf3"
+        }
+      ]
+    },
+    {
+      "job_id": "7a2cba759270",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:14:34.687Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/pt_dataset_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output-dir",
+        "runs/pt_xgboost_v1_s17",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_measured",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/splits/frozen_prothrombin.json"
+      ],
+      "wall_seconds": 4.19,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/pt_xgboost_v1_s17/metrics.json",
+          "recorded_sha256": "21fab28694b528d05dcaf1f35f34dc151b19366c04f15ea507444aecbdb787b4",
+          "digest": "json:ab629e8dc58aae7a4ff6ea44d896e5f36becd5404c79b11ca4546d84bd7f9af4"
+        },
+        {
+          "path": "runs/pt_xgboost_v1_s17/predictions.csv",
+          "recorded_sha256": "502343898d90539075e2710fbaef8483481ec5e3f853f1efd646264987d5df5d",
+          "digest": "sha256:502343898d90539075e2710fbaef8483481ec5e3f853f1efd646264987d5df5d"
+        },
+        {
+          "path": "runs/pt_xgboost_v1_s17/model.joblib",
+          "recorded_sha256": "979ebed7a592859ad90614d0ab55131d585e25f6937b56ef541d2e141ef86c83",
+          "digest": "sha256:979ebed7a592859ad90614d0ab55131d585e25f6937b56ef541d2e141ef86c83"
+        },
+        {
+          "path": "runs/pt_xgboost_v1_s17/artifact_manifest.json",
+          "recorded_sha256": "e09d34ef74a9d418b3e60d88e0fda95fbb2f4eb843ce300b245ffb31b52cd585",
+          "digest": "json:61705a4886699f82a845fa4d70312afea82cb1aba9b92e844ca4f8a68c1db57c"
+        }
+      ]
+    },
+    {
+      "job_id": "5c265d7cf1fc",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:14:38.899Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/pt_dataset_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output-dir",
+        "runs/pt_catboost_v1_s17",
+        "--model",
+        "catboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_measured",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/splits/frozen_prothrombin.json"
+      ],
+      "wall_seconds": 27.82,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/pt_catboost_v1_s17/metrics.json",
+          "recorded_sha256": "4ae0c24b79400b695f4305a0a5ed67a13438889a68f76159d3e3379436a7b973",
+          "digest": "json:3aaec310ac598de91b8fc64777d54a1906760518e99591327afa842bd7a239e2"
+        },
+        {
+          "path": "runs/pt_catboost_v1_s17/predictions.csv",
+          "recorded_sha256": "80f9829d6c909d614c961ef0c6a265db75b7b6495b315edf98a99c93affb237f",
+          "digest": "sha256:80f9829d6c909d614c961ef0c6a265db75b7b6495b315edf98a99c93affb237f"
+        },
+        {
+          "path": "runs/pt_catboost_v1_s17/model.joblib",
+          "recorded_sha256": "594306ad3a65feaa9925efb20d58be7c7842197008573cf00cc3421fa026356b",
+          "digest": "sha256:594306ad3a65feaa9925efb20d58be7c7842197008573cf00cc3421fa026356b"
+        },
+        {
+          "path": "runs/pt_catboost_v1_s17/artifact_manifest.json",
+          "recorded_sha256": "35214e7fb3723747ed3216e13bd6b387fdf27448e53d55aad1ef5dc26cdf556c",
+          "digest": "json:8190e0cf160110174133014f2cbb312550274b3172593c108c54d8555722f32c"
+        }
+      ]
+    },
+    {
+      "job_id": "2a7097af7a78",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:15:06.752Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/pt_dataset_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output-dir",
+        "runs/pt_logreg_v1_s17",
+        "--model",
+        "logreg",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_measured",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/splits/frozen_prothrombin.json"
+      ],
+      "wall_seconds": 2.15,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:455: OptimizeWarning: Unknown solver options: iprint\n  opt_res = optimize.minimize(",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/pt_logreg_v1_s17/metrics.json",
+          "recorded_sha256": "f845b0f7638b5a94b2948243249a47636bff81889c206747f9935bca3692117b",
+          "digest": "json:14bc9640d057bd0cd6a2621519d68a4a1dddc92e4009613e7c7ef71080f73420"
+        },
+        {
+          "path": "runs/pt_logreg_v1_s17/predictions.csv",
+          "recorded_sha256": "5ca64ca45967d6cd1af6b48280b95d75ef74b1999cd9b35effe6845037728fa5",
+          "digest": "sha256:5ca64ca45967d6cd1af6b48280b95d75ef74b1999cd9b35effe6845037728fa5"
+        },
+        {
+          "path": "runs/pt_logreg_v1_s17/model.joblib",
+          "recorded_sha256": "99e4737fef55b7b4651557194f2864c1670ee4747409b8e017efab12f6f232aa",
+          "digest": "sha256:99e4737fef55b7b4651557194f2864c1670ee4747409b8e017efab12f6f232aa"
+        },
+        {
+          "path": "runs/pt_logreg_v1_s17/artifact_manifest.json",
+          "recorded_sha256": "847313b9684547f6035127cc48d4d68e328739b387bd765f37ce938211d55eb4",
+          "digest": "json:dadc97820704657d225b7abcfbed790dcba8d27e46499a43ed75507434bbc7ea"
+        }
+      ]
+    },
+    {
+      "job_id": "a387b9d2a593",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:15:12.478Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/pt_dataset_p7b_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output-dir",
+        "runs/pt_rf_v2_s17",
+        "--model",
+        "rf",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_measured",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/splits/frozen_prothrombin.json"
+      ],
+      "wall_seconds": 4.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/pt_rf_v2_s17/metrics.json",
+          "recorded_sha256": "5462cc8c23ab7a95792427af7e84cf6e12ecedf2c6493357dde05124fdab6ad8",
+          "digest": "json:1a6d818531ba367b23fb4fe8b8c062107a0bc6be569a8adeb495c8c6c14661db"
+        },
+        {
+          "path": "runs/pt_rf_v2_s17/predictions.csv",
+          "recorded_sha256": "0e5e53c1504bc0230a012cd370d7918412921bc0fc1ec96ebf6996947161a95a",
+          "digest": "sha256:0e5e53c1504bc0230a012cd370d7918412921bc0fc1ec96ebf6996947161a95a"
+        },
+        {
+          "path": "runs/pt_rf_v2_s17/model.joblib",
+          "recorded_sha256": "31b6b6cea16841f39c257b2bf42f063d06c7295cc3d6dcfc6b48e0f9bbd76256",
+          "digest": "sha256:31b6b6cea16841f39c257b2bf42f063d06c7295cc3d6dcfc6b48e0f9bbd76256"
+        },
+        {
+          "path": "runs/pt_rf_v2_s17/artifact_manifest.json",
+          "recorded_sha256": "b52dfad389a14a5e256985b50c9c0c1c6170eea051fa6187a91127245c9065db",
+          "digest": "json:3e8e51ae91b7c9f471858af91b17096114ba4cad8da1d6f6100b310e52e13977"
+        }
+      ]
+    },
+    {
+      "job_id": "16a7cbb054ae",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:15:16.590Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/pt_dataset_p7b_v2.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output-dir",
+        "runs/pt_xgboost_v2_s17",
+        "--model",
+        "xgboost",
+        "--seed",
+        "17",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_measured",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/splits/frozen_prothrombin.json"
+      ],
+      "wall_seconds": 6.45,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/pt_xgboost_v2_s17/metrics.json",
+          "recorded_sha256": "21ad91beb5ae637357e56c3a6f6bef9859b6e734cac05b902aae6e59c8082720",
+          "digest": "json:2bb1b1001faca6d95abf7f78870cd28368f77debea7ef21ad7b983f09dc43c9a"
+        },
+        {
+          "path": "runs/pt_xgboost_v2_s17/predictions.csv",
+          "recorded_sha256": "cc47fae2953e40bcc4f4126ebb085424c72ac726d9c968b24b23747ddea6f2d8",
+          "digest": "sha256:cc47fae2953e40bcc4f4126ebb085424c72ac726d9c968b24b23747ddea6f2d8"
+        },
+        {
+          "path": "runs/pt_xgboost_v2_s17/model.joblib",
+          "recorded_sha256": "41b9e8ddf45c082edb8d1c18e84d014ac69ec75f89ffe378a0f47e7bf731f6a2",
+          "digest": "sha256:41b9e8ddf45c082edb8d1c18e84d014ac69ec75f89ffe378a0f47e7bf731f6a2"
+        },
+        {
+          "path": "runs/pt_xgboost_v2_s17/artifact_manifest.json",
+          "recorded_sha256": "9c56055cf48deed90ff532b43bc1df7424bd4b0a97af1f8ead6bf060f3538488",
+          "digest": "json:d3bc8d55b66f8797342f4b552f9666905d622ec4d568d8cda62ab095dbabf8d2"
+        }
+      ]
+    },
+    {
+      "job_id": "7398beb748ee",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:15:34.224Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/pt_dataset_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output-dir",
+        "runs/pt_rf_v1_s42",
+        "--model",
+        "rf",
+        "--seed",
+        "42",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_measured",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/splits/frozen_prothrombin.json"
+      ],
+      "wall_seconds": 4.09,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/pt_rf_v1_s42/metrics.json",
+          "recorded_sha256": "03a697d5a84c301da92b31666a831f89fd0c34e218fd55655153f35349119f57",
+          "digest": "json:f4ff5d0c49552a7533009b4a6ad64132a5328cd488921fda1099379f0f84f1a6"
+        },
+        {
+          "path": "runs/pt_rf_v1_s42/predictions.csv",
+          "recorded_sha256": "7d13fabf59c9e3cad16c033408da9b5d0fa1532fbfd36c5a06146db6624744e3",
+          "digest": "sha256:7d13fabf59c9e3cad16c033408da9b5d0fa1532fbfd36c5a06146db6624744e3"
+        },
+        {
+          "path": "runs/pt_rf_v1_s42/model.joblib",
+          "recorded_sha256": "cc89ba7881d5941e99145145be1429d0f83be862143cc5ec150425a78e26fd77",
+          "digest": "sha256:cc89ba7881d5941e99145145be1429d0f83be862143cc5ec150425a78e26fd77"
+        },
+        {
+          "path": "runs/pt_rf_v1_s42/artifact_manifest.json",
+          "recorded_sha256": "bf06856ae70004a2f5aa802e1a737603d2ae2fc83ca987ee64f55fe4cfd79840",
+          "digest": "json:fb2d966e811ef78ee3d467dc646f43321d0d0366a6c46b1a683a0debeef56127"
+        }
+      ]
+    },
+    {
+      "job_id": "f4adb15014fc",
+      "tool_id": "ml.train",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:15:38.343Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.modeling.train",
+        "--features",
+        "features/pt_dataset_p7b_v1.npz",
+        "--labels",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/dataset_p7b.csv",
+        "--output-dir",
+        "runs/pt_rf_v1_s7",
+        "--model",
+        "rf",
+        "--seed",
+        "7",
+        "--test-fraction",
+        "0.3",
+        "--label-source",
+        "chembl_ki_measured",
+        "--label-id-column",
+        "molecule_chembl_id",
+        "--label-column",
+        "label",
+        "--split-manifest",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/prothrombin/ki/splits/frozen_prothrombin.json"
+      ],
+      "wall_seconds": 3.26,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "runs/pt_rf_v1_s7/metrics.json",
+          "recorded_sha256": "95f37ff369fd4b82320d0e78738f1faa38399025fcb7c29ca93e59e96c525ac6",
+          "digest": "json:4e801d669991f856a6cce3effd146dbc013c1619ccb37a1916f38a95920d5dd7"
+        },
+        {
+          "path": "runs/pt_rf_v1_s7/predictions.csv",
+          "recorded_sha256": "2c60c8191b85de2e6cc805dd0df2ce9af893a0e28dbb1bec4a506195f755c68f",
+          "digest": "sha256:2c60c8191b85de2e6cc805dd0df2ce9af893a0e28dbb1bec4a506195f755c68f"
+        },
+        {
+          "path": "runs/pt_rf_v1_s7/model.joblib",
+          "recorded_sha256": "dd9cb51a02aced8354b5d4905e8c2a4d72a8fd71052a9721f92d4fe356bb6c79",
+          "digest": "sha256:dd9cb51a02aced8354b5d4905e8c2a4d72a8fd71052a9721f92d4fe356bb6c79"
+        },
+        {
+          "path": "runs/pt_rf_v1_s7/artifact_manifest.json",
+          "recorded_sha256": "3a35be18f16c3dba3bea6c9c158d733dc6d931eaf94bf22d6d61b7a6d2816621",
+          "digest": "json:767962ae942a60eb356f02aa9853bcbdfc5a6f0540088010eb8393ae9e2fb879"
+        }
+      ]
+    },
+    {
+      "job_id": "ae11bd3ff9fb",
+      "tool_id": "screening.rank",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:15:50.261Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.screening.predict",
+        "--model",
+        "runs/pt_rf_v1_s17/model.joblib",
+        "--library",
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi",
+        "--output",
+        "screening/pt_library_100k_ranked.csv",
+        "--top-output",
+        "screening/pt_top100.csv",
+        "--report",
+        "screening/pt_screening_report.json",
+        "--top-k",
+        "100",
+        "--radius",
+        "2",
+        "--n-bits",
+        "2048",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 19.7,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "screening/pt_library_100k_ranked.csv",
+          "recorded_sha256": "8d52676476b384c93b71f803c737e330f013db4ff590471c8d474bf062757284",
+          "digest": "sha256:8d52676476b384c93b71f803c737e330f013db4ff590471c8d474bf062757284"
+        },
+        {
+          "path": "screening/pt_top100.csv",
+          "recorded_sha256": "30821dc2ea45480033763dc6f3671c0808309abb02b17c3a0b274ce6b2c92243",
+          "digest": "sha256:30821dc2ea45480033763dc6f3671c0808309abb02b17c3a0b274ce6b2c92243"
+        },
+        {
+          "path": "screening/pt_screening_report.json",
+          "recorded_sha256": "ad26bfb83385af8c8ecaff5a84ec85474a8913042eb994c26edde9625e33e8f0",
+          "digest": "json:918492ad3b63505fd1c92f94bc748ad91df8cc45f06cab4e9b9915a24f5f407c"
+        }
+      ]
+    },
+    {
+      "job_id": "522d62472f8e",
+      "tool_id": "evaluation.locked",
+      "state": "SUCCEEDED",
+      "started_at": "2026-11-08T15:16:16.504Z",
+      "argv": [
+        "/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python",
+        "-m",
+        "evovs_science.evaluation.locked",
+        "--target",
+        "PT",
+        "--endpoint",
+        "Ki",
+        "--model",
+        "runs/pt_rf_v1_s17/model.joblib",
+        "--workspace",
+        ".",
+        "--receipt",
+        "evaluation/pt_locked.json",
+        "--desc-set",
+        "v1"
+      ],
+      "wall_seconds": 2.29,
+      "exit_code": 0,
+      "error": "",
+      "stderr_tail": "",
+      "stdout_tail": "",
+      "artifacts": [
+        {
+          "path": "evaluation/pt_locked.json",
+          "recorded_sha256": "4a505440fd1d9197c7492f18cefc7b5e5b3f2f02dd5deb99cf8114b0546a63c8",
+          "digest": "json:7162c21ba4d987bcae7b72de9101f3a698a6a4a0b52b54df24cf2799a43e6174"
+        }
+      ]
+    }
+  ]
+}
