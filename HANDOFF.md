@@ -56,30 +56,39 @@
 
 ---
 
-## 三之一、无人值守链（2026-11-08 05:00 启动）
+## 三之一、无人值守链（2026-11-08 启动，两次事故后于 21:23 恢复）
 
-`ops/p7b_run_all.sh` 已在 tmux `p7b-all` 里运行，日志 `ops/p7b_runs/orchestrator.log`。
+`ops/p7b_run_all.sh`（编排器，tmux `p7b-all`）+ `ops/p7b_watchdog.sh`（看门狗，tmux `p7b-watch`），
+日志 `ops/p7b_runs/{orchestrator,watchdog}.log`。
 
 | 阶段 | 内容 | 失败处理 |
 |---|---|---|
 | 0 | 等 round-7 的 M 驱动器退出 + 工单清零 | 60 min 后仍未清零则 abort |
 | 1 | `p7b_patch.py --include-ts` → `pnpm typecheck` → `pnpm build` | 任一步失败立即 abort |
-| 2 | 依次跑 **R(rsi) → M(memory) → A(fixed) → W(无 agent)** | 每次重启校验 `/proc/<pid>/environ` 的 `EVOVS_GROUP` 与 usage hook，不符即 abort；每臂结束校验工单清零 |
-| 3 | `analysis --round p7b` / `locked --round p7b` / `cv_repeat --batch --round p7b` | 单份失败只记录，不阻断其余 |
+| 2 | 依次跑 **R → M → A → W** | 每次重启校验 `/proc/<pid>/environ` 的 `EVOVS_GROUP` 与 usage hook，不符即 abort |
+| 3 | `analysis --round p7b` / `locked --round p7b` / `cv_repeat --batch --round p7b` | 单份失败只记录 |
 
-**为什么每次重启都要硬校验**：`EVOVS_GROUP` 不在 tmux 的 `update-environment` 列表里。若 tmux server 没死透，新会话会**静默沿用上一组的配置**——那就会用错的臂跑完 9 个靶点，事后无法补救。
+### 事故记录（两次共损失约 15 小时）
 
-**手动接管**：
-```bash
-tmux kill-session -t p7b-all     # 停编排器（当前臂的驱动器不受影响）
-tmux kill-session -t p7b-rsi     # 停某个臂的驱动器
-tail -f ops/p7b_runs/orchestrator.log
-```
+**第一次（06:16:58 失联 11 小时）** —— 四个叠加缺陷，每个都足以致命：
 
-### 启动前预先排除的两个问题
+1. `service_start` 里调 `tmux kill-server`：编排器自己住在 tmux 里，**把自己杀了**
+2. `env.sh` 里 `case ":$NODE_OPTIONS:"` 未加 `${...:-}`：编排器开了 `set -u`，**source 时整个 shell 中止**（这段是埋点那次追加的）
+3. Windows 侧 Python 打补丁写回 **CRLF**：bash 报 `$'\r': command not found`
+4. 把服务分组名 `rsi` 当成驱动器的 `--group`：argparse 拒绝
 
-1. **`pnpm typecheck` 其实一直是失败的**（README 声称 PASS 已过时）：`screening.rank` 的 argv 引用 `args.desc_set`，但 `RankInput` 从未声明该字段。运行时因为 `undefined` 被丢弃而侥幸可用，predict 走默认 v1。已在 `p7b_patch.py` 补上声明，typecheck 现通过。
-2. **补丁脚本破坏了 CRLF**：`registry.ts` 是 CRLF，用默认 `read_text/write_text` 往返会把整个文件改成 LF，一行改动变成 318 行 diff。已改用 `newline=""`，现在 diff 只有 2 行。
+**第二次（17:16 启动，17:21 挂死，21:23 才发现）** —— 评估阶段 LLM 调用挂死：
+
+- 现象：`trigger` 表有记录、`decision` 表从不产生，工单数为 0
+- 死锁机制：本地 source 按 `taskId` 去重 → 同一任务被重投 **480 次**，`trigger` 表也不再增长
+- 恢复：重启服务（清掉僵死的 LLM 客户端）+ 删除 3 条陈旧 trigger / 1 条 decision
+- 直接测得 DeepSeek API 本身正常（chat 200 / 0.94 s），是客户端侧僵死
+
+**由此新增看门狗** `ops/p7b_watchdog.sh`：独立进程，判定条件是「臂驱动器存活但**工单数 20 分钟不变**」。
+刻意**不用** `trigger − decision` 差值——去重后两个表都不增长，那个信号测不出来。
+
+> ⚠️ 教训：这套自动化在交付时没有做过端到端跑通验证，四个 bug 全部只在真跑时暴露，
+> 且没有任何告警。后续任何无人值守链路，必须先跑一次完整的最小闭环再放行。
 
 ## 三、当前实验状态（2026-11-08 00:15）
 
