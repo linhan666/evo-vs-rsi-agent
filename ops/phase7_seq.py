@@ -250,6 +250,8 @@ def model_table(workdir: Path, jobs: list[dict]) -> dict[str, dict]:
             kind = "refit"        # retrained on all labelled data: metrics are in-sample
         elif strategies.get(manifest) in ("scaffold", "random"):
             kind = strategies[manifest]
+        elif "frozen_" in manifest:
+            kind = "scaffold"     # phase7b hands over a frozen scaffold-grouped manifest
         elif "scaffold" in manifest:
             kind = "scaffold"     # manifest name is the only remaining evidence
         elif manifest:
@@ -293,6 +295,9 @@ def featurization_of(jobs: list[dict]) -> dict:
     return chosen
 
 
+USAGE_LOG_NAME: str | None = None   # set by --usage-log; falls back to the round-7 name
+
+
 def token_usage(started: str | None, ended: str | None, group: str) -> dict:
     """Sum the LLM usage log over the ticket's wall-clock window.
 
@@ -300,7 +305,7 @@ def token_usage(started: str | None, ended: str | None, group: str) -> dict:
     attributed by timestamp rather than by ticket id. That is accurate enough for
     the macro comparison and needs no change to the service.
     """
-    path = DATA_ROOT / f"usage_seq_{group}.jsonl"
+    path = DATA_ROOT / (USAGE_LOG_NAME or f"usage_seq_{group}.jsonl")
     if not (started and ended and path.exists()):
         return {}
     try:
@@ -608,10 +613,14 @@ def main(argv: list[str] | None = None) -> int:
                         help="directory holding the task JSONs (default ops/phase7_custom)")
     parser.add_argument("--store", default=None,
                         help="experience store path; each memory-bearing arm needs its own file")
+    parser.add_argument("--usage-log", default=None,
+                        help="ledger file under scientific/.artifacts, e.g. usage_p7b_r.jsonl")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
 
-    global TASKS, STORE
+    global TASKS, STORE, USAGE_LOG_NAME
+    if args.usage_log:
+        USAGE_LOG_NAME = args.usage_log
     if args.tasks_dir:
         TASKS = (ROOT / args.tasks_dir) if not args.tasks_dir.startswith("/") else Path(args.tasks_dir)
     if args.store:

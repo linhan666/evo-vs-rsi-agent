@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 # Independent watchdog for the phase7b chain.
 #
-# Why it exists
-# -------------
-# Twice today the assessment step hung: the trigger was accepted into `trigger`,
-# the LLM call never returned, and no `decision` row was ever written — so no
-# ticket appeared and the driver kept re-submitting the same task. Counting
-# `trigger - decision` does NOT detect this, because the local source dedupes by
-# task id: the trigger table stops growing too. The only reliable signal is
-# "the arm driver is alive but no new ticket has appeared for a long time".
+# History (read before changing the signal)
+# -----------------------------------------
+# v1 used "ticket count unchanged for 20 min" and produced nothing but false
+# positives: a ticket is created once per *target*, so the count legitimately sits
+# still for the 15-20 minutes a target takes. Worse, its arm-name lookup returned
+# "p7b-r" while the mapping expected "r", so every restart silently no-opped —
+# which is the only reason it did not restart the service every two minutes and
+# destroy the run.
 #
-# It restarts the service (which clears the stuck LLM client) and logs loudly.
-# It never touches the orchestrator or the drivers.
+# The real failure it must catch: the assessment LLM call hangs, so a trigger never
+# becomes a ticket and the driver re-submits the same task forever. The reliable
+# signature is "the driver is alive, nothing scientific is running, and no new job
+# has appeared for a long time".
 #
 # Run: tmux new-session -d -s p7b-watch -c /home/linhan_cluster/evo_vs_rsi \
 #        'bash ops/p7b_watchdog.sh'
@@ -21,33 +23,37 @@ ROOT=/home/linhan_cluster/evo_vs_rsi
 cd "$ROOT" || exit 1
 LOG=$ROOT/ops/p7b_runs/watchdog.log
 PY=$ROOT/scientific/.venv/bin/python
-IDLE_LIMIT=1200   # 20 min without a new ticket while a driver runs == stuck
+WORK=$ROOT/.artifacts/state/work
+IDLE_LIMIT=1080   # 18 min with no new job and nothing running == stuck
 mkdir -p "$ROOT/ops/p7b_runs"
 
 log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*" >>"$LOG"; }
 
-ticket_count() {
-  python3 - <<'EOF'
-import sqlite3
-print(sqlite3.connect('.artifacts/state/orchestrator.sqlite').execute('SELECT COUNT(*) FROM ticket').fetchone()[0])
-EOF
+arm_driver() {  # prints r|m|a or nothing
+  tmux ls 2>/dev/null | sed -n 's/^p7b-\([rma]\):.*/\1/p' | head -1
 }
 
-arm_driver_alive() {
-  tmux ls 2>/dev/null | grep -qE '^p7b-(r|m|a):'
+newest_job_age() {
+  # seconds since the most recently touched job directory, or 99999 if none
+  local dir job
+  dir=$(ls -dt "$WORK"/*/ 2>/dev/null | head -1)
+  if [ -z "$dir" ]; then echo 99999; return; fi
+  job=$(ls -dt "${dir}.jobs"/*/ 2>/dev/null | head -1)
+  if [ -z "$job" ]; then echo 99999; return; fi
+  echo $(( $(date +%s) - $(stat -c %Y "$job") ))
 }
 
-current_arm() {
-  tmux ls 2>/dev/null | grep -oE '^p7b-(r|m|a):' | head -1 | tr -d ':'
+science_running() {
+  ps -eo cmd 2>/dev/null | grep -c '[e]vovs_science' || true
 }
 
-restart_service() {  # $1 arm letter
+restart_service() {  # $1 arm letter r|m|a
   local arm=$1 sgroup usage
   case "$arm" in
     r) sgroup=rsi;    usage=usage_p7b_r.jsonl ;;
     m) sgroup=memory; usage=usage_p7b_m.jsonl ;;
     a) sgroup=fixed;  usage=usage_p7b_a.jsonl ;;
-    *) return 1 ;;
+    *) log "ERROR: unknown arm '$arm'"; return 1 ;;
   esac
   log "restarting service: arm=$arm group=$sgroup"
   scripts/dsh-superagent stop >>"$LOG" 2>&1
@@ -74,28 +80,26 @@ restart_service() {  # $1 arm letter
 }
 
 log "watchdog start (pid $$, idle limit ${IDLE_LIMIT}s)"
-last_count=$(ticket_count)
-last_change=$(date +%s)
+stuck=0
 
 while :; do
   sleep 60
-  if ! arm_driver_alive; then
+  arm=$(arm_driver)
+  if [ -z "$arm" ]; then
     log "no arm driver running; watchdog exits"
     break
   fi
-  count=$(ticket_count)
-  if [ "$count" != "$last_count" ]; then
-    last_count=$count
-    last_change=$(date +%s)
-    continue
-  fi
-  idle=$(( $(date +%s) - last_change ))
-  if [ "$idle" -ge "$IDLE_LIMIT" ]; then
-    arm=$(current_arm)
-    log "STUCK: arm $arm alive, ticket count frozen at $count for ${idle}s"
-    restart_service "$arm" && last_change=$(date +%s)
-    # give the agent a moment to pick the ticket up again
-    sleep 60
-    last_count=$(ticket_count)
+  age=$(newest_job_age)
+  busy=$(science_running)
+  if [ "$age" -ge "$IDLE_LIMIT" ] && [ "$busy" -eq 0 ]; then
+    stuck=$((stuck + 1))
+    log "suspect: arm=$arm no new job for ${age}s, 0 science processes (${stuck}/3)"
+    if [ "$stuck" -ge 3 ]; then
+      log "STUCK confirmed on arm $arm -- restarting the service"
+      restart_service "$arm" && stuck=0
+      sleep 60
+    fi
+  else
+    stuck=0
   fi
 done
