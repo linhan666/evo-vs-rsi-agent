@@ -114,6 +114,25 @@
       },
       "rollback": "drop the width check in screening/predict.py and the --desc-set argument",
       "note": "feature shape preflight: screening now carries --desc-set and refuses disagreeing widths"
+    },
+    {
+      "version": "v7",
+      "candidate_id": "auto-train-jobs-p7b",
+      "recorded_at": "2026-11-08T20:58:32+00:00",
+      "git_sha": "869962bff96f8bf98ecb9634a9497c907361d0c8",
+      "status": "active",
+      "change": {
+        "type": "env",
+        "key": "EVOVS_TRAIN_JOBS",
+        "value": "8"
+      },
+      "gate": {
+        "verdict": "pass",
+        "blocking": [],
+        "needs_human_number": []
+      },
+      "rollback": "set the EVOVS_TRAIN_JOBS default back to \"1\" in scientific/src/evovs_science/modeling/train.py; the knob is the only change",
+      "note": "First candidate derived from this round's own traces (9 p7b tickets). RandomForest/XGBoost were pinned to n_jobs=1 and CatBoost to its default thread count; all three are deterministic given random_state, so this trades cores for wall time only. Shadow replay over 11 real ml.train steps: equivalence 1.0, 57.38s -> 41.22s (1.394x, best step 1.717x). A/B on p7b_4_drd2: 3.42s -> 1.89s with byte-identical metrics."
     }
   ]
 }

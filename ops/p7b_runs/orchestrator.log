@@ -19,3 +19,24 @@ wrote /home/linhan_cluster/evo_vs_rsi/ops/phase7_runs/analysis.json
 wrote /home/linhan_cluster/evo_vs_rsi/ops/phase7_runs/locked.md
 a d2: single=0.9816 mean=0.9103 sd=0.0173 locked=0.9094
 a 5ht: single=0.9992 mean=0.9302 sd=0.0757 locked=0.9044
+a adr: single=0.9457 mean=0.9018 sd=0.0561 locked=0.8072
+a drd2: single=0.9565 mean=0.9217 sd=0.0100 locked=0.9215
+a mor: single=0.9424 mean=0.9250 sd=0.0149 locked=0.9425
+a cbr: single=1.0000 mean=0.8065 sd=0.0772 locked=0.6586
+a kor: single=0.9843 mean=0.9029 sd=0.0441 locked=0.9129
+a ca2: single=0.9865 mean=0.9688 sd=0.0204 locked=0.9687
+a pt: single=0.9481 mean=0.9446 sd=0.0288 locked=0.9070
+m d2: single=0.9777 mean=0.9012 sd=0.0293 locked=0.9064
+m 5ht: single=0.9992 mean=0.9302 sd=0.0757 locked=0.9665
+m adr: single=0.9340 mean=0.8879 sd=0.0671 locked=0.8072
+m drd2: single=0.9544 mean=0.9221 sd=0.0043 locked=0.9215
+m mor: single=0.9424 mean=0.9250 sd=0.0149 locked=0.9425
+m cbr: single=1.0000 mean=0.8065 sd=0.0772 locked=0.8129
+m kor: single=0.9857 mean=0.8857 sd=0.0474 locked=0.9129
+m ca2: single=0.9852 mean=0.9698 sd=0.0177 locked=0.9687
+m pt: single=0.9423 mean=0.9463 sd=0.0276 locked=0.9545
+r d2: single=0.9801 mean=0.9064 sd=0.0171 locked=0.9064
+r 5ht: single=0.9990 mean=0.9242 sd=0.0819 locked=0.9665
+wrote /home/linhan_cluster/evo_vs_rsi/ops/phase7_runs/cv_repeat.md
+[04:59:57] step 3: reports written to ops/phase7_runs/{analysis,locked,cv_repeat}.md
+[04:59:57] phase7b chain complete

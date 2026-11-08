@@ -1,0 +1,32 @@
+fix(reports)+feat(evolution): usable cross-arm reports, then promote v7 and launch R'
+
+两个报告缺陷的根因都不是表面现象：
+
+1. analysis.md 的 W 列显示 "—"
+   原因：W 记录写 auroc / locked_auroc，agent 记录写 best_scaffold_auroc，
+   而分析脚本只读后者。改为在载入时归一化一次，四处调用点同时修好。
+   现在 W 的 AUROC 中位数 0.942 正常显示。
+
+2. locked.md 大量行标「目标不匹配」
+   两个叠加原因：
+   a) W 记录没有 workdir 字段，`Path("")` 等于 `.`，于是 receipts() 把整个仓库
+      的收据都吸进来了 —— 之前那份报告里 W 一个 (adr) 记录能配上十几行。
+      改为按臂显式解析收据目录：agent 用 <workdir>/evaluation，W 用
+      .artifacts/p7b_workflow/<code>/evaluation，绝不回退到 cwd。
+   b) LOCKABLE 只硬编码了 drd2/mor/kor 三个，phase7b 扩到九个靶点后没同步。
+      改为从 evovs_science.evaluation.locked.CHANNELS 直接推导，不再手抄。
+
+修好后 locked.md 给出真正的四臂同尺对比：R−A 配对均值 +0.0118
+（5HT +0.0621、PT +0.0475、六项持平、D2 −0.0030）。
+
+v7 晋升（门禁认证）：
+  EVOVS_TRAIN_JOBS 默认 1 -> 8
+  门禁：equivalence pass(1.0) / cost pass(1.394x) / success pass /
+        failure n/a / quality n/a / safety pass(canary intact)，verdict pass
+  已记入 evolution/versions.json 为 v7，含 rollback 说明
+
+R′ 启动：
+  新 prefix p7c（task id 换新，避免线程去重导致永不重评）
+  记录落为 *_p7c.json，不与已完成的 R 臂冲突
+  独立经验库 experience_r_p7c.json —— 避免把「晋升后的 harness」与
+  「积累更多记忆」两个因素混在一起

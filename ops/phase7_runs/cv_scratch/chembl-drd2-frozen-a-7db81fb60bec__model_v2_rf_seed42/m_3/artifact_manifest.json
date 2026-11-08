@@ -1,0 +1,63 @@
+{
+  "schema_version": "1",
+  "created_at": "2026-11-08T20:54:30+00:00",
+  "generator": "evovs_science.modeling.train",
+  "environment": {
+    "python": "3.12.3",
+    "implementation": "CPython",
+    "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39"
+  },
+  "code_commit": "unknown",
+  "parameters": {
+    "model": "rf",
+    "seed": 42,
+    "split_strategy": "scaffold-manifest"
+  },
+  "inputs": [
+    {
+      "path": "features_v2.npz",
+      "sha256": "5f3b1a7552bfecc63cd2b0bc4b5203e3547a1d8bbf25df5a2f86277d6d8c3be2",
+      "size": 457612
+    },
+    {
+      "path": "dataset_p7b.csv",
+      "sha256": "928f3de277bf452b71b33e5ac106199a90a92e0bade03d739ad4c29b4604126c",
+      "size": 421597
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "metrics.json",
+      "sha256": "a06c6939557443ac6eea5cd316d713955b7e341291c647595897ed5691cf7fe2",
+      "size": 723,
+      "content_type": "application/json",
+      "generator": "evovs_science.modeling.train",
+      "description": "metrics and counts"
+    },
+    {
+      "path": "predictions.csv",
+      "sha256": "c25f78927c7a20830d64f52760db67bf71576715aa052d239cf7059121a15562",
+      "size": 80919,
+      "content_type": "text/csv",
+      "generator": "evovs_science.modeling.train",
+      "description": "per-molecule scores"
+    },
+    {
+      "path": "model.joblib",
+      "sha256": "21655178c551daa90101fd1fb0b5fb96da0a2de30845d1521053503b0c091b52",
+      "size": 11354287,
+      "content_type": "application/octet-stream",
+      "generator": "evovs_science.modeling.train",
+      "description": "fitted pipeline"
+    }
+  ],
+  "label_source": "chembl_drd2_ki",
+  "metrics": {
+    "auroc": 0.9253,
+    "auprc": 0.9638,
+    "accuracy": 0.8534,
+    "f1": 0.8918,
+    "ef_at_1pct": 1.472,
+    "ef_at_5pct": 1.472
+  }
+}

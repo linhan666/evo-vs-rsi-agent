@@ -1,0 +1,28 @@
+dsh-superagent stopped. Automatic recovery is paused until start/restart.
+Log: /home/linhan_cluster/evo_vs_rsi/.artifacts/dsh-superagent-superagent-20261109-045855-786791.log
+{
+  "pids": [
+    786809
+  ],
+  "cwd": "/home/linhan_cluster/evo_vs_rsi",
+  "url": "http://127.0.0.1:3082",
+  "manually_stopped": false,
+  "health": {
+    "runtime": "ready",
+    "relay": "ready",
+    "notice": "ready",
+    "launch": "ready",
+    "delivery": "ready",
+    "assessment": "ready",
+    "reply": "ready",
+    "evals": "ready",
+    "models": "ready",
+    "github": "paused",
+    "local": "ready"
+  },
+  "errors": {},
+  "setup": null,
+  "feishu": null
+}
+[04:59:18] service up: group=rsi pid=786809
+[04:59:30] R' driver up: tmux p7b-r (prefix p7c, label p7c)

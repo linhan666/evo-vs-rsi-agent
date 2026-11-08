@@ -1,0 +1,63 @@
+{
+  "schema_version": "1",
+  "created_at": "2026-11-08T20:59:38+00:00",
+  "generator": "evovs_science.modeling.train",
+  "environment": {
+    "python": "3.12.3",
+    "implementation": "CPython",
+    "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39"
+  },
+  "code_commit": "unknown",
+  "parameters": {
+    "model": "rf",
+    "seed": 23,
+    "split_strategy": "scaffold-manifest"
+  },
+  "inputs": [
+    {
+      "path": "d2_p7b_v1.npz",
+      "sha256": "60d18ede6df00e8e92baad41dfdc9fd8fb1fd33ea2292f90365b366dbe0f7fb9",
+      "size": 458443
+    },
+    {
+      "path": "dataset_p7b.csv",
+      "sha256": "517c6dfa27b9f3b4adb8ac12d6edb3c4d561168b4a9bf4ee9157edb9165b778e",
+      "size": 742448
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "metrics.json",
+      "sha256": "28c56d420aff32c50f032c74712501d8e30e0b45af9dd19194669f0c5409319a",
+      "size": 741,
+      "content_type": "application/json",
+      "generator": "evovs_science.modeling.train",
+      "description": "metrics and counts"
+    },
+    {
+      "path": "predictions.csv",
+      "sha256": "5a46404241229bf60c33156863df8fd9330a5f630df841cee8e2a490c86745b6",
+      "size": 142766,
+      "content_type": "text/csv",
+      "generator": "evovs_science.modeling.train",
+      "description": "per-molecule scores"
+    },
+    {
+      "path": "model.joblib",
+      "sha256": "73d7d3a8b322dc470040e20e3fa40d77f535a709c35263123ebd7ad554f44d16",
+      "size": 6888143,
+      "content_type": "application/octet-stream",
+      "generator": "evovs_science.modeling.train",
+      "description": "fitted pipeline"
+    }
+  ],
+  "label_source": "chembl:d(2)_dopamine_recept:Ki",
+  "metrics": {
+    "auroc": 0.9037,
+    "auprc": 0.9956,
+    "accuracy": 0.9762,
+    "f1": 0.9879,
+    "ef_at_1pct": 1.033,
+    "ef_at_5pct": 1.033
+  }
+}

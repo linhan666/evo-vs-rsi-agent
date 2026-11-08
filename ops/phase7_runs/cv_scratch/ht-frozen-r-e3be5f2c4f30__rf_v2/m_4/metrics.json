@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "created_at": "2026-11-08T20:59:57+00:00",
+  "label_source": "chembl_ki",
+  "model": "rf",
+  "seed": 17,
+  "split_strategy": "scaffold-manifest",
+  "counts": {
+    "joined": 4104,
+    "train": 3290,
+    "validation": 641,
+    "positives": 4015,
+    "validation_positives": 621
+  },
+  "metrics": {
+    "auroc": 0.9414,
+    "auprc": 0.9965,
+    "accuracy": 0.9828,
+    "f1": 0.9912,
+    "ef_at_1pct": 1.032,
+    "ef_at_5pct": 1.032
+  },
+  "notes": [
+    "Metrics are computed on the scaffold-manifest validation molecules.",
+    "The locked final test set is evaluated separately by evovs_science.evaluation.evaluate."
+  ],
+  "versions": {
+    "sklearn": "1.5.2",
+    "numpy": "2.1.3"
+  }
+}

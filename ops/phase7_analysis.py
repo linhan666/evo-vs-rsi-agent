@@ -215,6 +215,13 @@ def main() -> int:
     # two rounds coexist on disk; mixing them would collapse different runs into
     # one cell inside canonical()
     raw_runs = [r for r in raw_runs if (r.get("label") or "") == args.round]
+    # W records report `auroc` (its frozen-manifest validation score) instead of
+    # `best_scaffold_auroc`, so every per-arm table showed "—" for W. Normalise
+    # once here rather than at each of the four call sites.
+    for record in raw_runs:
+        if record.get("best_scaffold_auroc") is None and record.get("auroc") is not None:
+            record["best_scaffold_auroc"] = record["auroc"]
+            record["auroc_source"] = "record.auroc (W: frozen-manifest validation)"
     runs = canonical(raw_runs)
     by_arm: dict[str, list[dict]] = {}
     for record in runs:

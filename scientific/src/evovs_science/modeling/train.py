@@ -38,7 +38,7 @@ def _train_jobs() -> int:
     because shadow replay can only apply env-type candidates; a hard-coded change
     would be unverifiable and therefore unpromotable.
     """
-    raw = os.environ.get("EVOVS_TRAIN_JOBS", "1").strip()
+    raw = os.environ.get("EVOVS_TRAIN_JOBS", "8").strip()   # v7: promoted 2026-11-09
     try:
         value = int(raw)
     except ValueError:

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "created_at": "2026-11-08T20:59:28+00:00",
+  "label_source": "chembl:d(2)_dopamine_recept:Ki",
+  "model": "rf",
+  "seed": 23,
+  "split_strategy": "scaffold-manifest",
+  "counts": {
+    "joined": 5789,
+    "train": 4368,
+    "validation": 1192,
+    "positives": 5555,
+    "validation_positives": 1149
+  },
+  "metrics": {
+    "auroc": 0.8913,
+    "auprc": 0.9933,
+    "accuracy": 0.9732,
+    "f1": 0.9863,
+    "ef_at_1pct": 1.037,
+    "ef_at_5pct": 1.037
+  },
+  "notes": [
+    "Metrics are computed on the scaffold-manifest validation molecules.",
+    "The locked final test set is evaluated separately by evovs_science.evaluation.evaluate."
+  ],
+  "versions": {
+    "sklearn": "1.5.2",
+    "numpy": "2.1.3"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": "1",
+  "created_at": "2026-11-08T20:56:07+00:00",
+  "generator": "evovs_science.modeling.train",
+  "environment": {
+    "python": "3.12.3",
+    "implementation": "CPython",
+    "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39"
+  },
+  "code_commit": "unknown",
+  "parameters": {
+    "model": "rf",
+    "seed": 42,
+    "split_strategy": "scaffold-manifest"
+  },
+  "inputs": [
+    {
+      "path": "features_v2_r3.npz",
+      "sha256": "31d79097f3be8f756b5d3c4e9e7b8bb6edd55f5f87690c1230f9f5a05b41361a",
+      "size": 433831
+    },
+    {
+      "path": "dataset_p7b.csv",
+      "sha256": "3d6abd3345bade0abde60284d3d6cd1508a22abb8e374e63a79aa648c2b30997",
+      "size": 328875
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "metrics.json",
+      "sha256": "07a2a18f3a3041c34033745611afa0eceb8e9121186dbf44ca5b700c67a477f7",
+      "size": 734,
+      "content_type": "application/json",
+      "generator": "evovs_science.modeling.train",
+      "description": "metrics and counts"
+    },
+    {
+      "path": "predictions.csv",
+      "sha256": "696d8fb81096cc512db0b5b4350db40dade134c1a7647848be68952fbe119994",
+      "size": 57477,
+      "content_type": "text/csv",
+      "generator": "evovs_science.modeling.train",
+      "description": "per-molecule scores"
+    },
+    {
+      "path": "model.joblib",
+      "sha256": "2d81465e784f515b2fa9350569b889b9097748f181ad908696f8b6c5bcf0d679",
+      "size": 5565167,
+      "content_type": "application/octet-stream",
+      "generator": "evovs_science.modeling.train",
+      "description": "fitted pipeline"
+    }
+  ],
+  "label_source": "chembl_prothrombin_ki_p7b",
+  "metrics": {
+    "auroc": 0.9416,
+    "auprc": 0.9801,
+    "accuracy": 0.8989,
+    "f1": 0.9372,
+    "ef_at_1pct": 1.297,
+    "ef_at_5pct": 1.297
+  }
+}

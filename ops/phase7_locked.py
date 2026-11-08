@@ -38,7 +38,22 @@ RUNS = ROOT / "ops" / "phase7_runs"
 OUT = RUNS / "locked.md"
 
 # sequence position -> the target the locked tool can actually evaluate
-LOCKABLE = {"drd2": "DRD2", "mor": "MOR", "kor": "KOR"}
+def _lockable() -> dict[str, str]:
+    """sequence slug -> locked target code.
+
+    Derived from the evaluator itself. The hand-written version listed only
+    drd2/mor/kor, so once phase7b gave all nine targets a locked channel every
+    other row was flagged "目标不匹配" even though the receipt was correct.
+    """
+    try:
+        from evovs_science.evaluation.locked import CHANNELS
+        return {code.lower(): code for code in CHANNELS["Ki"]}
+    except Exception:  # keep the report runnable without the package on the path
+        return {"d2": "D2", "5ht": "5HT", "adr": "ADR", "drd2": "DRD2", "mor": "MOR",
+                "cbr": "CBR", "kor": "KOR", "ca2": "CA2", "pt": "PT"}
+
+
+LOCKABLE = _lockable()
 
 
 def receipts(workdir: Path) -> list[dict]:
@@ -73,8 +88,19 @@ def main() -> int:
         if (matched.group(4) or "") != args.round:
             continue
         arm, target = matched.group(1), matched.group(3)
-        workdir = Path(record.get("workdir") or "")
-        for receipt in receipts(workdir):
+        # W records carry no `workdir`, and `Path("")` is `.` -- walking it made
+        # the report ingest every receipt in the repository and pair them by
+        # position, which is why most rows read "目标不匹配". Resolve the receipt
+        # directory explicitly per arm and never walk a fallback.
+        raw = record.get("workdir") or ""
+        if raw and Path(raw).is_dir():
+            receipt_dir = Path(raw) / "evaluation"
+        else:
+            code = (LOCKABLE.get(target) or target).lower()
+            receipt_dir = ROOT / ".artifacts" / "p7b_workflow" / code / "evaluation"
+        if not receipt_dir.is_dir():
+            continue
+        for receipt in receipts(receipt_dir):
             evaluated = receipt.get("target")
             expected = LOCKABLE.get(target)
             valid = expected is not None and evaluated == expected

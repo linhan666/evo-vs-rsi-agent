@@ -1,0 +1,6 @@
+{
+  "task_id": "p7c_r_adr",
+  "sender": "operator",
+  "title": "Phase7c R' arm R target 3 (ADR): experience store available, reuse what fits (self-modifying harness)",
+  "text": "Target 3/9: ADR (Ki). Build the most reliable binding-activity predictor and rank the 100k library.\n\nlabels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/dataset_p7b.csv\nlibrary: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\nsplit: pass /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/adenosine_receptor_a/ki/splits/frozen_adenosine_receptor_a.json as --split-manifest to ml.train. Do not call data.split.\nstore: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json (the `store` argument of experience.retrieve)\nfinish with: evaluation.locked --target ADR --endpoint Ki --desc-set <the set you trained on> --receipt evaluation/adr_locked.json\n\nReport: choices and why; validation AUROC/AUPRC/EF@1%; the locked AUROC quoted from the receipt; top-100 path; wall clock and job count; experience ids reused.\n"
+}

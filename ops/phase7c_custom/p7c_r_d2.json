@@ -1,0 +1,6 @@
+{
+  "task_id": "p7c_r_d2",
+  "sender": "operator",
+  "title": "Phase7c R' arm R target 1 (D2): experience store available, reuse what fits (self-modifying harness)",
+  "text": "Target 1/9: D2 (Ki). Build the most reliable binding-activity predictor and rank the 100k library.\n\nlabels: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/dataset_p7b.csv\nlibrary: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/zinc/library_100k.smi\nsplit: pass /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/chembl/d(2)_dopamine_recept/ki/splits/frozen_d(2)_dopamine_recept.json as --split-manifest to ml.train. Do not call data.split.\nstore: /home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/experience/experience_r.json (the `store` argument of experience.retrieve)\nfinish with: evaluation.locked --target D2 --endpoint Ki --desc-set <the set you trained on> --receipt evaluation/d2_locked.json\n\nReport: choices and why; validation AUROC/AUPRC/EF@1%; the locked AUROC quoted from the receipt; top-100 path; wall clock and job count; experience ids reused.\n"
+}
