@@ -34,6 +34,13 @@ NEW_ARGS = '''    parser.add_argument("--label-column", default="label")
         from ..search.space import LIMIT_TOTAL, get as get_config
 
         config = get_config(args.config_id)
+        # A draw without the frozen split would validate on a random internal split:
+        # the number would look fine and be incomparable with every other arm. The
+        # first p8 smoke did exactly that, so it is now refused.
+        if not args.split_manifest:
+            raise SystemExit("MISSING_SPLIT_MANIFEST: a --config-id draw must also pass "
+                             "--split-manifest (the frozen_p8 manifest); otherwise validation "
+                             "uses a random split and the comparison is meaningless")
         if config.model != args.model:
             raise SystemExit(f"config {config.id} declares model={config.model}, "
                              f"but --model={args.model}; the configuration is the unit of search")
