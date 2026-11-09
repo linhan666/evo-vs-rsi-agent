@@ -1,0 +1,20 @@
+fix(ops): round records must be counted by label, from record-shaped names only
+
+巡检第三次指出同一个计数口径问题，这次是根因：
+`glob("ops/phase7_runs/*_p7c.json")` 同时匹配到 `analysis_p7c.json`，
+于是 9 个靶点的一轮报了 10 条记录。前两次是「p7b 四臂饱和后无法表达增量」
+和「四臂之外的轮次根本不计」，都是同一处设计缺陷的不同表现。
+
+改为通用的 round_counts：扫描所有 json，用严格的文件名模式
+  ^[ramw]_\d{2}_.+_(?P<label>[a-z0-9]+)$
+匹配才算记录，label 取自最后一个下划线之后。这一条同时挡住两类误计：
+  - analysis_* / summary_* / noise_floor / w_noise 等汇总文件
+  - r_d2_p7b.code.json 这种没有 `_NN_` 序号的代码指标
+
+现在快照输出：
+  p7b:36  p7c:9  p7d:9  p7e:9  p7f:9  p7g:9
+每轮独立，新增阶段不需要改代码。
+
+巡检模板同步改为用 round_counts 判断当前阶段，并登记三条已知情况：
+wf 类链无 ticket/job 所以不能用 newest_job_age 看它；watchdog 看不见裸 bash
+跑的一次性 workflow；`99999` 只应出现在 05:36 之前的旧日志里。

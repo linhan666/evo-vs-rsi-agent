@@ -22,10 +22,27 @@ mkdir -p "$ROOT/.artifacts"
 
 while :; do
   "$PY" - <<'EOF' >>"$OUT" 2>/dev/null
-import glob, json, os, sqlite3, subprocess, time
+import glob, json, os, re, sqlite3, subprocess, time
 
 ROOT = "/home/linhan_cluster/evo_vs_rsi"
 os.chdir(ROOT)
+
+
+RECORD_RE = re.compile(r"^[ramw]_\d{2}_.+_(?P<label>[a-z0-9]+)$")
+
+
+def round_counts():
+    """Per-round-label record counts, derived from real record filenames only."""
+    counts = {}
+    for path in glob.glob("ops/phase7_runs/*.json"):
+        stem = os.path.basename(path)[:-5]
+        matched = RECORD_RE.match(stem)
+        if not matched:
+            continue
+        label = matched.group("label")
+        counts[label] = counts.get(label, 0) + 1
+    return dict(sorted(counts.items()))
+
 
 def records(arm):
     return len(glob.glob(f"ops/phase7_runs/{arm}_*_p7b.json"))
@@ -87,9 +104,13 @@ def science_processes():
 print(json.dumps({
     "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
     "records": {arm: records(arm) for arm in ("r", "m", "a", "w")},
-    # the four arms saturate at 36 and never move again; later rounds (R' under v7)
-    # write *_p7c records, so progress has to be carried by this counter
-    "p7c_records": len(glob.glob("ops/phase7_runs/*_p7c.json")),
+    # The four arms saturate at 36 and never move again, so progress has to be read
+    # per round label. Two traps this avoids, both hit in production:
+    #   * `glob("*_p7c.json")` also matches `analysis_p7c.json`, which reported 10
+    #     records for a 9-target round;
+    #   * `*.code.json` files would count as records if the label were parsed naively.
+    # Only files shaped <arm>_<seq>_<target>_<label>.json count.
+    "round_counts": round_counts(),
     "sessions": tmux_sessions(),
     "current_target_line": current_target(),
     "unfinished_tickets": unfinished(),
