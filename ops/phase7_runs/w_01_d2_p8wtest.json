@@ -1,0 +1,43 @@
+{
+  "group": "w",
+  "seq": 1,
+  "target": "D2",
+  "slug": "d(2)_dopamine_recept",
+  "label": "p8wtest",
+  "panel": "AutoML baseline: exhaustive over the frozen space, no LLM",
+  "space_version": "e317fbae21bc2eda",
+  "budget_limit": 4,
+  "configs_used": 4,
+  "stop_reason": "budget_exhausted",
+  "best_config": "logreg-v1-s17",
+  "best_config_auroc": 0.9117,
+  "configs": [
+    {
+      "config_id": "logreg-v1-s17",
+      "auroc": 0.9117,
+      "exit_code": 1
+    },
+    {
+      "config_id": "logreg-v1-s23",
+      "auroc": 0.9117,
+      "exit_code": 1
+    },
+    {
+      "config_id": "logreg-v1-s42",
+      "auroc": 0.9117,
+      "exit_code": 1
+    },
+    {
+      "config_id": "logreg-v1-s7",
+      "auroc": 0.9117,
+      "exit_code": 1
+    }
+  ],
+  "steps": 7,
+  "wall_seconds": 82.74,
+  "jobs_failed": 4,
+  "auroc": 0.9117,
+  "locked_auroc": 0.7991,
+  "success": true,
+  "recorded_at": "2026-11-09T21:34:33+00:00"
+}

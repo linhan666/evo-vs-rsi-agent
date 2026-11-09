@@ -1,0 +1,25 @@
+{
+  "ticket": "dopamine-p8b5b-r-b6683e059622",
+  "jobs_total": 47,
+  "jobs_failed": 23,
+  "failure_rate": 0.489,
+  "first_success_index": 43,
+  "featurizations": [
+    "r1_b256_v1",
+    "r2_b2048_v1",
+    "r3_b2048_v1"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom"
+  ],
+  "n_featurizations": 3,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

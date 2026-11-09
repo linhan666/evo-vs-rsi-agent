@@ -186,6 +186,33 @@ def failure_gate(spec: dict, report: dict) -> dict:
     claim, not a free pass.
     """
     acceptance = spec.get("acceptance", {})
+
+    # "Fail earlier" is a distinct claim from "stop failing". A preflight candidate
+    # rejects a bad input before the expensive work, so the step still fails while
+    # costing far less. Judge it on time; successful steps remain the success gate's
+    # business, so a real regression cannot hide here.
+    if acceptance.get("early_rejection"):
+        steps = [step for step in (report.get("steps") or [])
+                 if step.get("recorded_state") not in (None, "SUCCEEDED")]
+        if not steps:
+            return _gate("failure", FAIL,
+                         "early_rejection claims need replayed failing steps; run shadow.py with --include-failed")
+        ratios = []
+        for step in steps:
+            before = step.get("replayed_baseline_wall_seconds")
+            after = step.get("candidate_wall_seconds")
+            if before and after:
+                ratios.append(float(before) / float(after))
+        if not ratios:
+            return _gate("failure", FAIL,
+                         "early_rejection needs baseline timings; run shadow.py with --baseline-replay")
+        ratios.sort()
+        median = ratios[len(ratios) // 2]
+        required = float(acceptance.get("min_rejection_speedup", 2.0))
+        detail = ("rejection median {0:.2f}x faster across {1} failing step(s); required {2:.2f}x"
+                  .format(median, len(ratios), required))
+        return _gate("failure", PASS if median >= required else FAIL, detail)
+
     target = acceptance.get("failures_in_replay")
     if target is None:
         return _gate("failure", NOT_APPLICABLE, "the candidate makes no failure claim")

@@ -42,7 +42,7 @@ export function scientificTools(ticket: Ticket): Tool[] {
       schema: z.object({
         tool_id: z.string().min(1).describe('From scientific_tools'),
         arguments: z.record(z.string(), z.unknown()).describe('Match its input_schema'),
-        max_wall_seconds: z.number().int().min(1).max(3600).optional().describe('Seconds'),
+        max_wall_seconds: z.number().int().min(1).max(21600).optional().describe('Seconds; up to 6 h, so a slow fit is measured rather than killed'),
       }).strict(),
       execute: async (args, signal) => {
         const definition = findTool(args.tool_id)

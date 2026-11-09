@@ -1,0 +1,24 @@
+[21:45:02Z] group=r sequence=['d2', '5ht', 'adr', 'drd2', 'mor', 'cbr', 'kor', 'ca2', 'pt']
+[21:45:02Z] submitted p8b5b_r_d2.json -> inbox/p8b5b_r_d2.json
+[21:45:32Z] #1 d2 waiting (state=running, assigned 1x)
+[21:46:02Z] #1 d2 waiting (state=running, assigned 1x)
+[21:46:32Z] #1 d2 waiting (state=running, assigned 1x)
+[21:47:02Z] #1 d2 waiting (state=running, assigned 1x)
+[21:47:32Z] #1 d2 waiting (state=running, assigned 1x)
+[21:48:03Z] #1 d2 waiting (state=running, assigned 1x)
+[21:48:33Z] #1 d2 waiting (state=running, assigned 1x)
+[21:49:03Z] #1 d2 waiting (state=running, assigned 1x)
+[21:49:33Z] #1 d2 waiting (state=running, assigned 1x)
+[21:50:03Z] #1 d2 waiting (state=running, assigned 1x)
+[21:50:33Z] #1 d2 waiting (state=running, assigned 1x)
+[21:51:03Z] #1 d2 waiting (state=running, assigned 1x)
+[21:51:33Z] #1 d2 waiting (state=running, assigned 1x)
+[21:52:03Z] #1 d2 waiting (state=running, assigned 1x)
+[21:52:33Z] #1 d2 waiting (state=running, assigned 1x)
+[21:53:03Z] #1 d2 waiting (state=running, assigned 1x)
+[21:53:33Z] #1 d2 waiting (state=running, assigned 1x)
+[21:54:04Z] #1 d2 DONE state=ready wall=523.6s jobs=42 best=draw_006_xgb_r3(0.9274) scaffold=None(None) top100=1
+[21:54:04Z] experience dataset for D2 already recorded; not duplicating
+[21:54:04Z] experience model for D2 already recorded; not duplicating
+[21:54:04Z] code_metrics -> r_d2_p8b5b.code.json
+[21:54:04Z] MISSING task file /home/linhan_cluster/evo_vs_rsi/ops/p8_smoke/p8b5b_r_5ht.json

@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-11-09T21:32:43+00:00",
+  "validation_fraction": 0.3,
+  "targets": {
+    "d2": {
+      "train": 3039,
+      "validation": 1737,
+      "test": 1013
+    },
+    "5ht": {
+      "train": 2155,
+      "validation": 1231,
+      "test": 718
+    },
+    "adr": {
+      "train": 1507,
+      "validation": 861,
+      "test": 502
+    },
+    "drd2": {
+      "train": 1729,
+      "validation": 988,
+      "test": 576
+    },
+    "mor": {
+      "train": 1465,
+      "validation": 837,
+      "test": 488
+    },
+    "cbr": {
+      "train": 1030,
+      "validation": 589,
+      "test": 344
+    },
+    "kor": {
+      "train": 997,
+      "validation": 570,
+      "test": 332
+    },
+    "ca2": {
+      "train": 3258,
+      "validation": 1862,
+      "test": 1086
+    },
+    "pt": {
+      "train": 1260,
+      "validation": 720,
+      "test": 420
+    }
+  }
+}

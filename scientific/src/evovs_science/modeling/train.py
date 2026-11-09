@@ -186,7 +186,29 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--label-source", default="fixture")
     parser.add_argument("--label-id-column", default="id")
     parser.add_argument("--label-column", default="label")
+    parser.add_argument("--config-id", default=None,
+                        help="configuration id from the frozen search space; charges the budget")
+    parser.add_argument("--workspace", default=".",
+                        help="ticket directory holding .search_budget.json")
+    parser.add_argument("--budget-limit", type=int, default=None,
+                        help="how many configurations this ticket may draw (default: the whole space)")
     args = parser.parse_args(argv)
+
+    if args.config_id:
+        # Import here so the tool keeps working without the search package installed.
+        from ..search.budget import consume, read
+        from ..search.space import LIMIT_TOTAL, get as get_config
+
+        config = get_config(args.config_id)
+        if config.model != args.model:
+            raise SystemExit(f"config {config.id} declares model={config.model}, "
+                             f"but --model={args.model}; the configuration is the unit of search")
+        if config.seed != args.seed:
+            raise SystemExit(f"config {config.id} declares seed={config.seed}, "
+                             f"but --seed={args.seed}")
+        limit = args.budget_limit if args.budget_limit is not None else LIMIT_TOTAL
+        state = consume(args.workspace, config.id, limit)
+        print(f"search draw {state['used']}/{state['limit']} -> {config.id}", flush=True)
 
     data = np.load(args.features, allow_pickle=True)
     ids = [str(item) for item in data["ids"]]
@@ -325,6 +347,17 @@ def main(argv: list[str] | None = None) -> int:
 
     print(json.dumps({"metrics": metrics["metrics"], "counts": metrics["counts"],
                       "split_strategy": split_strategy}))
+    if args.config_id:
+        # Leave a per-step copy so a record can show which draw produced it even
+        # when the ticket ledger is later rotated.
+        import json as _json
+        from ..search.budget import read as _read
+        snapshot = _read(args.workspace)
+        out = Path(args.output_dir)
+        if out.exists():
+            (out / "search_draw.json").write_text(
+                _json.dumps({"config_id": args.config_id, **snapshot}, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8")
     return 0
 
 

@@ -1,0 +1,14 @@
+[21:38:43Z] group=r sequence=['d2', '5ht', 'adr', 'drd2', 'mor', 'cbr', 'kor', 'ca2', 'pt']
+[21:38:43Z] submitted p8b5_r_d2.json -> inbox/p8b5_r_d2.json
+[21:39:13Z] #1 d2 waiting (state=running, assigned 1x)
+[21:39:43Z] #1 d2 waiting (state=running, assigned 1x)
+[21:40:13Z] #1 d2 waiting (state=running, assigned 1x)
+[21:40:43Z] #1 d2 waiting (state=running, assigned 1x)
+[21:41:13Z] #1 d2 waiting (state=running, assigned 1x)
+[21:41:43Z] #1 d2 waiting (state=running, assigned 1x)
+[21:42:13Z] #1 d2 waiting (state=running, assigned 1x)
+[21:42:43Z] #1 d2 waiting (state=running, assigned 1x)
+[21:43:13Z] #1 d2 waiting (state=running, assigned 1x)
+[21:43:43Z] #1 d2 waiting (state=running, assigned 1x)
+[21:44:14Z] #1 d2 waiting (state=running, assigned 1x)
+[21:44:44Z] #1 d2 waiting (state=running, assigned 1x)

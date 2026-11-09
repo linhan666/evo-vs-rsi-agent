@@ -295,7 +295,8 @@ def featurization_of(jobs: list[dict]) -> dict:
     return chosen
 
 
-USAGE_LOG_NAME: str | None = None   # set by --usage-log; falls back to the round-7 name
+USAGE_LOG_NAME: str | None = None
+BUDGET_LIMIT: int | None = None   # search draws per ticket, set by --budget-limit
 
 
 def token_usage(started: str | None, ended: str | None, group: str) -> dict:
@@ -377,6 +378,7 @@ def collect(group: str, entry: dict, task_id: str, ticket: dict, label: str = ""
 
     record = {
         "group": group,
+        "budget_limit": BUDGET_LIMIT,
         "seq": entry["seq"],
         "target": entry["target"],
         "task_id": task_id,
@@ -615,12 +617,17 @@ def main(argv: list[str] | None = None) -> int:
                         help="experience store path; each memory-bearing arm needs its own file")
     parser.add_argument("--usage-log", default=None,
                         help="ledger file under scientific/.artifacts, e.g. usage_p7b_r.jsonl")
+    parser.add_argument("--budget-limit", type=int, default=None,
+                        help="search draws allowed per ticket; recorded so the analysis can "
+                             "tell `budget_exhausted` from `stopped_early`")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
 
-    global TASKS, STORE, USAGE_LOG_NAME
+    global TASKS, STORE, USAGE_LOG_NAME, BUDGET_LIMIT
     if args.usage_log:
         USAGE_LOG_NAME = args.usage_log
+    if args.budget_limit:
+        BUDGET_LIMIT = args.budget_limit
     if args.tasks_dir:
         TASKS = (ROOT / args.tasks_dir) if not args.tasks_dir.startswith("/") else Path(args.tasks_dir)
     if args.store:

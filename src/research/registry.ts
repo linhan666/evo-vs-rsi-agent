@@ -79,6 +79,11 @@ const TrainInput = z.object({
   split_manifest: DataPath.optional().describe('split_manifest.json: train on scaffold-train, report on scaffold-validation'),
   label_id_column: z.string().trim().min(1).max(60).optional(),
   label_column: z.string().trim().min(1).max(60).optional(),
+  config_id: z.string().trim().min(1).max(80).optional()
+    .describe('One configuration id from `search.space`; charges this ticket\'s search budget'),
+  workspace: DataPath.optional().describe('Ticket directory holding .search_budget.json (default: the cwd)'),
+  budget_limit: z.number().int().min(1).max(1000).optional()
+    .describe('How many configurations this ticket may draw (default: the whole space)'),
 }).strict()
 
 const RankInput = z.object({
@@ -171,6 +176,21 @@ const FUSE_TOOL = {
   outputs: (args: z.infer<typeof FuseInput>) => [args.output, args.report],
 } as ScientificToolDefinition
 
+// Hoisted so z.infer can type the argv/outputs callbacks; an inline schema makes
+// those parameters resolve to `never` and fails typecheck.
+const ProposalInput = z.object({
+  candidate_id: z.string().trim().min(3).max(80)
+    .describe('Stable id, e.g. preflight-ml-train-columns'),
+  hypothesis: z.string().trim().min(10).max(2000)
+    .describe('What waste this removes, and the evidence you saw in the traces'),
+  risk: z.string().trim().min(5).max(1000),
+  change_key: z.string().trim().min(3).max(120).describe('e.g. preflight:ml.train'),
+  change_value: z.string().trim().min(5).max(2000),
+  acceptance_json: z.string().trim().min(2).max(400)
+    .describe('JSON object, e.g. {"equivalence":1.0,"early_rejection":true}'),
+  output_dir: RelativePath.default('harness_candidates'),
+}).strict()
+
 const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
   {
     id: 'rdkit.featurize',
@@ -208,11 +228,43 @@ const SCIENTIFIC_TOOLS_BASE: readonly ScientificToolDefinition[] = [
       '--label-source', args.label_source,
       '--label-id-column', args.label_id_column ?? 'id', '--label-column', args.label_column ?? 'label',
       ...(args.split_manifest ? ['--split-manifest', args.split_manifest] : []),
+      ...(args.config_id ? ['--config-id', args.config_id] : []),
+      ...(args.workspace ? ['--workspace', args.workspace] : []),
+      ...(args.budget_limit ? ['--budget-limit', String(args.budget_limit)] : []),
     ],
     outputs: (args: z.infer<typeof TrainInput>) => [
       `${args.output_dir}/metrics.json`, `${args.output_dir}/predictions.csv`, `${args.output_dir}/model.joblib`,
       `${args.output_dir}/artifact_manifest.json`,
     ],
+  },
+  {
+    id: 'search.space',
+    version: '0.1.0',
+    description: 'List the frozen 100-configuration search space every arm must search. Read it before drawing configurations.',
+    capabilities: ['search', 'read'],
+    resources: [],
+    sideEffects: [],
+    failureCodes: [],
+    input: z.object({}).strict(),
+    argv: (_args, context) => [context.python, '-m', 'evovs_science.search.space', '--list'],
+    outputs: () => [],
+  },
+  {
+    id: 'harness.propose',
+    version: '0.1.0',
+    description: 'Propose a change to the harness itself, as a candidate spec for the shadow/gate pipeline. Use it when the traces show the harness wasting work; the operator still adjudicates promotion.',
+    capabilities: ['self-modification', 'write_artifacts'],
+    resources: [],
+    sideEffects: ['write_artifacts'],
+    failureCodes: ['INVALID_SPEC'],
+    input: ProposalInput,
+    argv: (args: z.infer<typeof ProposalInput>, context) => [
+      context.python, '-m', 'evovs_science.harness.propose',
+      '--candidate-id', args.candidate_id, '--hypothesis', args.hypothesis, '--risk', args.risk,
+      '--change-key', args.change_key, '--change-value', args.change_value,
+      '--acceptance-json', args.acceptance_json, '--output-dir', args.output_dir,
+    ],
+    outputs: (args: z.infer<typeof ProposalInput>) => [`${args.output_dir}/${args.candidate_id}.json`],
   },
 ]
 

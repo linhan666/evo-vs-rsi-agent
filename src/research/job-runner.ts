@@ -69,7 +69,7 @@ const running = new Map<string, ChildProcess>()
 // arenas, mmap'd arrays — so 8GB of address space made pthread_create fail long
 // before the box ran out of RAM. 32GB of virtual space is generous without being
 // a licence to run away; the box has 2TB.
-const DEFAULT_RESOURCES: JobResources = { max_cpu_cores: 2, max_gpu_count: 0, max_wall_seconds: 600, max_memory_gb: 32 }
+const DEFAULT_RESOURCES: JobResources = { max_cpu_cores: 2, max_gpu_count: 0, max_wall_seconds: 7200, max_memory_gb: 32 }
 const PRLIMIT = '/usr/bin/prlimit'
 const CLOCK_TICKS = 100
 
