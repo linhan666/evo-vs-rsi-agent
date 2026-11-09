@@ -322,12 +322,12 @@
     "screening/cbr_top100_rfv1.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 35,
+    "prompt_tokens": 1527110,
+    "completion_tokens": 42710,
+    "cached_tokens": 1488640,
+    "total_tokens": 1569820
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/cannabinoid-p7c-r-92e0be60a018",
-  "recorded_at": "2026-11-08T22:35:05+00:00"
+  "recorded_at": "2026-11-09T12:57:20+00:00"
 }

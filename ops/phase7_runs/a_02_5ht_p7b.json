@@ -249,12 +249,12 @@
     "p7b_5ht/top100_xgb_v1.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 28,
+    "prompt_tokens": 1319934,
+    "completion_tokens": 31655,
+    "cached_tokens": 1280896,
+    "total_tokens": 1351589
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/ht-frozen-a-f66bbb3de529",
-  "recorded_at": "2026-11-08T18:40:52+00:00"
+  "recorded_at": "2026-11-09T12:57:32+00:00"
 }

@@ -194,12 +194,12 @@
     "d2/top100_rf_v1.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 34,
+    "prompt_tokens": 1469470,
+    "completion_tokens": 40750,
+    "cached_tokens": 1433984,
+    "total_tokens": 1510220
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/dopamine-p7c-r-b8d9e0586e76",
-  "recorded_at": "2026-11-08T21:05:19+00:00"
+  "recorded_at": "2026-11-09T12:57:18+00:00"
 }

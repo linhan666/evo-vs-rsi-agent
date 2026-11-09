@@ -228,12 +228,12 @@
     "evaluation/drd2_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 23,
+    "prompt_tokens": 985659,
+    "completion_tokens": 28578,
+    "cached_tokens": 952704,
+    "total_tokens": 1014237
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/chembl-drd2-frozen-a-7db81fb60bec",
-  "recorded_at": "2026-11-08T18:51:24+00:00"
+  "recorded_at": "2026-11-09T12:57:33+00:00"
 }

@@ -211,12 +211,12 @@
     "rankings/top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 32,
+    "prompt_tokens": 1295832,
+    "completion_tokens": 31339,
+    "cached_tokens": 1257472,
+    "total_tokens": 1327171
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/adenosine-p7c-r-44a297905ae8",
-  "recorded_at": "2026-11-08T21:15:22+00:00"
+  "recorded_at": "2026-11-09T12:57:18+00:00"
 }

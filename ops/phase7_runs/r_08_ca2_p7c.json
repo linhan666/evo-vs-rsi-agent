@@ -212,12 +212,12 @@
     "screening/ca2_ki_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 28,
+    "prompt_tokens": 1174729,
+    "completion_tokens": 26420,
+    "cached_tokens": 1140480,
+    "total_tokens": 1201149
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/anhydrase-p7c-r-060aed292a2a",
-  "recorded_at": "2026-11-08T22:43:07+00:00"
+  "recorded_at": "2026-11-09T12:57:21+00:00"
 }

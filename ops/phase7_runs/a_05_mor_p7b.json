@@ -296,12 +296,12 @@
     ".artifacts/state/work/mor-frozen-a-e16601ac3b6e/ranking/mor_ki_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 29,
+    "prompt_tokens": 1184647,
+    "completion_tokens": 24470,
+    "cached_tokens": 1144576,
+    "total_tokens": 1209117
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/mor-frozen-a-e16601ac3b6e",
-  "recorded_at": "2026-11-08T18:56:55+00:00"
+  "recorded_at": "2026-11-09T12:57:34+00:00"
 }

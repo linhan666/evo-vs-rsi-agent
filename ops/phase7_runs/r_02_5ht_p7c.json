@@ -147,12 +147,12 @@
     "screening/top100_5ht.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 40,
+    "prompt_tokens": 1640068,
+    "completion_tokens": 33724,
+    "cached_tokens": 1609344,
+    "total_tokens": 1673792
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/ht-p7c-r-491db4fffb42",
-  "recorded_at": "2026-11-08T21:10:50+00:00"
+  "recorded_at": "2026-11-09T12:57:18+00:00"
 }

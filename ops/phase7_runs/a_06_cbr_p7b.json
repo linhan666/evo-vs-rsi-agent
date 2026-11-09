@@ -264,12 +264,12 @@
     "cbr/top100_cbr_cat.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 31,
+    "prompt_tokens": 1445182,
+    "completion_tokens": 30761,
+    "cached_tokens": 1406592,
+    "total_tokens": 1475943
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/cannabinoid-frozen-a-53ceb8562de8",
-  "recorded_at": "2026-11-08T19:04:26+00:00"
+  "recorded_at": "2026-11-09T12:57:34+00:00"
 }

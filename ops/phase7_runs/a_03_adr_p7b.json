@@ -261,12 +261,12 @@
     "ranking/adr_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 29,
+    "prompt_tokens": 1202275,
+    "completion_tokens": 23626,
+    "cached_tokens": 1164544,
+    "total_tokens": 1225901
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/adenosine-frozen-a-969017b5fcd3",
-  "recorded_at": "2026-11-08T18:45:23+00:00"
+  "recorded_at": "2026-11-09T12:57:33+00:00"
 }

@@ -143,12 +143,12 @@
     "screening/kor_rf_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 24,
+    "prompt_tokens": 1031225,
+    "completion_tokens": 24772,
+    "cached_tokens": 1006080,
+    "total_tokens": 1055997
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/kor-p7c-r-8cbfbfae75f0",
-  "recorded_at": "2026-11-08T22:39:06+00:00"
+  "recorded_at": "2026-11-09T12:57:20+00:00"
 }

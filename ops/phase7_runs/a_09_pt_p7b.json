@@ -397,12 +397,12 @@
     "pt/top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 29,
+    "prompt_tokens": 1384915,
+    "completion_tokens": 28648,
+    "cached_tokens": 1346176,
+    "total_tokens": 1413563
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/prothrombin-frozen-a-01206cb5a0ef",
-  "recorded_at": "2026-11-08T19:24:29+00:00"
+  "recorded_at": "2026-11-09T12:57:36+00:00"
 }

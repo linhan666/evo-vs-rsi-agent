@@ -228,12 +228,12 @@
     "rankings/kor_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 26,
+    "prompt_tokens": 1184373,
+    "completion_tokens": 27726,
+    "cached_tokens": 1152896,
+    "total_tokens": 1212099
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/kor-frozen-a-7ab8a3f3989c",
-  "recorded_at": "2026-11-08T19:08:57+00:00"
+  "recorded_at": "2026-11-09T12:57:35+00:00"
 }

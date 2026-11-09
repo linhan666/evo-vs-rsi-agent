@@ -279,12 +279,12 @@
     "screening/d2_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 28,
+    "prompt_tokens": 1284218,
+    "completion_tokens": 31605,
+    "cached_tokens": 1246464,
+    "total_tokens": 1315823
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/dopamine-frozen-a-37c932fc33d8",
-  "recorded_at": "2026-11-08T18:34:51+00:00"
+  "recorded_at": "2026-11-09T12:57:32+00:00"
 }

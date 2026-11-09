@@ -211,12 +211,12 @@
     "ranking/mor_ki_v2_rf_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 23,
+    "prompt_tokens": 1027068,
+    "completion_tokens": 16166,
+    "cached_tokens": 1001216,
+    "total_tokens": 1043234
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/mor-p7c-r-cf993cda4fe6",
-  "recorded_at": "2026-11-08T21:25:56+00:00"
+  "recorded_at": "2026-11-09T12:57:19+00:00"
 }
