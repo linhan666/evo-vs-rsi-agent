@@ -138,6 +138,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="phase7b workflow (group W)")
     parser.add_argument("--slug", default=None, help="run a single target by slug")
     parser.add_argument("--all", action="store_true")
+    parser.add_argument("--label", default="p7b",
+                        help="round label; sets the record filename suffix and the record's label field")
+    parser.add_argument("--scratch-root", default=SCRATCH_ROOT,
+                        help="per-rep scratch root. Repeats need their own, otherwise the locked "
+                             "evaluator refuses with 'this ticket already triggered a locked "
+                             "evaluation' (that is what failed KOR on 2026-11-09)")
     args = parser.parse_args(argv)
     if not args.all and not args.slug:
         parser.error("give --all or --slug")
@@ -149,9 +155,10 @@ def main(argv: list[str] | None = None) -> int:
     os.makedirs(RECORDS, exist_ok=True)
     ok = 0
     for seq, name, slug, code in chosen:
-        scratch = os.path.join(SCRATCH_ROOT, code.lower())
+        scratch = os.path.join(args.scratch_root, code.lower())
         record = one(name, slug, code, seq, scratch)
-        path = os.path.join(RECORDS, f"w_{seq:02d}_{code.lower()}_p7b.json")
+        record["label"] = args.label
+        path = os.path.join(RECORDS, f"w_{seq:02d}_{code.lower()}_{args.label}.json")
         with open(path, "w", encoding="utf-8") as handle:
             json.dump(record, handle, ensure_ascii=False, indent=2)
             handle.write("\n")

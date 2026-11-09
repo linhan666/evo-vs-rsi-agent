@@ -1,0 +1,27 @@
+feat(analysis): W is deterministic, so agent-vs-pipeline now has an error bar
+
+给 W 补了两次重复（p7f / p7g），并给 p7b_workflow.py 加了 --label 与
+--scratch-root：原来的 scratch 目录是固定的，重跑会撞上锁定评测的速率限制
+（KOR 那次 "this ticket already triggered a locked Ki evaluation" 就是它）。
+
+结果：W 是确定性的。9 个靶点 × 3 次重复，逐靶点极差全部为 0.0000 —— 
+同数据、同代码、同种子，固定流水线重跑不产生任何波动。
+
+于是 agent 与 W 的对比有了干净的误差棒：差值的不确定性全部来自 agent 的
+重跑波动（实测逐靶点 SD = 0.0308），W 一侧贡献为零。
+
+  W 均值 0.8657（无误差）
+  臂                 均值      与 W 配对差   差值/标准误
+  R (agent+memory)   0.8932   +0.0275       +2.7
+  M (agent+memory)   0.9103   +0.0447       +4.3
+  A (agent only)     0.8814   +0.0157       +1.5
+
+n=9 配对、8 自由度，双侧 p<0.05 需要 |t| >= 2.31。所以：
+  M 过线（4.3）· R 刚过线（2.7）· A 不过线（1.5）
+
+结论收窄为：**记忆臂（R/M）在锁定集上确实优于固定流水线，无记忆的 A 与
+流水线不可区分。** 这比之前"agent 比流水线好"的说法更准，也更有意思 ——
+带来优势的是记忆，不是"有 agent"这件事本身。
+
+注意标准误用的是实测臂内 SD 而非配对差自身的 SD，n=9，属近似；
+引用时按 t(8) 判，不要按正态判。
