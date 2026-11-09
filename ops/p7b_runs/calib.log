@@ -27,3 +27,8 @@ Log: /home/linhan_cluster/evo_vs_rsi/.artifacts/dsh-superagent-superagent-202611
 [16:19:36] service up: group=memory pid=2401098
 [16:19:36] === calib rep2 (prefix p7d) ===
 [16:19:51] rep2 driver up
+[17:08:52] rep2 finished, records: 9
+[17:08:52] === calib rep3 (prefix p7e) ===
+[17:09:07] rep3 driver up
+[18:00:07] rep3 finished, records: 9
+[18:00:07] calibration complete

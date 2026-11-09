@@ -1,0 +1,24 @@
+{
+  "ticket": "anhydrase-p7d-m-bd4de6c4c38b",
+  "jobs_total": 19,
+  "jobs_failed": 2,
+  "failure_rate": 0.105,
+  "first_success_index": 0,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r2_b2048_v2"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom"
+  ],
+  "n_featurizations": 2,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

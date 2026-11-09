@@ -1,0 +1,93 @@
+{
+  "reps": [
+    "p7b",
+    "p7d",
+    "p7e"
+  ],
+  "summaries": [
+    {
+      "metric": "locked",
+      "pooled_sd": 0.0308,
+      "mean_pairwise_diff": 0.0154,
+      "max_target_range": 0.1543,
+      "targets_used": 9
+    },
+    {
+      "metric": "validation",
+      "pooled_sd": 0.0005,
+      "mean_pairwise_diff": 0.0004,
+      "max_target_range": 0.0017,
+      "targets_used": 9
+    },
+    {
+      "metric": "wall",
+      "pooled_sd": 185.2769,
+      "mean_pairwise_diff": 157.3704,
+      "max_target_range": 857.9,
+      "targets_used": 9
+    },
+    {
+      "metric": "jobs",
+      "pooled_sd": 4.1141,
+      "mean_pairwise_diff": 4.5926,
+      "max_target_range": 17.0,
+      "targets_used": 9
+    },
+    {
+      "metric": "tokens",
+      "pooled_sd": 549473.4655,
+      "mean_pairwise_diff": 477861.1852,
+      "max_target_range": 2241546.0,
+      "targets_used": 9
+    }
+  ],
+  "per_target_locked": {
+    "d2": [
+      0.9064,
+      0.9064,
+      0.9064
+    ],
+    "5ht": [
+      0.9665,
+      0.9264,
+      0.9653
+    ],
+    "adr": [
+      0.8072,
+      0.8072,
+      0.8072
+    ],
+    "drd2": [
+      0.9215,
+      0.9215,
+      0.9215
+    ],
+    "mor": [
+      0.9425,
+      0.9425,
+      0.9425
+    ],
+    "cbr": [
+      0.8129,
+      0.6586,
+      0.6586
+    ],
+    "kor": [
+      0.9129,
+      0.9129,
+      0.9129
+    ],
+    "ca2": [
+      0.9687,
+      0.9683,
+      0.9687
+    ],
+    "pt": [
+      0.9545,
+      0.9416,
+      0.9545
+    ]
+  },
+  "between_arm": 0.0118,
+  "between_version": 0.0112
+}
