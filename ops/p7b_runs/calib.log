@@ -1,0 +1,29 @@
+dsh-superagent stopped. Automatic recovery is paused until start/restart.
+Log: /home/linhan_cluster/evo_vs_rsi/.artifacts/dsh-superagent-superagent-20261109-161911-2401089.log
+{
+  "pids": [
+    2401098
+  ],
+  "cwd": "/home/linhan_cluster/evo_vs_rsi",
+  "url": "http://127.0.0.1:3082",
+  "manually_stopped": false,
+  "health": {
+    "runtime": "ready",
+    "relay": "ready",
+    "notice": "ready",
+    "launch": "ready",
+    "delivery": "ready",
+    "assessment": "ready",
+    "reply": "ready",
+    "evals": "ready",
+    "models": "ready",
+    "github": "paused",
+    "local": "ready"
+  },
+  "errors": {},
+  "setup": null,
+  "feishu": null
+}
+[16:19:36] service up: group=memory pid=2401098
+[16:19:36] === calib rep2 (prefix p7d) ===
+[16:19:51] rep2 driver up

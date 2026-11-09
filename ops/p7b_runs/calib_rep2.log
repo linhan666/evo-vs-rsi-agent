@@ -1,0 +1,5 @@
+[08:19:36Z] group=m sequence=['d2', '5ht', 'adr', 'drd2', 'mor', 'cbr', 'kor', 'ca2', 'pt']
+[08:19:36Z] submitted p7d_m_d2.json -> inbox/p7d_m_d2.json
+[08:20:07Z] #1 d2 waiting (state=running, assigned 1x)
+[08:20:37Z] #1 d2 waiting (state=running, assigned 1x)
+[08:21:07Z] #1 d2 waiting (state=running, assigned 1x)
