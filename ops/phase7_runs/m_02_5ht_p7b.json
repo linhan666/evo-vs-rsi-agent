@@ -194,12 +194,12 @@
     "screening/5ht_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 21,
+    "prompt_tokens": 984453,
+    "completion_tokens": 22205,
+    "cached_tokens": 953600,
+    "total_tokens": 1006658
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/ht-frozen-m-ccd60a43be74",
-  "recorded_at": "2026-11-08T17:49:14+00:00"
+  "recorded_at": "2026-11-09T08:01:25+00:00"
 }

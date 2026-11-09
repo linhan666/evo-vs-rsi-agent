@@ -19,10 +19,10 @@
   "best_auroc": 0.9852,
   "best_auprc": 0.9992,
   "best_ef_at_1pct": 1.056,
-  "best_scaffold_model": null,
-  "best_scaffold_auroc": null,
-  "best_scaffold_auprc": null,
-  "best_scaffold_ef_at_1pct": null,
+  "best_scaffold_model": "models/ca2_rf_v1_s42",
+  "best_scaffold_auroc": 0.9852,
+  "best_scaffold_auprc": 0.9992,
+  "best_scaffold_ef_at_1pct": 1.056,
   "refit_models_excluded": [],
   "model_table": {
     "models/ca2_logreg_v1": {
@@ -30,7 +30,7 @@
       "seed": 17,
       "split_strategy": "scaffold-manifest",
       "split_manifest": "frozen_carbonic_anhydrase_2.json",
-      "split_kind": "other",
+      "split_kind": "scaffold",
       "auroc": 0.9156,
       "auprc": 0.9936,
       "ef_at_1pct": 1.056,
@@ -46,7 +46,7 @@
       "seed": 17,
       "split_strategy": "scaffold-manifest",
       "split_manifest": "frozen_carbonic_anhydrase_2.json",
-      "split_kind": "other",
+      "split_kind": "scaffold",
       "auroc": 0.9838,
       "auprc": 0.9991,
       "ef_at_1pct": 1.056,
@@ -62,7 +62,7 @@
       "seed": 42,
       "split_strategy": "scaffold-manifest",
       "split_manifest": "frozen_carbonic_anhydrase_2.json",
-      "split_kind": "other",
+      "split_kind": "scaffold",
       "auroc": 0.9852,
       "auprc": 0.9992,
       "ef_at_1pct": 1.056,
@@ -78,7 +78,7 @@
       "seed": 7,
       "split_strategy": "scaffold-manifest",
       "split_manifest": "frozen_carbonic_anhydrase_2.json",
-      "split_kind": "other",
+      "split_kind": "scaffold",
       "auroc": 0.983,
       "auprc": 0.999,
       "ef_at_1pct": 1.056,
@@ -94,7 +94,7 @@
       "seed": 17,
       "split_strategy": "scaffold-manifest",
       "split_manifest": "frozen_carbonic_anhydrase_2.json",
-      "split_kind": "other",
+      "split_kind": "scaffold",
       "auroc": 0.9716,
       "auprc": 0.9983,
       "ef_at_1pct": 1.056,
@@ -143,12 +143,12 @@
     "rankings/ca2_rf_v1_s42_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 32,
+    "prompt_tokens": 1120372,
+    "completion_tokens": 29962,
+    "cached_tokens": 1085056,
+    "total_tokens": 1150334
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/anhydrase-frozen-r-e412acda8b8d",
-  "recorded_at": "2026-11-08T15:13:05+00:00"
+  "recorded_at": "2026-11-09T07:59:21+00:00"
 }

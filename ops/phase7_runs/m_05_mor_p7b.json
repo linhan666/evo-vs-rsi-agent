@@ -181,12 +181,12 @@
     "verification/top100_check.npz"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 30,
+    "prompt_tokens": 1054979,
+    "completion_tokens": 19178,
+    "cached_tokens": 1024128,
+    "total_tokens": 1074157
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/mor-frozen-m-50f0727a7e71",
-  "recorded_at": "2026-11-08T18:04:21+00:00"
+  "recorded_at": "2026-11-09T08:01:27+00:00"
 }

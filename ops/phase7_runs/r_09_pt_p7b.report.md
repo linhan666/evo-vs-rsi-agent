@@ -5,7 +5,7 @@
 - state: ready
 - wall: 227.6s, jobs 15 (failed 0), models 8
 - best validation model (any split): runs/pt_rf_v1_s17 AUROC=0.9423 AUPRC=0.9754 EF@1%=1.437
-- best scaffold model: None AUROC=None EF@1%=None
+- best scaffold model: runs/pt_rf_v1_s17 AUROC=0.9423 EF@1%=1.437
 - refits excluded from ranking: []
 - top-100 artifacts: 1
 

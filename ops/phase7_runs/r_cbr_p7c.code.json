@@ -1,0 +1,24 @@
+{
+  "ticket": "cannabinoid-p7c-r-92e0be60a018",
+  "jobs_total": 24,
+  "jobs_failed": 1,
+  "failure_rate": 0.042,
+  "first_success_index": 0,
+  "featurizations": [
+    "r2_b2048_v1",
+    "r2_b2048_v2"
+  ],
+  "models": [
+    "catboost",
+    "logreg",
+    "rf",
+    "xgboost"
+  ],
+  "split_strategies": [
+    "custom"
+  ],
+  "n_featurizations": 2,
+  "n_models": 4,
+  "code_lines": 0,
+  "top100": true
+}

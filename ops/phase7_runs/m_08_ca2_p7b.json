@@ -160,12 +160,12 @@
     "screening/ca2_top100.csv"
   ],
   "tokens": {
-    "llm_calls": 0,
-    "prompt_tokens": 0,
-    "completion_tokens": 0,
-    "cached_tokens": 0,
-    "total_tokens": 0
+    "llm_calls": 29,
+    "prompt_tokens": 1294131,
+    "completion_tokens": 33765,
+    "cached_tokens": 1258624,
+    "total_tokens": 1327896
   },
   "workdir": "/home/linhan_cluster/evo_vs_rsi/.artifacts/state/work/anhydrase-frozen-m-65a7a1072a17",
-  "recorded_at": "2026-11-08T18:24:24+00:00"
+  "recorded_at": "2026-11-09T08:01:29+00:00"
 }

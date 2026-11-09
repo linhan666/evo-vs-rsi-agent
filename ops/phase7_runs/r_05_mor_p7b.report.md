@@ -5,7 +5,7 @@
 - state: ready
 - wall: 406.3s, jobs 20 (failed 1), models 12
 - best validation model (any split): mor_frozen/seedcheck_rf_v2_s7 AUROC=0.9427 AUPRC=0.9744 EF@1%=1.416
-- best scaffold model: None AUROC=None EF@1%=None
+- best scaffold model: mor_frozen/seedcheck_rf_v2_s7 AUROC=0.9427 EF@1%=1.416
 - refits excluded from ranking: []
 - top-100 artifacts: 1
 
