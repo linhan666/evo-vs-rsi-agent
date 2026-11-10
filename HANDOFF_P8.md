@@ -1,426 +1,368 @@
-# RSIAutoML / evo-vs-rsi-agent — 交接文档（P8 起点）
+# RSIAutoML / evo-vs-rsi-agent — 交接文档（P8 执行中）
 
-生成时间：2026-11-10 15:20（GMT+8）
-仓库：`github.com/linhan666/evo-vs-rsi-agent`，HEAD `024c3b5`
-远端主机：`172.25.18.26`（A800f），用户 `linhan_cluster`，工作目录 `/home/linhan_cluster/evo_vs_rsi`
+更新时间：2026-11-10 17:05（GMT+8）
+仓库：`github.com/linhan666/evo-vs-rsi-agent`，HEAD `462ec8e`
+执行主机：**172.25.16.37 (H100b)**，工作目录 `/home/linhan_cluster/evo_vs_rsi`
 
 ---
 
 ## 0. 一句话状态
 
-**p7 轮（四臂 36 条 + R′ 9 条 + M/W 各两次重复共 36 条 = 81 条记录）已全部结束并出结论。p8 轮的机制（冻结空间、预算强制、交付重评、门禁语义）已落地并验证。用户已批准 A②+B④+C 三项改造，但要求先不实施——本文档即为此准备。**
+**p7 轮（81 条记录）已结束并出结论；p8 的机制已落地；AutoGluon 独立环境已建成、W 基线已端到端跑通（D2 锁定 0.9063，与四臂同量级）。还剩两件事未做：加"交互形式"轴（B④）、校准预算折算口径（C）。做完即可跑单档验证 → 全量。**
 
 ---
 
-## 1. 用户的原始意图（务必按此执行，不要自行简化）
+## 1. 用户的原始意图（逐字保留，勿改写）
 
-研究对象：**RSI 药物筛选 Agent Harness**（可自我演化的 LLM agent harness，用于分子活性预测与库筛选）。
+> 我来描述一下理论上最理想的实验表现：
+>
+> （1）**W 是 automl 基线，没有 LLM 参与，限定算法类型和特征类型范围进行穷举，比如 100 个不同模型的穷举（这部分可以使用已有的开源的且权威的 automl 模型）**。结果应该是耗时最长，但确实可以得到第一或者较高的性能排名；
+>
+> **A 是 LLM 编排的 automl workflow 类 agent，不使用已有的开源的且权威的 automl 模型，而是由 LLM 编排决策**，同样限定算法类型和特征类型范围进行穷举，比如 100 个不同模型的穷举。结果应该是消耗 token，耗时较 W 有所下降，但是性能表现应该和 W 几乎一致；
+>
+> **M 是由 LLM 决策编排的带有记忆库的 agent**，同样限定算法类型和特征类型范围进行穷举，比如 100 个不同模型的穷举。经过单靶点的每折实验或者多靶点的轮流实验后，有记忆的情况下，LLM 开始会自主决策哪些特征和算法**以及交互形式**，进而不一定要 100 个不同模型，就可以自主决策停止，但是**只复用记忆，不会修改自身内容**。结果应该是消耗大量的 token，耗时较 W 有更明显下降，但是性能表现不稳定；
+>
+> **R 是自进化（RSI，针对于 harness 的自进化）的基于 LLM 的药物筛选 agent harness**，同样限定算法类型和特征类型范围进行穷举，比如 100 个不同模型的穷举。经过单靶点的每折实验或者多靶点的轮流实验后，有记忆且自进化的情况下，LLM 开始会自主决策哪些特征和算法以及交互形式，以及**灵活复用任何可用内容**，以及**根据所有反馈修改（或者说纠正）记忆、修改（或者说纠正、改善）harness**，进而不一定要 100 个不同模型，就可以自主决策停止……结果应该是**相比于 M 甚至 A 消耗较少的 token，耗时较 W 有更大幅下降（这里所有的耗时，指的是总耗时，而不是单靶点单轮的耗时），同时性能应该和 W 几乎一致**。
+>
+> （2）除了（1）的情况，可以看出 harness 自进化的 RSI 药物筛选 agent harness 速度极快和 token 消耗极低以及自动化程度极快，**可以匹配极高的搜索预算（也就是（1）限定的"100 个不同模型的穷举"）的性能，因此我们还可以逐轮减少搜索预算，理论上是预算越低，……性能可能还会超过 W\A\M 三组**。
 
-### 1.1 四组对比设计
+### 1.1 对 W 的关键限定（用户反复强调三次）
 
-| 组 | 是什么 | LLM 角色 | 搜索方式 | 记忆 | 自进化 | 预期总耗时 | 预期 token | 预期性能 |
-|---|---|---|---|---|---|---|---|---|
-| **W** | **AutoML 基线，用权威开源 AutoML**（不是自建网格） | **无** | 限定算法族×特征类型穷举，如 100 个模型 | 无 | 无 | **最长** | 0 | **第一或前列** |
-| **A** | LLM 编排的 AutoML workflow agent，**不用**现成 AutoML | 编排决策 | 同样穷举 100 | 无 | 无 | 比 W 短 | 消耗 token | **≈ W** |
-| **M** | LLM 编排 + **记忆库** | 编排决策 | 多靶点轮转后有记忆，自主判断该试哪些特征/算法/交互，**不必跑满，可自主停止** | 有，**只复用** | 无 | 比 W 明显短 | 大量 token | **不稳定** |
-| **R** | **RSI 自进化** harness | 编排 + 改造自身 | 同上，且**灵活复用任何可用内容、按反馈纠正记忆、修改/改善 harness 本身**，更早停 | 有，且**会纠正** | **有** | **比 W 大幅下降** | **比 M 甚至 A 更少** | **≈ W** |
+> 强调的 automl 基线做法是"W 是 automl 基线，没有 LLM 参与，限定算法类型和特征类型范围进行穷举……（这部分可以使用已有的开源的且权威的 automl 模型）"，**这意味着不是"logreg、rf、xgboost、catboost"和"v1/v2/r1/b4096/r3b4096"这么简单的范围组合，也不是自建的 automl 基线，应该是使用"已有的开源的且权威的 automl 模型"**。
 
-### 1.2 第二轮：预算递减实验
+### 1.2 四组预期（结构化）
 
-R 既然又快又省，就能在**更低搜索预算**下逼近 100 配置的性能。逐轮压预算（100 → 50 → 20 → 10 → 5），**预算越低，R 相对 W/A/M 的优势应越大**，性能甚至可能反超。
+| 组 | LLM | 记忆 | 自进化 | 总耗时 | token | 性能 |
+|---|---|---|---|---|---|---|
+| **W** | 无 | 无 | 无 | **最长** | 0 | **第一/前列** |
+| **A** | 编排 | 无 | 无 | 比 W 短 | 消耗 token | **≈ W** |
+| **M** | 编排 | 有（只复用） | 无 | 比 W 明显短 | 大量 token | **不稳定** |
+| **R** | 编排 + 改造自身 | 有（会纠正） | **有** | **比 W 大幅下降** | **比 M 甚至 A 少** | **≈ W** |
 
-### 1.3 指标口径（用户明确强调过）
+### 1.3 指标口径（用户强调）
 
-- **耗时 = 跨靶点/跨轮次的累计总耗时**，不是单靶点单轮的中位墙钟。
-- 性能 = 受保护**锁定测试集**上的 AUROC（各臂共享同一批分子）。
-- 效率 = 在给定**试验预算**下达到的质量，即"用多少次拟合换多少分"。
+- **耗时 = 跨靶点/跨轮次的累计总耗时**，不是单靶点单轮中位数。
+- 性能 = 受保护**锁定测试集** AUROC（各臂共享同一批分子）。
+- 效率 = 给定**试验预算**下达到的质量。
 
-### 1.4 用户反复纠正过的三点（不要重犯）
+### 1.4 用户明确纠正过的三点（不要重犯）
 
-1. **不要人为设作业超时**打断合法训练（曾把 catboost 在 1200 s 杀掉，直接改变某臂的模型集合）。
-2. **W 不能是弱基线**——必须是权威开源 AutoML，不能是我自建的 4 算法×5 特征网格。
-3. **框架选型由用户决定**——我只负责检索清单与实测，不擅自定。
+1. **不要人为设作业超时**打断合法训练（曾把 catboost 在 1200 s 杀掉，改变了某臂的模型集合）。
+2. **W 不能是弱基线**，必须是权威开源 AutoML，不能自建网格。
+3. **框架选型由用户拍板**，我只做检索清单与实测（已选定 **AutoGluon**，用户并明确"集成保留"）。
 
 ---
 
-## 2. p7 轮：已完成、已出结论
+## 2. p7 轮：已结束，结论如下
 
-### 2.1 记录清单（81 条，全部在 `ops/phase7_runs/`）
+### 2.1 记录（81 条，`ops/phase7_runs/`）
 
 | 标签 | 内容 | 条数 |
 |---|---|---|
-| `p7b` | 四臂 r / m / a / w × 9 靶点 | 36 |
+| `p7b` | 四臂 r/m/a/w × 9 靶点 | 36 |
 | `p7c` | R′（v7 晋升后复跑） | 9 |
-| `p7d` / `p7e` | M 臂重复两次（噪声标定） | 18 |
-| `p7f` / `p7g` | W 臂重复两次（噪声标定） | 18 |
+| `p7d`/`p7e` | M 臂重复两次（噪声标定） | 18 |
+| `p7f`/`p7g` | W 臂重复两次（噪声标定） | 18 |
 
-### 2.2 四臂描述统计（p7b，中位数）
+### 2.2 四臂描述统计（中位数，H100b）
 
-| 臂 | 墙钟 s | 作业数 | 模型数 | token（实测） | 验证 AUROC |
+| 臂 | 墙钟 s | 作业 | 模型 | token（实测） | 验证 AUROC |
 |---|---|---|---|---|---|
 | R | 484.9 | 22 | 11 | 1,285,191 | 0.980 |
 | A | 347.4 | 20 | 12 | 1,315,823 | 0.982 |
 | M | 278.0 | 16 | 8 | 1,275,072 | 0.978 |
 | W | 30.8 | 0 | 0 | — | 0.942 |
 
-### 2.3 测量层三个发现（决定结论怎么读）
+### 2.3 测量层三个发现
 
 | 发现 | 数据 | 后果 |
 |---|---|---|
-| 臂内噪声大 | M 三重跑，锁定 AUROC 池化 **SD = 0.0308**，CBR 单靶极差 **0.1543** | 臂对臂待检效应 δ≈0.012 **小于噪声** |
-| 验证集无区分度 | 同臂重复中 validation SD **0.0005**，而同批模型锁定极差 0.154 | agent 的"择优"在锁定集看来近乎**抽签** |
-| W 确定性 | 3 次 × 9 靶，极差全 **0.0000** | "vs W"的误差棒只来自 agent 一侧，检验力充分 |
+| 臂内噪声大 | M 三重跑锁定 AUROC 池化 **SD=0.0308**，CBR 单靶极差 **0.1543** | 臂对臂 δ≈0.012 **小于噪声** |
+| 验证集无区分度 | 同臂重复 validation SD **0.0005**，同批模型锁定极差 0.154 | "择优"在锁定集看来近乎抽签 |
+| W 确定性 | 3 次 × 9 靶极差全 **0.0000** | "vs W"的误差棒只来自 agent 一侧 |
 
-### 2.4 结论（分层，与 `CONCLUSIONS.md` 一致）
+### 2.4 结论（与 `CONCLUSIONS.md` 一致）
 
-**支持**
-- 记忆臂（R/M）在锁定集上优于 W：M **+0.0447（4.3σ）**、R **+0.0275（2.7σ）**，t(8) 临界 2.31。
-- 自我改进回路可端到端跑通，门禁能拒绝不合格候选。
+**支持**：记忆臂（R/M）优于 W —— M **+0.0447（4.3σ）**、R **+0.0275（2.7σ）**，t(8) 临界 2.31；自我改进回路可跑通、门禁能拒绝不合格候选。
 
-**不支持**
-- 记忆相对无记忆 agent 提升质量：R vs A 仅 **+0.0118**，远小于 SD 0.0308。功效分析需 **n≈103** 靶点。
-- 自我修改提升质量：R ≡ M（工具面相同，P4-04 当时未实现），v7 是纯吞吐改动，5/9 逐位相同。
-- 无记忆 agent 优于流水线：A **+0.0157（1.5σ）**，不过线。
+**不支持**：记忆相对无记忆 agent 提升质量（R vs A **+0.0118** ≪ SD 0.0308，需 n≈103）；自我修改提升质量（R≡M，v7 是纯吞吐改动，5/9 逐位相同）；无记忆 agent 优于流水线（A **+0.0157，1.5σ**）。
 
-**已撤回的错误结论**
-- ❌ "记忆省 8 倍 token"：10.13M 来自单条估算侧文件，补齐台账后 A 实测 1,315,823，三臂基本相同。
-- ❌ "agent 比流水线慢 9–16 倍"：被 catboost 超时污染（R 丢 3000 s、M 丢 900 s），剔除后工具时间 R 79 s / M 77 s / A 130 s。
-
-### 2.5 v7 晋升（已落地，可作为"自我修改生效"的机制证据）
-
-- 变更：`EVOVS_TRAIN_JOBS` 默认 `1 → 8`（RF/XGB 的 `n_jobs`、CatBoost 的 `thread_count`）
-- 门禁六项全过：equivalence 1.0 / cost 1.394× / success / failure n-a / quality n-a / safety canary
-- shadow 重放 11 个真实 `ml.train` 步：57.38 s → 41.22 s
-- 记录于 `evolution/versions.json` 的 **v7**
+**已撤回**：❌"记忆省 8 倍 token"（10.13M 是单条估算值，实测三臂均 ~1.28M）；❌"agent 慢 9–16 倍"（被 catboost 超时污染，剔除后 R 79 s / M 77 s / A 130 s）。
 
 ---
 
-## 3. p8 轮：机制已落地（可直接复用）
+## 3. p8 机制：已落地并验证
 
-### 3.1 冻结搜索空间
+| 机制 | 位置 | 状态 |
+|---|---|---|
+| **冻结搜索空间** 100 配置（4 算法 × 5 特征表示 × 5 **种子**） | `scientific/.../search/space.py`，`p8-100-v2`，指纹 `656e58db` | ✅ 但第三轴是**种子，不是交互形式** → 见 §7 B④ |
+| **预算强制**（工具级） | `search/budget.py` + `train.py --config-id/--workspace/--budget-limit` | ✅ 实测 limit 5 → `used=5/5`，第 6 次抛 `SEARCH_BUDGET_EXHAUSTED`；重复同配置不重复扣 |
+| `search.space` 工具 | 紧凑 TSV + `--json`；接受 id 或序号（`7`、`cfg000`） | ✅ |
+| `harness.propose` 工具（P4-04） | `evovs_science/harness/propose.py` | ✅ agent 可写 CandidateSpec，晋升仍走 shadow/gate |
+| **p8 切分**（验证集 10%→30%） | `ops/p8_splits.py` → `frozen_p8_<slug>.json`，验证 570–1862 | ✅ 锁定集未动 |
+| **交付重评** | `ops/p8_finalize.py`（配合 `locked.py --recheck`） | ✅ 见 §5 缺陷表 |
+| **门禁 early_rejection** | `evolution/gate.py` | ✅ 合成验证 10× 通过 / 1.11× 拒绝 |
+| 135 份 p8 任务文本 | `ops/p8_texts.py` → `ops/p8_tasks/p8b<budget>_<arm>_<code>.json` | ✅ |
+| 调度器 | `ops/p8_sweep.sh <budgets...>` | ✅ 语法通过，未跑全量 |
 
-` scientific/src/evovs_science/search/space.py`，版本 `p8-100-v2`，指纹 `656e58db`。
+### 3.1 冻结空间的真实内容（重要，勿再简化）
 
 | 轴 | 取值 |
 |---|---|
 | 算法族（4） | `logreg` / `rf` / `xgboost` / `catboost` |
-| 特征表示（5） | `v1`(desc v1, r2, 2048) / `v2`(v2, r3, 2048) / `r1`(v1, r1, 2048) / `b4096`(v1, r2, 4096) / `r3b4096`(v2, r3, 4096) |
-| 第三轴（5） | **种子** 17/23/42/7/101 ← **注意：这不是"交互形式"，见 §6 B④** |
+| 特征表示（5） | `v1`=desc v1,r2,2048 · `v2`=desc v2,r3,2048 · `r1`=v1,r1,2048 · `b4096`=v1,r2,4096 · `r3b4096`=v2,r3,4096 |
+| 第三轴（5） | **种子** 17/23/42/7/101 ← 应为交互形式，待改 |
 
-**排序是「种子最外层」**：预算 4 覆盖四个算法族，预算 20 覆盖全部算法×特征组合。不要改回算法优先，否则低预算只试得到同一算法。
-
-### 3.2 预算强制（工具级，非约定）
-
-- `search/budget.py` + `train.py --config-id/--workspace/--budget-limit`
-- 每张新配置扣一次；第 N+1 次抛 `SEARCH_BUDGET_EXHAUSTED`；**重复同一配置不重复扣**（复现检查）
-- 账本 `.search_budget.json` 落在工单目录，字段 `{space_version, limit, used, ids}`
-- 实测：limit 5 时 `used=5/5`，其后所有 draw 被拒
-
-### 3.3 新工具
-
-| 工具 | 作用 |
-|---|---|
-| `search.space` | 列出 100 配置（紧凑 TSV；`--json` 全量）。id 形如 `rf-v1-s17`，也接受序号（`7`、`cfg000`） |
-| `harness.propose` | agent 自己写 CandidateSpec（P4-04 落地），晋升仍走 shadow/gate/operator |
-
-### 3.4 p8 切分（验证集 10% → 30%）
-
-`ops/p8_splits.py` 生成 `frozen_p8_<slug>.json`，各靶验证集 570–1862 个分子（原 190–621）。**受保护锁定集未动**，跨轮质量仍可比。
-
-### 3.5 交付重评
-
-`ops/p8_finalize.py --label <label>`：若锁定评测所用模型 ≠ 最优模型，自动用最优模型重跑并标 `locked_reevaluated: true`；同时补齐 `configs_used / budget_limit / stop_reason`。幂等（已 finalized 则跳过）。
-
-### 3.6 门禁语义
-
-`evolution/gate.py` 新增 `early_rejection`：判据从"失败消失"改为"同样失败但显著更快"（`min_rejection_speedup`，默认 2.0）。合成报告验证：10× 通过、1.11× 拒绝。
-
-### 3.7 调度
-
-`ops/p8_sweep.sh <budgets...>`：对每个预算依次跑 W（AutoML）、A、M、R，并在每档后 finalize。
-
-### 3.8 任务文本
-
-`ops/p8_texts.py` 生成 `ops/p8_tasks/p8b<budget>_<arm>_<code>.json`，共 135 份（5 预算 × 3 臂 × 9 靶）。
+排序为**种子最外层**：预算 4 覆盖四算法，预算 20 覆盖全部算法×特征组合。不要改回算法优先。
 
 ---
 
-## 4. 已修复的缺陷清单（新会话务必知道，别重犯）
+## 4. AutoGluon 基线：已建成并验证（本轮最重要的进展）
 
-### 4.1 编排与运维
-
-| 缺陷 | 后果 | 修法 |
-|---|---|---|
-| **tmux `-t` 是前缀匹配**，`p7b-a` 匹配到 `p7b-all` | A→W 切换卡死 60 分钟（等一个永不退出的会话） | 全部改 `-t "=p7b-<arm>"` 精确匹配 |
-| `stores cleared` 无条件执行 | 续跑时清空经验库（R 的库被清、M 的差点被清） | 仅 `START_FROM=r` 时清 |
-| watchdog 用哨兵 `99999` 表示"未知" | 被判成"空闲 27 小时"，反复误报（未真触发，纯侥幸） | 未知返回空 + `stuck=0` 跳过，**未知绝不累计** |
-| watchdog 在无驱动时退出 | 臂切换窗口失去监控（第二次发生） | 改为继续待命 |
-| 进度快照只计四臂 | 四臂饱和后无法表达增量；`p7c_records` 把 `analysis_p7c.json` 也算进去 | 改 `round_counts`，按严格文件名模式统计 |
-| 作业超时 600/3600 s | catboost 被 SIGKILL，直接删掉某臂的配置 | 默认 7200 s、上限 21600 s |
-
-### 4.2 测量与统计
-
-| 缺陷 | 后果 | 修法 |
-|---|---|---|
-| `best_scaffold_auroc` 是**训练过的模型取 max** | 奖励"训得多"（A 13 个、R 7 个、M 5 个），跨臂不可比 | 只用于同臂内比较；跨臂用锁定 AUROC |
-| 锁定评测硬编码 `radius=2 / n_bits=2048` | r1/b4096/r3b4096 三种表示**无法重建**，p7 大量锁定评测缺失 | `--radius/--n-bits` 可传，并写进收据文件名 |
-| 交付模型 ≠ 最优模型（R 6/9、M 5/9、A 6/9） | 各臂质量被不同程度低估 | `p8_finalize.py` 强制用最优模型重评 |
-| token 用了单条估算值当九条中位 | 得出"省 8 倍"的错误结论 | 补齐台账后重算；估算侧文件改名 `.superseded` |
-| `--config-id` 可缺 `--split-manifest` | 回落到随机内部切分，与冻结切分不可比，`best` 变 None | `--config-id` 必配 `--split-manifest`，否则 `MISSING_SPLIT_MANIFEST` |
-| **锁定评测限流把 finalize 也挡住了** | `.evaluation/<TARGET>_<ENDPOINT>.done` 存在即拒 → 交付重评**静默失败**（只记 `locked_rerun_error`），修正等于没做 | `locked.py` 新增 `--recheck`：越过 marker、输出加 `_recheck` 后缀（agent 原分数不被覆盖）；`p8_finalize.py` 已带上该参数 |
-| **`rctl.py` 默认主机静默** | `DEFAULT_HOST = 172.25.18.26`，漏写 `--host` 就把活派到 A800f，而 p7 墙钟基线在 H100b —— 无任何提示 | 每次连接在 stderr 打印 `[host] <ip>`；仍可用 `EVOVS_HOST` 覆盖 |
-
-### 4.3 第三方
-
-| 问题 | 证据 | 规避 |
-|---|---|---|
-| **FLAML 2.8.0 的 `rf`/`extra_tree` 直接崩** | `AttributeError: 'RandomForestEstimator' object has no attribute '_t1'`；装 `psutil` 无效；源码里设 `_t1` 的分支被内层守卫跳过 | 见 §6 A②：改用 AutoGluon；或剔除这两族；或降级 FLAML |
-
----
-
-## 5. 环境与运维手册
-
-### 5.1 连接
-
-```bash
-export MSYS2_ARG_CONV_EXCL='*' MSYS_NO_PATHCONV=1
-cd D:/RSI_AutoML
-D:/anaconda3/python.exe ops/rctl.py exec "<远程命令>" --host 172.25.16.37
-D:/anaconda3/python.exe ops/rctl.py put <本地> <远端> --host 172.25.16.37
-```
-
-代理 `47.238.155.196:14842`（账号见用户提供）。**每次调用都要带 `export MSYS2_ARG_CONV_EXCL='*'`**，否则 `/home/...` 被转成 Windows 路径。
-
-### 5.1b 主机拓扑（关系到墙钟可比性，必读）
-
-| 主机 | hostname | GPU | 角色 |
-|---|---|---|---|
-| **172.25.16.37** | `H100b` | 2× H100 80GB | **本次会话全部计算实际运行在这台** |
-| **172.25.18.26** | `A800f` | 2× A800 80GB | 用户记录中标注的"运行主机"；**同时是 NFS 服务端** |
-
-**关键事实：两者共享同一份存储。** `.16.37` 上 `/home/linhan_cluster` 挂载自 `172.25.18.26:/nfs/linhan_cluster`（41 T，50% 使用）。因此：
-
-- 两台机看到的仓库、commit、数据**完全一致**（实测两台都在 `71372ca`，同一份 `ops/phase7_runs/`）。
-- 所以"代码落地主机 vs 实验测试主机"在这套环境里**不是文件位置的区别，而是在哪个节点执行的区别**。
-- **但墙钟是机器相关的。** p7 的 81 条记录全部在 `H100b` 上测得；若换到 `A800f` 跑，墙钟不可跨轮直接比较。
-- 用户记忆里的执行规则写的是 `.18.26`，而本会话用的是 `.16.37`——**这一偏离已如实记录**。p7 全是 CPU 活（rdkit / sklearn），质量指标不受影响，但耗时数据带 H100b 的机器指纹。
-
-**后续要求**：p8 全轮锁定在同一台机上跑；若改机，必须在报告里注明并重新建立墙钟基线。
-
-### 5.1c 跨节点共享状态的隐患（必须知道）
-
-因为两台机共用同一份 `/home/linhan_cluster`，下面两样东西**是跨节点共享的**：
-
-| 共享状态 | 位置 | 后果 |
-|---|---|---|
-| 锁定评测限流 marker | `<workdir>/.evaluation/<TARGET>_<ENDPOINT>.done` | A800f 上的残留会让 H100b 的评测直接被拒 |
-| 搜索预算账本 | `<workdir>/.search_budget.json` | 另一节点的消耗会污染本节点的 `used` |
-
-**实测状态（2026-11-10 15:40）**：A800f 上**无 tmux、无进程**；H100b 上只有 `dsh-superagent`／`p7b-progress`／`p7b-watch` 三个会话，无计算进程。所以当前是**潜在风险而非正在发生**。
-
-**投全量前的强制检查**（两台都要看）：
-
-```bash
-for h in 172.25.16.37 172.25.18.26; do
-  D:/anaconda3/python.exe ops/rctl.py exec \
-    "hostname; tmux ls 2>&1 | head; ps -eo pid,cmd | grep -E '[e]vovs_science|[p]hase7_seq|[p]8_' | head" --host $h
-done
-```
-
-只允许在**执行主机**上看到会话；另一台必须完全静默。
-
-### 5.1d AutoGluon 独立环境（已建成，2026-11-10）
+### 4.1 独立环境（`.venv-automl`）
 
 | 项 | 值 |
 |---|---|
-| 路径 | `scientific/.venv-automl` |
-| 体积 | **1.2 GB** |
+| 路径 | `scientific/.venv-automl`（**1.2 GB**） |
 | autogluon.tabular | **1.6.3**（`[lightgbm,catboost,xgboost]`，**不含** torch/spacy/fastai） |
 | 依赖 | scikit-learn **1.9.1**、numpy 2.5.4、pandas 2.3.3、rdkit 2026.9.1 |
 | 构建脚本 | `ops/p8_make_automl_venv.sh` |
 | 版本指纹 | `ops/p8_venv_automl.freeze.txt` |
 
-**为什么必须独立**：这个 venv 的 sklearn 是 **1.9.1**，而 agent 臂的 `scientific/.venv` 是 **1.5.2**。原地升级会让 p7 的 81 条记录失去可复现性。实测差值比预估更大（1.5.2 → 1.9.1 跨了 4 个大版本），隔离是必需的。
+**必须独立**：该 venv 的 sklearn 是 **1.9.1**，agent 臂的 `scientific/.venv` 是 **1.5.2**（跨 4 个大版本）。原地升级会让 p7 的 81 条记录失去可复现性。
 
-**安装要点**：该机无 ensurepip，venv 用 `--without-pip` 建，再从 `scientific/.venv` 拷 pip/setuptools/wheel 引导。`[all]` 会拉 torch（526 MB）+ spacy + fastai，而我们的模型类型里没有神经网络——故只装 GBM 扩展，省约 2 GB。
+**安装坑**：该机无 ensurepip → `--without-pip` 建 venv，再从 `.venv` 拷 pip/setuptools/wheel 引导。`[all]` 会拉 torch（526 MB）+spacy+fastai，而模型类型里没有神经网络 → 只装 GBM 扩展。
 
-**单靶点验证（D2、v1 特征、p8 冻结切分、限定 6 个模型族）**：
+### 4.2 W 脚本（`ops/p8_automl_ag.py`）
 
-```
-wall 60.9s | val AUROC 0.9529 | 枚举 7 个模型
-WeightedEnsemble_L2  0.9529   ← AutoGluon 自动组合
-RandomForest         0.9337
-ExtraTrees           0.9210
-XGBoost              0.9168
-CatBoost             0.9150
-LinearModel          0.9139
-LightGBM             0.9101
-```
+- 运行在 `.venv-automl`；模型族限定 `{GBM, CAT, XGB, RF, XT, LR}`（与 agent 可选项同集合）
+- `num_bag_folds=0`、`num_stack_levels=0`、`auto_stack=False`、**`fit_weighted_ensemble=True`（集成保留，用户已拍板）**
+- **锁定评分在本地复刻**：AutoGluon 产出预测器目录而非 `model.joblib`，现有 `evaluation.locked` 加载不了 → 在 `.venv-automl` 内用**同一 `featurize` 参数、同一指标函数**（`roc_auc_score`/`average_precision_score`/`enrichment`）算出同 schema 的受保护指标文件与收据
+- 筛库同理内置（写 `runs/<tag>_all.csv` 与 `<tag>_topK.csv`）
 
-对照：sklearn logreg 0.9383、rf 0.9133。**量级一致，管线正确**（FLAML 那次 0.58 的异常没有再出现）。
+### 4.3 实测结果
 
-**一个待定的口径问题**：AutoGluon 默认会额外产出 `WeightedEnsemble_L2`（把 6 个基础模型加权组合），它的分数高于任何单个基础模型。而 agent 臂的 `ml.train` 只能产出**单个**模型。所以：
+**探针（D2、v1、6 族）**：wall 60.9 s，val **0.9529**，枚举 7 个模型
 
-- 若保留 ensemble → 更忠实于"AutoGluon 就是这个水平"，但 W 手里多了一张 agent 没有的牌；
-- 若关闭（`fit_weighted_ensemble=False`）→ 比较变成"选单个配置"，但削弱了基线。
-
-**建议保留并在报告里写明**：抑制 AutoGluon 的集成会招致"你把基线阉了"的质疑；而 agent 若要赢，本就该在搜索效率而非集成上赢。
-
-### 5.2 Python 环境
-
-| 项 | 值 |
+| 模型 | val AUROC |
 |---|---|
-| 解释器 | `/home/linhan_cluster/evo_vs_rsi/scientific/.venv/bin/python`（3.12） |
-| 关键版本 | scikit-learn **1.5.2** · numpy **2.1.3** · flaml **2.8.0** · psutil 7.2.2 |
-| venv 体积 | 1.8 G |
-| 磁盘 | `/home/linhan_cluster` NFS **21 T 可用（50%）**；`/home` 仅剩 647 G（96%）——**别往 /home 写大数据** |
-| pip | `scientific/.venv/bin/pip 24.2`，镜像 `https://pypi.tuna.tsinghua.edu.cn/simple` 可用 |
+| WeightedEnsemble_L2 | **0.9529** |
+| RandomForest | 0.9337 |
+| ExtraTrees | 0.9210 |
+| XGBoost | 0.9168 |
+| CatBoost | 0.9150 |
+| LinearModel | 0.9139 |
+| LightGBM | 0.9101 |
 
-### 5.3 常用命令
+对照：sklearn logreg 0.9383、rf 0.9133 → **管线正确**（FLAML 那次 0.58 的异常未再现）。
+
+**端到端（D2、预算 5、每表示 15 s）**：
+
+| 表示 | 选中 | val |
+|---|---|---|
+| **v1** | WeightedEnsemble_L2 | **0.9477** ← 选中 |
+| r1 | WeightedEnsemble_L2 | 0.9446 |
+| v2 | WeightedEnsemble_L2 | 0.9297 |
+| b4096 | WeightedEnsemble_L2 | 0.9157 |
+| r3b4096 | WeightedEnsemble_L2 | 0.8779 |
+
+枚举 14 个模型，wall 161 s，**locked 0.9063**。
+
+**对照 p7 同靶点锁定值**：W 0.8993 · R/M 0.9064 · A 0.9094 · **AutoGluon@b5 0.9063** → 同量级，包装器评分路径与 agent 臂可比。
+
+---
+
+## 5. 已修复缺陷清单（含根因，勿重犯）
+
+### 5.1 编排与运维
+
+| 缺陷 | 后果 | 修法 |
+|---|---|---|
+| tmux `-t` 前缀匹配（`p7b-a` 命中 `p7b-all`） | A→W 卡死 60 分钟 | 全改 `-t "=p7b-<arm>"` |
+| `stores cleared` 无条件执行 | 续跑清空经验库 | 仅 `START_FROM=r` 时清 |
+| watchdog 哨兵 `99999` | 被判"空闲 27 小时"，反复误报 | 未知返回空 + `stuck=0` 跳过，**未知绝不累计** |
+| watchdog 无驱动时退出 | 臂切换窗口失去监控 | 改为继续待命 |
+| 进度快照只计四臂 | 饱和后无法表达增量；`analysis_p7c.json` 被误计为记录 | 改 `round_counts`，严格文件名模式 |
+| 作业超时 600/3600 s | catboost 被 SIGKILL，删掉某臂配置 | 默认 7200 s、上限 21600 s |
+| **锁定评测限流挡住 finalize** | 交付重评**静默失败**，只记 `locked_rerun_error` | `locked.py --recheck`：越过 marker、输出加 `_recheck` 后缀、marker 仍写回 |
+| **`rctl.py` 默认主机静默**（A800f） | 漏写 `--host` 把活派到另一台且无提示 | 每次连接在 stderr 打印 `[host] <ip>` |
+
+### 5.2 测量与统计
+
+| 缺陷 | 后果 | 修法 |
+|---|---|---|
+| `best_scaffold_auroc` 是 **max-over-N** | 奖励"训得多"，跨臂不可比 | 只用于同臂内；跨臂用锁定 AUROC |
+| 锁定评测硬编码 `radius=2/n_bits=2048` | r1/b4096/r3b4096 **无法重建** | `--radius/--n-bits` 可传并写进收据名 |
+| 交付模型 ≠ 最优模型（R 6/9、M 5/9、A 6/9） | 各臂被不同程度低估 | `p8_finalize.py` 强制用最优模型重评 |
+| token 用单条估算值当中位 | 得出"省 8 倍"的错误结论 | 补齐台账重算；估算文件改名 `.superseded` |
+| `--config-id` 可缺 `--split-manifest` | 回落到随机切分，`best` 变 None | 强制要求，否则 `MISSING_SPLIT_MANIFEST` |
+
+### 5.3 第三方
+
+| 问题 | 证据 | 规避 |
+|---|---|---|
+| **FLAML 2.8.0 的 `rf`/`extra_tree` 直接崩** | `AttributeError: 'RandomForestEstimator' object has no attribute '_t1'`；装 psutil 无效；设 `_t1` 的分支被内层守卫跳过 | 已弃用 FLAML，改 AutoGluon |
+| AutoGluon 无 torch 时告警刷屏 | 预期内（模型类型不含 NN） | 后续静音，不影响结果 |
+
+---
+
+## 6. 环境与运维手册
+
+### 6.1 主机拓扑（关系到墙钟可比性）
+
+| 主机 | hostname | GPU | 角色 |
+|---|---|---|---|
+| **172.25.16.37** | `H100b` | 2× H100 80GB | **p7/p8 唯一执行主机** |
+| 172.25.18.26 | `A800f` | 2× A800 80GB | NFS 服务端；用户记录里的"运行主机"，但本次未用 |
+
+两者**共享同一份** `/home/linhan_cluster`（`.16.37` 上挂载自 `172.25.18.26:/nfs/linhan_cluster`，41 T / 50%）。故"代码落地 vs 实验测试"是**执行节点**的区别，不是文件位置的区别。**但墙钟是机器相关的**：p7 的 81 条全部在 H100b 测得。
+
+### 6.2 跨节点共享状态（隐患）
+
+| 共享状态 | 位置 | 后果 |
+|---|---|---|
+| 限流 marker | `<workdir>/.evaluation/<TARGET>_<ENDPOINT>.done` | 另一台的残留会让本台评测被拒 |
+| 预算账本 | `<workdir>/.search_budget.json` | 另一台的消耗会污染 `used` |
+
+**投全量前必须双机检查**：
 
 ```bash
-# 服务（agent 需要）
-scripts/dsh-superagent start|stop|status          # group: rsi / memory / fixed
-tmux set-environment -g EVOVS_GROUP rsi          # 切组必须同时 set-environment 与 export
-# 关键：切组后要验证 /proc/<pid>/environ 里 EVOVS_GROUP 与预期一致
-
-# 驱动
-python3 -u ops/phase7_seq.py --group r --prefix p8b5 --tasks-dir ops/p8_tasks \
-        --label p8b5 --budget-limit 5 --usage-log usage_p8_rsi.jsonl
-
-# 监控
-tail -1 .artifacts/p7b_status.jsonl              # 每分钟快照（round_counts/sessions/science_processes）
-bash ops/p7b_watchdog.sh                         # 看门狗（tmux 名 p7b-watch）
-bash ops/p7b_progress.sh                         # 进度快照（tmux 名 p7b-progress）
+for h in 172.25.16.37 172.25.18.26; do
+  D:/anaconda3/python.exe ops/rctl.py exec \
+    "hostname; tmux ls 2>&1|head; ps -eo pid,cmd|grep -E '[e]vovs_science|[p]hase7_seq|[p]8_'|head" --host $h
+done
 ```
+只允许执行主机上有会话；另一台必须完全静默（2026-11-10 17:00 实测：A800f 无 tmux 无进程）。
 
-### 5.4 命名与去重（极易踩）
+### 6.3 连接与环境
 
-- 记录文件：`<arm>_<seq>_<target>_<label>.json`，例 `r_01_d2_p8b5.json`
-- 任务 id：`<prefix>_<arm>_<code>`，例 `p8b5_r_d2`；**重跑同一 label 会被判"已处理"而卡住** → 换新 prefix
-- 锁定评测限流：`<workdir>/.evaluation/<TARGET>_<ENDPOINT>.done` 存在即拒绝
+```bash
+export MSYS2_ARG_CONV_EXCL='*' MSYS_NO_PATHCONV=1
+cd D:/RSI_AutoML
+D:/anaconda3/python.exe ops/rctl.py exec "<cmd>" --host 172.25.16.37
+```
+代理 `47.238.155.196:14842`。
+
+| 项 | agent 臂 | AutoGluon 臂 |
+|---|---|---|
+| 解释器 | `scientific/.venv/bin/python`（3.12） | `scientific/.venv-automl/bin/python` |
+| sklearn | **1.5.2** | **1.9.1** |
+| 体积 | 1.8 G | 1.2 G |
+| flaml | 2.8.0（已弃用） | — |
+
+磁盘：`/home/linhan_cluster` NFS **21 T 可用**；`/home` 仅 647 G（96%）**别写**。pip 缓存曾达 7.5 G（可 `pip cache purge`）。
+
+### 6.4 命名与去重（易踩）
+
+- 记录文件 `<arm>_<seq>_<target>_<label>.json`
+- 任务 id `<prefix>_<arm>_<code>`；**重跑必须换 prefix**，否则被判"已处理"卡住
+- 锁定评测限流 marker：同一工单同一靶点只能评一次（operator 用 `--recheck` 例外）
 
 ---
 
-## 6. 用户已批准但**尚未实施**的三项改造
+## 7. 已批准但**尚未完成**的两项
 
-### A② 切 AutoGluon，装独立 venv
+### B④ 增加"交互形式"轴（`space.py` 第三轴）
 
-**决定**：改用 AutoGluon 作 W 基线；**装到独立 venv**（如 `scientific/.venv-automl`），不动 `scientific/.venv`。
+**现状**：第三轴是**种子**，交互形式完全缺失（`grep interaction` 0 命中）。用户设计明确要求 M/R 能自主决定"哪些特征和算法**以及交互形式**"。
 
-**为什么必须独立**：AutoGluon 新版要求 `scikit-learn ≥ 1.6`，而当前是 1.5.2。一旦原地升级，**p7 的 81 条记录与全部锁定评测的环境就变了**，可比性受损。
-
-**实施要点**
-1. 建 `scientific/.venv-automl`（该机无 ensurepip，需 `--without-pip` + 从现有 venv 借 pip bootstrap）
-2. `pip install autogluon.tabular`，`du -sh` 量体积并记录 `pip freeze` 指纹
-3. `p8_automl.py` 增加 `--python` 参数，用该解释器跑 W；agent 臂仍用 `scientific/.venv`
-4. 必须验证：能接受我们预计算的稠密特征、能限制模型族（与 agent 臂同空间）、能按**试验数**计预算（`auto_stack=False`、`num_bag_folds=0`、`holdout`/`num_stack_levels=0`，用 `fit(time_limit=..., presets='medium')` 时需记录折算规则）、能导出 `predict_proba` 模型供 `evaluation.locked` 评分
-
-### B④ 增加"交互形式"轴
-
-**背景**：用户设计里搜索空间是「算法类型 × 特征类型 × **交互形式**」，而当前第三轴是**种子**，交互形式完全缺失（`grep interaction` 在清单里 0 命中）。
-
-**实施要点**
+**要做**：
 1. `rdkit.featurize` 增 `--interactions {none, desc-8, desc-16, and-64, and-128+desc8}`
-   - `desc-k`：前 k 个描述符的两两乘积（8→28 列，16→120 列）
-   - `and-k`：方差最高的 k 个位两两 AND（64→2016 列，128→8128 列）
-   - **位/描述符的筛选只在训练折上做**，避免泄漏（或固定按列号取）
-2. 空间改为 **4 算法 × 5 特征 × 5 交互 = 100**，种子固定 17（另设一个 ×2 种子的稳定性复核）
-3. 同步更新 `p8_texts.py`（任务文本要告诉 agent 可以选交互形式）
+   - `desc-k`：前 k 个描述符两两乘积（8→28 列，16→120 列）
+   - `and-k`：方差最高 k 个位两两 AND（64→2016 列，128→8128 列）
+   - **筛选只在训练折上做**，避免泄漏
+2. 空间改 **4 算法 × 5 特征 × 5 交互 = 100**，种子固定 17（另设 ×2 种子做稳定性复核）
+3. 同步更新 `p8_texts.py`（任务文本要告知可选交互形式）
+4. AutoGluon 侧：把交互作为**特征表示的一部分**（同 5×5 组合喂给 W），保证两边同空间
 
-### C 保留 5 表示 + 按试验数对齐预算
+### C 预算口径（已有实测数据，需定规则）
 
-- 特征表示保持 5 种（不缩减）
-- W 与 agent 臂的预算单位统一为**试验数（拟合次数）**；若 AutoGluon 只能按时间预算，则必须在记录里写明折算规则与"哪个约束先触发"
+**问题**：agent 的预算是 **draw 数**（一次 `ml.train --config-id`），AutoGluon 却只能按 **时间**（`time_limit`）控制，无法限制试验数。
 
----
+**实测**：D2 上名义预算 5（每表示 15 s）实际枚举 **14 个模型**，约 **5.4 秒/模型**。
 
-## 7. 下一步执行顺序（建议）
-
-**0. 先锁定执行主机**（见 §5.1b）。p7 的墙钟是在 `172.25.16.37 (H100b)` 上测的；
-p8 全轮应固定在**同一台**，否则总耗时不可跨轮比较。用户记录的运行主机是 `172.25.18.26`，
-若要迁到 A800f，需重测一次基线并把机器标识写进报告。
-
-1. 建独立 venv + 装 AutoGluon，量体积、锁版本、记 `pip freeze`
-2. 单靶点（D2）对照验证：AutoGluon 的验证 AUROC 应落在 **0.90–0.95** 区间（与 sklearn logreg 0.938 / rf 0.913 同量级）；若出现 0.58 这种异常即为管线错误
-3. 加 `--interactions` 与新的 100 配置空间，重出 135 份任务文本
-4. 单档验证（预算 5）：确认 ①预算被遵守 ②交付的是最优模型 ③finalize 能重评
-5. 通过后投 5 档全量（100/50/20/10/5）。按当前速度估计 **15–20 小时**
-6. 出报告：每档 × 四组的总耗时、总 token、锁定 AUROC；重点看"预算越低 R 优势是否越大"
+**要做**：
+1. 按 5.4 s/模型重新标定 `--seconds-per-model`
+2. 记录里同时写明三个量：**目标预算 / 实际枚举数 / 哪个约束先触发**
+3. 分析时按**实际枚举数**配对（而非名义预算），并在报告里显式说明这一折算
 
 ---
 
-## 8. 陷阱清单（照抄给新会话）
+## 8. 已冻结的判定规则（2026-11-10，出结果前写定）
 
-1. **别在实验运行期间改 `modeling/train.py`**——四臂会跑在不同版本上。
-2. **tmux 会话判断一律用 `=name`**，`-t name` 是前缀匹配。
-3. **重跑必须换 prefix**，否则 task_id 去重会直接卡住。
-4. **agent 可能猜错 config id**（`000`/`cfg000`），现已兼容序号；若再出现异常 id，看工具报错里的示例。
-5. **FLAML 的 rf/extra_tree 不可用**（2.8.0 缺陷），别浪费时间排查自己的代码。
-6. **`Path("")` 等于 `.`**——凡是"读记录里的目录"都要先判空，否则会遍历整个仓库（`phase7_locked.py` 曾因此错配全部收据）。
-7. **锁定评测有速率限制**，同一工单同一靶点只能评一次；重评要换收据名或清 marker。
-8. **`/home` 只剩 647 G**，大文件一律落 `/home/linhan_cluster`（NFS，21 T）。
-
----
-
-## 9. 术语与口径
-
-| 术语 | 定义 |
+| 项 | 冻结值 |
 |---|---|
-| **锁定 AUROC** | 受保护测试集上的 AUROC，按靶点固定、各臂共享，**唯一合法的跨臂标尺** |
-| **验证 AUROC** | 内部冻结切分（p8 为 30%）上的分数，用于**同臂内**选模型，**不可跨臂比** |
-| **draw / 试验预算** | 一次 `ml.train --config-id`（或 AutoGluon 的一次 trial） |
-| **stop_reason** | `budget_exhausted`（用满）/ `stopped_early`（自主提前停） |
-| **W 确定性** | 同数据同代码同种子，重跑逐位相同（实测极差 0.0000） |
-| **噪声地板** | 同臂重跑的锁定 AUROC 池化 SD = 0.0308；任何小于它的臂间差异不可主张 |
-| **墙钟口径** | **机器相关**。p7 全部在 `172.25.16.37 (H100b)` 测得，换机不可直接比较 |
+| 执行主机 | **172.25.16.37 (H100b)** |
+| 最小可主张效应（锁定 AUROC） | **≥ 0.031**（= 实测噪声地板 0.0308） |
+| 主分析 | 各档内四组**配对**比较，每档独立，不跨档混池 |
+| 预算递减判据 | 只看 **R 相对 W 的优势量是否随预算单调上升**（5 点趋势），不做逐点显著性 |
+| 结论措辞 | 只能主张 ≥0.03 量级；**不得声称能检出 0.012**（需 n≈103） |
+| 靶点数 | 维持 9 |
+| W 定义 | **AutoGluon 1.6.3**，限定模型类型 × 5 特征表示；**集成保留**；枚举由 AutoGluon 完成 |
 
 ---
 
-## 10. 关键文件索引
+## 9. 下一步执行顺序
+
+1. **标定预算折算**（按 5.4 s/模型；记录三量）
+2. **加交互形式轴**（B④）→ 空间改 4×5×5 → 重出 135 份任务文本 → W 侧同步
+3. **单档验证**（预算 5，四组全跑）：确认 ①预算被遵守 ②交付的是最优模型 ③finalize 能重评（`--recheck`）④四组锁定值同量级
+4. **投全量**：100/50/20/10/5，预计 **15–20 小时**（AutoGluon 单档约 4–5 h）
+5. **出报告**：每档四组的总耗时、总 token、锁定 AUROC；重点看"预算越低 R 优势是否越大"
+
+---
+
+## 10. 陷阱清单（照抄给新会话）
+
+1. **别在实验运行期改 `train.py`**——四臂会跑在不同版本上。
+2. **tmux 判断一律 `=name`**，`-t name` 是前缀匹配。
+3. **重跑必须换 prefix**，否则 task_id 去重卡死。
+4. **agent 可能猜错 config id**（`000`/`cfg000`），已兼容序号；异常 id 看工具报错示例。
+5. **FLAML 的 rf/extra_tree 是库缺陷**，已弃用；别浪费时间排查自己的代码。
+6. **`Path("")` 等于 `.`**——读记录目录前必须判空（曾导致遍历全仓库错配收据）。
+7. **锁定评测有速率限制**；operator 重评必须带 `--recheck`。
+8. **AutoGluon 产出的是预测器目录**，不是 joblib；别试图喂给 `evaluation.locked`。
+9. **`/home` 只剩 647 G**，大文件落 `/home/linhan_cluster`。
+10. **两个 venv 的 sklearn 差 4 个大版本**，别交叉调用。
+
+---
+
+## 11. 文件索引
 
 | 路径 | 用途 |
 |---|---|
-| `CONCLUSIONS.md` | p7 轮的完整科学结论（已定稿） |
-| `scientific/src/evovs_science/search/space.py` | 冻结搜索空间（100 配置、指纹、序号解析） |
-| `scientific/src/evovs_science/search/budget.py` | 预算账本与强制 |
-| `scientific/src/evovs_science/harness/propose.py` | P4-04：agent 自主提案 |
-| `ops/p8_automl.py` | W 基线（当前是 FLAML 版，待换 AutoGluon） |
-| `ops/p8_workflow.py` | 旧的手搭网格 W（**已作废**，保留仅作对照） |
-| `ops/p8_splits.py` | 生成 30% 验证集的 p8 切分 |
+| `CONCLUSIONS.md` | p7 轮完整科学结论（已定稿） |
+| `HANDOFF_P8.md` | 本文档 |
+| `scientific/src/evovs_science/search/{space,budget}.py` | 冻结空间 + 预算强制 |
+| `scientific/src/evovs_science/harness/propose.py` | P4-04 agent 自主提案 |
+| `ops/p8_make_automl_venv.sh` | 建 `.venv-automl` |
+| **`ops/p8_automl_ag.py`** | **W 基线（AutoGluon，含同口径锁定评分与筛库）** |
+| `ops/p8_automl.py` / `p8_workflow.py` | 旧 FLAML 版 / 旧手搭网格版（**均已作废**，保留对照） |
+| `ops/p8_automl_probe.py` | AutoGluon 单靶点探针 |
+| `ops/p8_splits.py` | 30% 验证集的 p8 切分 |
 | `ops/p8_texts.py` | 生成 135 份任务文本 |
 | `ops/p8_finalize.py` | 交付重评 + 预算字段补齐 |
 | `ops/p8_sweep.sh` | 预算递减调度 |
-| `ops/p8_trace_one.py` | 逐靶点导出四组执行轨迹（分析行为差异用） |
+| `ops/p8_trace_one.py` | 逐靶点导出四组执行轨迹 |
 | `ops/p7b_noise_floor.py` / `p7b_noise_w.py` | 噪声地板与 agent-vs-W 误差棒 |
-| `ops/phase7_locked.py` / `phase7_analysis.py` | 跨臂报告生成 |
-| `evolution/gate.py` | 门禁（含 `early_rejection`） |
-| `evolution/versions.json` | 版本账本（v1–v7） |
+| `ops/phase7_locked.py` / `phase7_analysis.py` | 跨臂报告 |
+| `evolution/gate.py` / `versions.json` | 门禁（含 `early_rejection`）/ 版本账本 v1–v7 |
 
 ---
 
-## 11. p8 判定规则（2026-11-10 冻结，出结果前写定，不得事后修改）
+## 12. 新会话建议开场（可直接粘贴）
 
-| 项 | 冻结值 | 依据 |
-|---|---|---|
-| **执行主机** | **172.25.16.37 (H100b)** | p7 全部 81 条墙钟在此测得；换机不可回溯 |
-| **最小可主张效应**（锁定 AUROC） | **≥ 0.031** | 实测噪声地板 SD = 0.0308；小于此值一律写"不可区分" |
-| **主分析** | 各预算档内四组**配对**比较（同靶点、同锁定集），每档独立报告，不跨档混池 | 锁定集按靶点固定，配对是唯一合法做法 |
-| **预算递减的判据** | 看 **R 相对 W 的优势量是否随预算单调上升**（5 个点做趋势），不做逐点显著性宣称 | 5 个点不足以支撑逐点检验 |
-| **结论措辞** | 只能写"在本设计可检出的 ≥0.03 量级上"；**不得声称能检出 0.012** | 功效分析：δ≈0.012 需 n≈103 靶点 |
-| **靶点数** | 维持 9 | 扩样本不解决"验证集无区分度"这个更根本的问题 |
-| **W 的定义** | **AutoGluon（AWS，Apache-2.0）**，限定模型类型集合 × 5 种特征表示；枚举由 AutoGluon 自己完成，**不是**手搭网格 | 用户明确要求"已有的开源的且权威的 automl 模型" |
-| **环境隔离** | W 跑在 `scientific/.venv-automl`；agent 臂留在 `scientific/.venv` | AutoGluon 要求 sklearn ≥1.6，而现有 1.5.2 —— 原地升级会作废 p7 的可复现性 |
-
-> 本节在拿到任何 p8 数据之前写定。若日后需要修改，必须在文档里留一条带日期的修订记录，并说明修改发生在看到哪些数据之前/之后。
-
----
-
-## 12. 新会话建议开场
-
-> 接手 `D:/RSI_AutoML` + 远端 `172.25.18.26:/home/linhan_cluster/evo_vs_rsi`。
-> 先读 `HANDOFF_P8.md` 与 `CONCLUSIONS.md`。
-> 用户的实验设计是四组（W=权威 AutoML 基线 / A=LLM 编排 / M=LLM+记忆 / R=RSI 自进化）
-> 在同一冻结搜索空间与试验预算下比较**累计总耗时、总 token、锁定 AUROC**，并做预算递减（100→50→20→10→5）。
-> 已批准待实施：A②（AutoGluon 装独立 venv）、B④（加交互形式轴，空间改 4×5×5）、C（保留 5 表示、按试验数对齐预算）。
-> 实施前不要动 `scientific/.venv`；所有改动先单靶点验证再投全量。
+> 接手 `D:/RSI_AutoML` + 远端 `172.25.16.37:/home/linhan_cluster/evo_vs_rsi`。
+> 先读 `HANDOFF_P8.md`（尤其 §1 用户意图、§4 AutoGluon 现状、§7 未完成两项、§8 冻结规则）。
+>
+> 实验设计：四组（W=AutoGluon 基线 / A=LLM 编排 / M=LLM+记忆 / R=RSI 自进化）在同一冻结搜索空间
+> 与试验预算下比较**累计总耗时、总 token、锁定 AUROC**，并做预算递减（100→50→20→10→5）。
+>
+> 已完成：p7 的 81 条记录与结论；p8 机制（冻结空间、预算强制、交付重评、门禁语义）；
+> AutoGluon 独立环境（`.venv-automl`，1.6.3）与 W 基线端到端跑通（D2 锁定 0.9063）。
+>
+> 待完成：① 预算折算标定（实测 5.4 s/模型，名义 5 却枚举 14）② 加交互形式轴（空间改 4×5×5）
+> ③ 单档验证 ④ 全量 ⑤ 报告。
+>
+> 硬约束：不动 `scientific/.venv`（sklearn 1.5.2，p7 记录的可复现性依赖它）；
+> 只用 H100b；判定规则已冻结，改写需留带日期的修订记录。
