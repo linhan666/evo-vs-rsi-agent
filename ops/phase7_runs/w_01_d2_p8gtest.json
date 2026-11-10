@@ -1,0 +1,87 @@
+{
+  "group": "w",
+  "seq": 1,
+  "target": "D2",
+  "slug": "d(2)_dopamine_recept",
+  "label": "p8gtest",
+  "panel": "AutoML baseline: AutoGluon 1.6.3, no LLM, bounded model types x five feature representations",
+  "framework": {
+    "name": "autogluon.tabular",
+    "version": "1.6.3",
+    "model_types": [
+      "GBM",
+      "CAT",
+      "XGB",
+      "RF",
+      "XT",
+      "LR"
+    ],
+    "ensemble": "kept",
+    "num_bag_folds": 0,
+    "num_stack_levels": 0
+  },
+  "space_version": "656e58dbf6ebe256",
+  "budget_limit": 5,
+  "seconds_per_model": 12.0,
+  "budget_unit": "wall-clock, 12s per expected model; per representation 15s",
+  "models_enumerated": 14,
+  "models_base": 9,
+  "configs_used": 14,
+  "stop_reason": "time_budget",
+  "per_representation": [
+    {
+      "representation": "v1",
+      "val_auroc": 0.9477,
+      "models_base": 2,
+      "models_total": 3,
+      "best_model": "WeightedEnsemble_L2",
+      "wall_seconds": 16.5,
+      "time_limit": 15
+    },
+    {
+      "representation": "v2",
+      "val_auroc": 0.9297,
+      "models_base": 2,
+      "models_total": 3,
+      "best_model": "WeightedEnsemble_L2",
+      "wall_seconds": 16.2,
+      "time_limit": 15
+    },
+    {
+      "representation": "r1",
+      "val_auroc": 0.9446,
+      "models_base": 3,
+      "models_total": 4,
+      "best_model": "WeightedEnsemble_L2",
+      "wall_seconds": 15.8,
+      "time_limit": 15
+    },
+    {
+      "representation": "b4096",
+      "val_auroc": 0.9157,
+      "models_base": 1,
+      "models_total": 2,
+      "best_model": "WeightedEnsemble_L2",
+      "wall_seconds": 16.5,
+      "time_limit": 15
+    },
+    {
+      "representation": "r3b4096",
+      "val_auroc": 0.8779,
+      "models_base": 1,
+      "models_total": 2,
+      "best_model": "WeightedEnsemble_L2",
+      "wall_seconds": 16.1,
+      "time_limit": 15
+    }
+  ],
+  "best_representation": "v1",
+  "best_model": "WeightedEnsemble_L2",
+  "scratch": "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/p8_automl_ag/p8gtest-b5/d2",
+  "auroc": 0.9477,
+  "locked_auroc": 0.9063,
+  "top100": "runs/d2_topK.csv",
+  "wall_seconds": 161.07,
+  "success": true,
+  "recorded_at": "2026-11-10T08:47:45+00:00"
+}
