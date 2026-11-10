@@ -1,0 +1,113 @@
+{
+  "group": "w",
+  "seq": 1,
+  "target": "D2",
+  "slug": "d(2)_dopamine_recept",
+  "label": "p8atest2",
+  "panel": "AutoML baseline: FLAML, no LLM, bounded estimator list and feature set",
+  "automl": {
+    "framework": "flaml",
+    "estimators": [
+      "lrl1",
+      "rf",
+      "extra_tree",
+      "xgboost",
+      "catboost",
+      "lgbm"
+    ],
+    "seed": 17,
+    "trial_budget_rule": "budget divided evenly across the five representations"
+  },
+  "space_version": "656e58dbf6ebe256",
+  "budget_limit": 20,
+  "configs_used": 20,
+  "stop_reason": "budget_exhausted",
+  "per_representation": [
+    {
+      "representation": "v1",
+      "best_estimator": "lrl1",
+      "best_config": {
+        "C": 1.0
+      },
+      "val_auroc": 0.6867864820477214,
+      "trials": 4,
+      "wall_seconds": 142.46,
+      "stopped_by": "max_iter"
+    },
+    {
+      "representation": "v2",
+      "best_estimator": "extra_tree",
+      "best_config": {
+        "n_estimators": 4,
+        "max_features": 0.02186870084203477,
+        "max_leaves": 4,
+        "criterion": "entropy"
+      },
+      "val_auroc": 0.7023186412615331,
+      "trials": 4,
+      "wall_seconds": 220.48,
+      "stopped_by": "max_iter"
+    },
+    {
+      "representation": "r1",
+      "best_estimator": "lgbm",
+      "best_config": {
+        "n_estimators": 4,
+        "num_leaves": 4,
+        "min_child_samples": 20,
+        "learning_rate": 0.09999999999999995,
+        "log_max_bin": 8,
+        "colsample_bytree": 1.0,
+        "reg_alpha": 0.0009765625,
+        "reg_lambda": 1.0
+      },
+      "val_auroc": 0.7039242652851401,
+      "trials": 4,
+      "wall_seconds": 59.9,
+      "stopped_by": "max_iter"
+    },
+    {
+      "representation": "b4096",
+      "best_estimator": "extra_tree",
+      "best_config": {
+        "n_estimators": 4,
+        "max_features": 0.015611665648287395,
+        "max_leaves": 4,
+        "criterion": "entropy"
+      },
+      "val_auroc": 0.6954221355800941,
+      "trials": 4,
+      "wall_seconds": 151.87,
+      "stopped_by": "max_iter"
+    },
+    {
+      "representation": "r3b4096",
+      "best_estimator": "extra_tree",
+      "best_config": {
+        "n_estimators": 4,
+        "max_features": 0.01554362416667488,
+        "max_leaves": 4,
+        "criterion": "entropy"
+      },
+      "val_auroc": 0.7394516176411681,
+      "trials": 4,
+      "wall_seconds": 405.24,
+      "stopped_by": "max_iter"
+    }
+  ],
+  "best_representation": "r3b4096",
+  "best_estimator": "extra_tree",
+  "best_config": {
+    "n_estimators": 4,
+    "max_features": 0.01554362416667488,
+    "max_leaves": 4,
+    "criterion": "entropy"
+  },
+  "scratch": "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/p8_automl/p8atest2-b20/d2",
+  "auroc": 0.7394516176411681,
+  "locked_auroc": 0.7319,
+  "wall_seconds": 1096.09,
+  "jobs_failed": 1,
+  "success": true,
+  "recorded_at": "2026-11-10T06:43:02+00:00"
+}

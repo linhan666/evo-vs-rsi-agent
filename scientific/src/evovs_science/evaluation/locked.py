@@ -58,6 +58,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--receipt", required=True, help="summary receipt written into the workspace")
     parser.add_argument("--desc-set", choices=("v1", "v2"), default=None,
                         help="must match the descriptor set the model was trained on")
+    parser.add_argument("--radius", type=int, default=2,
+                        help="Morgan radius the model was trained with (default 2)")
+    parser.add_argument("--n-bits", type=int, default=2048,
+                        help="Morgan bit width the model was trained with (default 2048)")
     args = parser.parse_args(argv)
 
     marker_dir = os.path.join(args.workspace, ".evaluation")
@@ -77,8 +81,12 @@ def main(argv: list[str] | None = None) -> int:
     desc_set = args.desc_set or "v1"
     ticket_name = os.path.basename(os.path.normpath(args.workspace))
     # endpoint + desc_set + ticket in the name: no two channels or generations can collide.
+    # radius and bit width are part of the identity of a feature matrix: two
+    # representations of the same target must not share one locked metrics file.
     output = os.path.join(
-        target_dir, f"metrics_test_locked_agent_{args.endpoint}_{desc_set}_{ticket_name}_{args.target}.json")
+        target_dir,
+        f"metrics_test_locked_agent_{args.endpoint}_{desc_set}_r{args.radius}_b{args.n_bits}_"
+        f"{ticket_name}_{args.target}.json")
 
     from . import evaluate as evaluator
 
@@ -88,8 +96,8 @@ def main(argv: list[str] | None = None) -> int:
         "--output", output,
         "--label-source", f"locked_agent_{args.endpoint}_{desc_set}",
         "--desc-set", desc_set,
-        "--radius", "2",
-        "--n-bits", "2048",
+        "--radius", str(args.radius),
+        "--n-bits", str(args.n_bits),
     ])
     if code != 0:
         raise SystemExit(f"locked evaluation failed (exit {code}); see the evaluator's own report")
@@ -99,6 +107,8 @@ def main(argv: list[str] | None = None) -> int:
         "target": args.target,
         "endpoint": args.endpoint,
         "desc_set": desc_set,
+        "radius": args.radius,
+        "n_bits": args.n_bits,
         "model": os.path.basename(args.model),
         "protected_output": output,
         "metrics": metrics,
