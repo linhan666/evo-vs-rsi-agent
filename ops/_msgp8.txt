@@ -1,0 +1,14 @@
+fix(p8): record the W scratch dir on the record, not inside run()
+
+上一版把 scratch 字段插进了 run() 的返回字典（那里也有同名的 wall_seconds 键），
+于是 W 一启动就 NameError，sweep 直接跳过 W 跑到 a 臂。改为写进 one() 的记录字典，
+finalize 才能读到 .search_budget.json。
+
+同时让 finalize 幂等：三个臂共用一个 round label，会重复扫同一目录，
+已经在 locked_reevaluated 上跳过，避免重复跑锁定评测。
+
+预算 5 的 W 档实测 9/9，每靶 5 配置、约 40 秒：
+  D2 0.8429 · 5HT 0.9637 · ADR 0.7723 · DRD2 0.8994 · MOR 0.9271
+  CBR 0.6860 · KOR 0.8885 · CA2 0.9400 · PT 0.9257   中位 0.8994
+多数靶点选中 rf-v1-s17：预算 5 只覆盖 4 算法 x v1 再加 logreg-v2，
+这正是多样性优先排序想要的效果——低预算也能跨算法族取样。

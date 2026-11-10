@@ -1,0 +1,52 @@
+[13:36:45] p8 sweep start (budgets: 5)
+[13:36:45] === W budget 5 ===
+{"seq": 1, "target": "D2", "budget": 5, "configs_used": 5, "best_config": "xgboost-v1-s17", "val": 0.9217, "locked": 0.8429, "wall": 52.06}
+{"seq": 2, "target": "5HT", "budget": 5, "configs_used": 5, "best_config": "rf-v1-s17", "val": 0.9022, "locked": 0.9637, "wall": 40.32}
+{"seq": 3, "target": "ADR", "budget": 5, "configs_used": 5, "best_config": "rf-v1-s17", "val": 0.8995, "locked": 0.7723, "wall": 37.3}
+{"seq": 4, "target": "DRD2", "budget": 5, "configs_used": 5, "best_config": "rf-v1-s17", "val": 0.9146, "locked": 0.8994, "wall": 40.36}
+{"seq": 5, "target": "MOR", "budget": 5, "configs_used": 5, "best_config": "rf-v1-s17", "val": 0.9134, "locked": 0.9271, "wall": 47.01}
+{"seq": 6, "target": "CBR", "budget": 5, "configs_used": 5, "best_config": "rf-v1-s17", "val": 0.962, "locked": 0.686, "wall": 35.92}
+{"seq": 7, "target": "KOR", "budget": 5, "configs_used": 5, "best_config": "rf-v1-s17", "val": 0.9173, "locked": 0.8885, "wall": 41.61}
+{"seq": 8, "target": "CA2", "budget": 5, "configs_used": 5, "best_config": "rf-v1-s17", "val": 0.9315, "locked": 0.94, "wall": 42.57}
+{"seq": 9, "target": "PT", "budget": 5, "configs_used": 5, "best_config": "rf-v1-s17", "val": 0.9393, "locked": 0.9257, "wall": 40.89}
+{"runs": 9, "succeeded": 9}
+[13:43:04] W budget 5 done
+  w_01_d2_p8w5.json: budget
+  w_02_5ht_p8w5.json: budget
+  w_03_adr_p8w5.json: budget
+  w_04_drd2_p8w5.json: budget
+  w_05_mor_p8w5.json: budget
+  w_06_cbr_p8w5.json: budget
+  w_07_kor_p8w5.json: budget
+  w_08_ca2_p8w5.json: budget
+  w_09_pt_p8w5.json: budget
+finalized 9 records for p8w5
+[13:43:04] === arm a budget 5 ===
+dsh-superagent stopped. Automatic recovery is paused until start/restart.
+Log: /home/linhan_cluster/evo_vs_rsi/.artifacts/dsh-superagent-superagent-20261110-134310-1940397.log
+{
+  "pids": [
+    1940401
+  ],
+  "cwd": "/home/linhan_cluster/evo_vs_rsi",
+  "url": "http://127.0.0.1:3082",
+  "manually_stopped": false,
+  "health": {
+    "runtime": "ready",
+    "relay": "ready",
+    "notice": "ready",
+    "launch": "ready",
+    "delivery": "ready",
+    "assessment": "ready",
+    "reply": "ready",
+    "evals": "ready",
+    "models": "ready",
+    "github": "paused",
+    "local": "ready"
+  },
+  "errors": {},
+  "setup": null,
+  "feishu": null
+}
+[13:43:33] service up: group=fixed pid=1940401
+[13:43:48] arm a driver up (p8b5)

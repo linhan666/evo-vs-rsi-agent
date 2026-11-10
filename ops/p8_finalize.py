@@ -64,6 +64,10 @@ def rerun_locked(record: dict, model_rel: str, code: str, desc_set: str, workdir
 
 def process(path: Path, arm: str) -> str:
     record = json.loads(path.read_text(encoding="utf-8"))
+    if record.get("locked_reevaluated"):
+        # Every arm shares the round label, so this runs over the same directory more
+        # than once; re-running the locked evaluation would just burn time.
+        return "already-finalized"
     workdir = Path(record.get("workdir") or "")
     if arm == "w":
         # W has no ticket workdir; its scratch is recorded by the workflow itself.

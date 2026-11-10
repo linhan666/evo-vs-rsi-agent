@@ -150,6 +150,7 @@ def one(seq: int, name: str, slug: str, code: str, budget: int, label: str, scra
         "jobs_failed": sum(1 for step in steps if step["exit_code"] != 0),
         "auroc": best["auroc"] if best else None,
         "locked_auroc": locked,
+        "scratch": scratch,
         "success": locked is not None,
         "recorded_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }

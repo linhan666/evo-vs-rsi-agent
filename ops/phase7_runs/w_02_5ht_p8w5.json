@@ -1,0 +1,52 @@
+{
+  "group": "w",
+  "seq": 2,
+  "target": "5HT",
+  "slug": "5-hydroxytryptamine_",
+  "label": "p8w5",
+  "panel": "AutoML baseline: exhaustive over the frozen space, no LLM",
+  "space_version": "p8-100-v2",
+  "budget_limit": 5,
+  "configs_used": 5,
+  "stop_reason": "budget_exhausted",
+  "best_config": "rf-v1-s17",
+  "best_config_auroc": 0.9022,
+  "configs": [
+    {
+      "config_id": "logreg-v1-s17",
+      "auroc": 0.8503,
+      "exit_code": 1
+    },
+    {
+      "config_id": "rf-v1-s17",
+      "auroc": 0.9022,
+      "exit_code": 1
+    },
+    {
+      "config_id": "xgboost-v1-s17",
+      "auroc": 0.8508,
+      "exit_code": 1
+    },
+    {
+      "config_id": "catboost-v1-s17",
+      "auroc": 0.7799,
+      "exit_code": 1
+    },
+    {
+      "config_id": "logreg-v2-s17",
+      "auroc": null,
+      "exit_code": 1
+    }
+  ],
+  "steps": 9,
+  "wall_seconds": 40.32,
+  "jobs_failed": 5,
+  "auroc": 0.9022,
+  "locked_auroc": 0.9637,
+  "scratch": "/home/linhan_cluster/evo_vs_rsi/scientific/.artifacts/p8_workflow/p8w5-b5/5ht",
+  "success": true,
+  "recorded_at": "2026-11-10T05:38:18+00:00",
+  "finalized": [
+    "budget"
+  ]
+}

@@ -1,0 +1,10 @@
+[05:34:24Z] group=a sequence=['d2', '5ht', 'adr', 'drd2', 'mor', 'cbr', 'kor', 'ca2', 'pt']
+[05:34:24Z] submitted p8b5_a_d2.json -> inbox/p8b5_a_d2.json
+[05:34:54Z] #1 d2 waiting (state=running, assigned 1x)
+[05:35:24Z] #1 d2 waiting (state=running, assigned 1x)
+[05:43:33Z] group=a sequence=['d2', '5ht', 'adr', 'drd2', 'mor', 'cbr', 'kor', 'ca2', 'pt']
+[05:43:34Z] #1 d2 DONE state=ready wall=511.3s jobs=36 best=runs/p_c002_xgb17(0.9217) scaffold=runs/probe_noconfig(0.9117) top100=1
+[05:43:34Z] code_metrics -> a_d2_p8b5.code.json
+[05:43:34Z] submitted p8b5_a_5ht.json -> inbox/p8b5_a_5ht.json
+[05:44:04Z] #2 5ht waiting (state=running, assigned 1x)
+[05:44:34Z] #2 5ht waiting (state=running, assigned 1x)
