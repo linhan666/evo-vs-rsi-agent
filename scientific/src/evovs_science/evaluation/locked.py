@@ -62,11 +62,15 @@ def main(argv: list[str] | None = None) -> int:
                         help="Morgan radius the model was trained with (default 2)")
     parser.add_argument("--n-bits", type=int, default=2048,
                         help="Morgan bit width the model was trained with (default 2048)")
+    parser.add_argument("--recheck", action="store_true",
+                        help="operator re-score of the same frozen model: bypass the per-ticket "
+                             "marker and write a separate _recheck output. The marker still exists "
+                             "afterwards, so an agent cannot retry.")
     args = parser.parse_args(argv)
 
     marker_dir = os.path.join(args.workspace, ".evaluation")
     marker = os.path.join(marker_dir, f"{args.target}_{args.endpoint}.done")
-    if os.path.exists(marker):
+    if os.path.exists(marker) and not args.recheck:
         raise SystemExit(
             f"rate limit: this ticket already triggered a locked {args.endpoint} evaluation for {args.target}")
     if not os.path.isfile(args.model):
@@ -83,10 +87,12 @@ def main(argv: list[str] | None = None) -> int:
     # endpoint + desc_set + ticket in the name: no two channels or generations can collide.
     # radius and bit width are part of the identity of a feature matrix: two
     # representations of the same target must not share one locked metrics file.
+    # A recheck must not overwrite the agent's own score: keep both, side by side.
+    suffix = "_recheck" if args.recheck else ""
     output = os.path.join(
         target_dir,
         f"metrics_test_locked_agent_{args.endpoint}_{desc_set}_r{args.radius}_b{args.n_bits}_"
-        f"{ticket_name}_{args.target}.json")
+        f"{ticket_name}_{args.target}{suffix}.json")
 
     from . import evaluate as evaluator
 
@@ -112,6 +118,7 @@ def main(argv: list[str] | None = None) -> int:
         "model": os.path.basename(args.model),
         "protected_output": output,
         "metrics": metrics,
+        "recheck": bool(args.recheck),
         "note": "summary only; the raw locked metrics file is not readable from the ticket",
     }
     os.makedirs(os.path.dirname(os.path.abspath(args.receipt)), exist_ok=True)

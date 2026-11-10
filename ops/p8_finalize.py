@@ -47,7 +47,7 @@ def rerun_locked(record: dict, model_rel: str, code: str, desc_set: str, workdir
     receipt = f"evaluation/{code.lower()}_final_locked.json"
     argv = [PYTHON, "-m", "evovs_science.evaluation.locked",
             "--target", code, "--endpoint", "Ki", "--desc-set", desc_set,
-            "--model", model_rel, "--workspace", ".", "--receipt", receipt]
+            "--model", model_rel, "--workspace", ".", "--receipt", receipt, "--recheck"]
     done = subprocess.run(argv, cwd=str(workdir), capture_output=True, text=True)
     if done.returncode != 0:
         record["locked_rerun_error"] = (done.stderr.strip().splitlines() or [""])[-1:][0][:200]

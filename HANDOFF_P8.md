@@ -167,6 +167,8 @@ R 既然又快又省，就能在**更低搜索预算**下逼近 100 配置的性
 | 交付模型 ≠ 最优模型（R 6/9、M 5/9、A 6/9） | 各臂质量被不同程度低估 | `p8_finalize.py` 强制用最优模型重评 |
 | token 用了单条估算值当九条中位 | 得出"省 8 倍"的错误结论 | 补齐台账后重算；估算侧文件改名 `.superseded` |
 | `--config-id` 可缺 `--split-manifest` | 回落到随机内部切分，与冻结切分不可比，`best` 变 None | `--config-id` 必配 `--split-manifest`，否则 `MISSING_SPLIT_MANIFEST` |
+| **锁定评测限流把 finalize 也挡住了** | `.evaluation/<TARGET>_<ENDPOINT>.done` 存在即拒 → 交付重评**静默失败**（只记 `locked_rerun_error`），修正等于没做 | `locked.py` 新增 `--recheck`：越过 marker、输出加 `_recheck` 后缀（agent 原分数不被覆盖）；`p8_finalize.py` 已带上该参数 |
+| **`rctl.py` 默认主机静默** | `DEFAULT_HOST = 172.25.18.26`，漏写 `--host` 就把活派到 A800f，而 p7 墙钟基线在 H100b —— 无任何提示 | 每次连接在 stderr 打印 `[host] <ip>`；仍可用 `EVOVS_HOST` 覆盖 |
 
 ### 4.3 第三方
 
@@ -204,6 +206,28 @@ D:/anaconda3/python.exe ops/rctl.py put <本地> <远端> --host 172.25.16.37
 - 用户记忆里的执行规则写的是 `.18.26`，而本会话用的是 `.16.37`——**这一偏离已如实记录**。p7 全是 CPU 活（rdkit / sklearn），质量指标不受影响，但耗时数据带 H100b 的机器指纹。
 
 **后续要求**：p8 全轮锁定在同一台机上跑；若改机，必须在报告里注明并重新建立墙钟基线。
+
+### 5.1c 跨节点共享状态的隐患（必须知道）
+
+因为两台机共用同一份 `/home/linhan_cluster`，下面两样东西**是跨节点共享的**：
+
+| 共享状态 | 位置 | 后果 |
+|---|---|---|
+| 锁定评测限流 marker | `<workdir>/.evaluation/<TARGET>_<ENDPOINT>.done` | A800f 上的残留会让 H100b 的评测直接被拒 |
+| 搜索预算账本 | `<workdir>/.search_budget.json` | 另一节点的消耗会污染本节点的 `used` |
+
+**实测状态（2026-11-10 15:40）**：A800f 上**无 tmux、无进程**；H100b 上只有 `dsh-superagent`／`p7b-progress`／`p7b-watch` 三个会话，无计算进程。所以当前是**潜在风险而非正在发生**。
+
+**投全量前的强制检查**（两台都要看）：
+
+```bash
+for h in 172.25.16.37 172.25.18.26; do
+  D:/anaconda3/python.exe ops/rctl.py exec \
+    "hostname; tmux ls 2>&1 | head; ps -eo pid,cmd | grep -E '[e]vovs_science|[p]hase7_seq|[p]8_' | head" --host $h
+done
+```
+
+只允许在**执行主机**上看到会话；另一台必须完全静默。
 
 ### 5.2 Python 环境
 

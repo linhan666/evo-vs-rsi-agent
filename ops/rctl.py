@@ -154,12 +154,32 @@ def write_stdin(client, remote, mode="600"):
 
 
 def get_file(client, remote, local):
-    code, out, err = run(client, "cat {}".format(shlex.quote(remote)), quiet=True)
+    """Binary-safe download: cat the remote file into a local file byte-for-byte.
+
+    The text path in run() would corrupt binary payloads (decode with "replace"
+    turns every invalid byte into a 3-byte U+FFFD), so this reads raw bytes.
+
+    Reads until the channel reports EOF instead of polling `exit_status_ready`:
+    the exit status can be ready while unread bytes are still queued, which
+    truncated any file larger than the channel window (observed at exactly
+    32768 bytes on a 70 KB document).
+    """
+    chan = client.get_transport().open_session(timeout=60)
+    chan.settimeout(900)
+    chan.exec_command("cat {}".format(shlex.quote(remote)))
+    out = bytearray()
+    while True:
+        chunk = chan.recv(CHUNK)
+        if not chunk:
+            break
+        out += chunk
+    code = chan.recv_exit_status()
+    chan.close()
     if code != 0:
-        raise RuntimeError("download failed (exit={}): {}".format(code, err[:500]))
+        raise RuntimeError("download failed (exit={})".format(code))
     os.makedirs(os.path.dirname(os.path.abspath(local)) or ".", exist_ok=True)
     with open(local, "wb") as fh:
-        fh.write(out.encode("utf-8"))
+        fh.write(bytes(out))
     print("[get] {} -> {} ({} bytes)".format(remote, local, len(out)))
 
 
@@ -170,6 +190,12 @@ def main():
     ap.add_argument("--host", default=DEFAULT_HOST)
     ap.add_argument("--timeout", type=int, default=1800)
     ns = ap.parse_args()
+
+    # The default host used to be silent. A missing --host sent work to A800f while p7's
+    # wall-clock baseline was measured on H100b, and nothing in the output said so.
+    # Announce it on every call; stderr keeps stdout clean for command output.
+    print("[host] {}  (--host to override; default from EVOVS_HOST)".format(ns.host),
+          file=sys.stderr)
 
     client = connect(ns.host)
     try:
