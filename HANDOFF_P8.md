@@ -229,6 +229,43 @@ done
 
 只允许在**执行主机**上看到会话；另一台必须完全静默。
 
+### 5.1d AutoGluon 独立环境（已建成，2026-11-10）
+
+| 项 | 值 |
+|---|---|
+| 路径 | `scientific/.venv-automl` |
+| 体积 | **1.2 GB** |
+| autogluon.tabular | **1.6.3**（`[lightgbm,catboost,xgboost]`，**不含** torch/spacy/fastai） |
+| 依赖 | scikit-learn **1.9.1**、numpy 2.5.4、pandas 2.3.3、rdkit 2026.9.1 |
+| 构建脚本 | `ops/p8_make_automl_venv.sh` |
+| 版本指纹 | `ops/p8_venv_automl.freeze.txt` |
+
+**为什么必须独立**：这个 venv 的 sklearn 是 **1.9.1**，而 agent 臂的 `scientific/.venv` 是 **1.5.2**。原地升级会让 p7 的 81 条记录失去可复现性。实测差值比预估更大（1.5.2 → 1.9.1 跨了 4 个大版本），隔离是必需的。
+
+**安装要点**：该机无 ensurepip，venv 用 `--without-pip` 建，再从 `scientific/.venv` 拷 pip/setuptools/wheel 引导。`[all]` 会拉 torch（526 MB）+ spacy + fastai，而我们的模型类型里没有神经网络——故只装 GBM 扩展，省约 2 GB。
+
+**单靶点验证（D2、v1 特征、p8 冻结切分、限定 6 个模型族）**：
+
+```
+wall 60.9s | val AUROC 0.9529 | 枚举 7 个模型
+WeightedEnsemble_L2  0.9529   ← AutoGluon 自动组合
+RandomForest         0.9337
+ExtraTrees           0.9210
+XGBoost              0.9168
+CatBoost             0.9150
+LinearModel          0.9139
+LightGBM             0.9101
+```
+
+对照：sklearn logreg 0.9383、rf 0.9133。**量级一致，管线正确**（FLAML 那次 0.58 的异常没有再出现）。
+
+**一个待定的口径问题**：AutoGluon 默认会额外产出 `WeightedEnsemble_L2`（把 6 个基础模型加权组合），它的分数高于任何单个基础模型。而 agent 臂的 `ml.train` 只能产出**单个**模型。所以：
+
+- 若保留 ensemble → 更忠实于"AutoGluon 就是这个水平"，但 W 手里多了一张 agent 没有的牌；
+- 若关闭（`fit_weighted_ensemble=False`）→ 比较变成"选单个配置"，但削弱了基线。
+
+**建议保留并在报告里写明**：抑制 AutoGluon 的集成会招致"你把基线阉了"的质疑；而 agent 若要赢，本就该在搜索效率而非集成上赢。
+
 ### 5.2 Python 环境
 
 | 项 | 值 |
