@@ -134,7 +134,7 @@ exposing:
 | `begin_deep_target` | DRS begins with a real target attempt |
 | `submit_target_attempt` | Distinguish verified PASS/FAIL from unscored outcomes |
 | `submit_focused_practice` | Learn verified local lessons without declaring target victory |
-| `register_harness_promotion` | R-only ledger for already gated and operator-approved changes |
+| `register_harness_promotion` | R-only ledger; a promoted Harness invalidates the previous DRS PASS and requires re-verification |
 | `freeze_for_test` / `attest_frozen` | Freeze memory and pin Harness/search-space identities |
 
 The prototype stores memory lessons **inside the returned state object**; it
@@ -268,7 +268,6 @@ Per [AGENTS.md](../AGENTS.md), run all checks on the authorized internal
 server, not a local machine. Suggested commands (not executed here):
 
 ```bash
-PYTHONPATH=scientific/src python3 -m unittest scientific.tests.test_rsi_protocol -v
 PYTHONPATH=scientific/src python3 -m unittest discover -s scientific/tests -p 'test_rsi_protocol.py' -v
 ```
 
