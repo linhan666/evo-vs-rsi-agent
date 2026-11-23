@@ -136,6 +136,21 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(promoted["protocol_history"][0]["event"],
                          "operator_approved_promotion")
 
+    def test_promotion_invalidates_previously_verified_target(self):
+        state = begin_deep_target(complete_brs(run()), "target")
+        state = submit_target_attempt(state, receipt("PASS", "train_validation"))
+        self.assertTrue(state["target"]["verified_ready"])
+        state = register_harness_promotion(
+            state, candidate_id="new-parser", gate_report_sha256=THREE,
+            operator_id="operator", new_harness_sha256=FOUR)
+        self.assertFalse(state["target"]["verified_ready"])
+        with self.assertRaises(ProtocolError):
+            freeze_for_test(state)
+        state = submit_target_attempt(state, receipt("PASS", "train_validation"))
+        frozen = freeze_for_test(state)
+        attest_frozen(frozen, expected_sha256=frozen["frozen_sha256"],
+                      search_space_sha256=ZERO, harness_sha256=FOUR)
+
     def test_tampered_memory_cannot_pass_frozen_attestation(self):
         state = begin_deep_target(complete_brs(run()), "target")
         state = submit_target_attempt(state, receipt("PASS", "train_validation"))
