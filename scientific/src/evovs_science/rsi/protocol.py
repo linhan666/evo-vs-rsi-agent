@@ -187,6 +187,9 @@ def _apply_lessons(state: dict, source_id: str, episode: dict) -> None:
             "evidence_scope": verifier["evidence_scope"],
             "actor_artifact_sha256": verifier["actor_artifact_sha256"],
             "verifier_report_sha256": verifier["report_sha256"],
+            "harness_sha256": state["harness_sha256"],
+            "search_space_sha256": state["search_space_sha256"],
+            "data_manifest_sha256": state["data_manifest_sha256"],
             **lesson,
         })
     state["memory_sha256"] = canonical_hash(state["memory"])
@@ -296,6 +299,12 @@ def register_harness_promotion(state: dict, *, candidate_id: str,
         "new_harness_sha256": next_sha,
     })
     new["harness_sha256"] = next_sha
+    if new["phase"] == "DRS":
+        # A previously verified target was checked against the old Harness.
+        # The changed version must succeed on an unchanged fresh target retry.
+        new["target"]["verified_ready"] = False
+        new["target"]["retry_required"] = True
+        new["target"]["needs_practice"] = False
     return new
 
 
