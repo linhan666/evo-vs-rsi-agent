@@ -269,6 +269,36 @@ def submit_focused_practice(state: dict, practice_id: str, result: dict) -> dict
     return new
 
 
+
+def register_harness_promotion(state: dict, *, candidate_id: str,
+                               gate_report_sha256: str, operator_id: str,
+                               new_harness_sha256: str) -> dict:
+    """Record an externally authorized Harness upgrade; never execute a patch.
+
+    Only the trusted host/operator can prove gate approval and install the
+    candidate. This ledger method deliberately does not replace gate.py.
+    """
+    new = _copy(state)
+    if new["arm"] != "R" or new["phase"] not in {"BRS", "DRS"} or new["wave"] is not None:
+        raise ProtocolError("only R may record promotion outside an active wave")
+    candidate = _word(candidate_id, "candidate_id")
+    gate = _sha(gate_report_sha256, "gate_report_sha256")
+    operator = _word(operator_id, "operator_id")
+    next_sha = _sha(new_harness_sha256, "new_harness_sha256")
+    if next_sha == new["harness_sha256"]:
+        raise ProtocolError("promotion must change the harness digest")
+    new["protocol_history"].append({
+        "event": "operator_approved_promotion",
+        "candidate_id": candidate,
+        "gate_report_sha256": gate,
+        "operator_id": operator,
+        "old_harness_sha256": new["harness_sha256"],
+        "new_harness_sha256": next_sha,
+    })
+    new["harness_sha256"] = next_sha
+    return new
+
+
 def freeze_for_test(state: dict) -> dict:
     """Frozen RSI memory: no Curriculum, no distillation, no official score reuse."""
     new = _copy(state)
